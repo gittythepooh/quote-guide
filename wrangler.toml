@@ -1,11 +1,14 @@
 name = "quote-guide"
-pages_build_output_dir = "./dist"
 compatibility_date = "2026-10-01"
 
-# Stage 3 (sharing): run `npx wrangler d1 create quote-guide`, paste the real database_id
-# below, remove the leading "# " from the four lines, then commit and push.
-# Left commented out so the static deploy does not fail on a database that does not exist yet.
-# For LOCAL testing with `wrangler pages dev`, uncomment these lines (the placeholder id works locally).
+# Cloudflare Workers with static assets: serves the built site from ./dist.
+# (_headers in dist/ is honoured. The API in functions/ is NOT served yet: see Stage 3.)
+[assets]
+directory = "./dist"
+
+# Stage 3 (sharing): the API must become a Worker entry (main = "src/worker.ts") with
+# run_worker_first = ["/api/*"] and a D1 binding. Run `npx wrangler d1 create quote-guide`
+# and uncomment the block below with the real database_id.
 #
 # [[d1_databases]]
 # binding = "DB"

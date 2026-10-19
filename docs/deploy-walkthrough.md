@@ -1,5 +1,7 @@
 # Deploy walkthrough: GitHub + Cloudflare Pages
 
+> **Update 19 Oct:** Cloudflare's Git import created a **Workers** project (it shows a "Deploy command" of `npx wrangler deploy`), not a Pages project. Cloudflare now steers new sites to Workers with static assets, so the repo is configured that way (`wrangler.toml` has an `[assets]` block). Stage 2 below still applies: leave Build command `npm run build` and Deploy command `npx wrangler deploy`. The API in `functions/` is Pages-style and is NOT served on Workers. For Stage 3 it has to become a Worker entry (`src/worker.ts`, `run_worker_first = ["/api/*"]`, D1 binding, `wrangler secret put TURNSTILE_SECRET`). Do that before turning sharing on.
+
 Safe order: put the site live first with sharing switched OFF (no Turnstile key, no database).
 The explorer, comparer, guide and findings page all work without the server. Turn sharing on later.
 
