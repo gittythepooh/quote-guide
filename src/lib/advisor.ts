@@ -87,12 +87,12 @@ const young = (a: Answers) => a.age === '17-20' || a.age === '21-24';
 const youngish = (a: Answers) => young(a) || a.age === '25-29';
 const seed = (k: ChangeKey) => seedFindings.find((s) => s.change === k)?.pct;
 
-/** Pick the best figure: community median if published, else the 2022 seed. */
+/** Pick the best figure: community median if published, else the starting seed. */
 function figure(k: ChangeKey, c: Community) {
   const comm = c[k];
   if (comm?.published && comm.medianPct !== null) return { pct: comm.medianPct, basis: `community median of ${comm.n} reports`, evidence: EVIDENCE.community };
   const s = seed(k);
-  return s === undefined ? null : { pct: s, basis: '2022 test on one young-driver profile', evidence: EVIDENCE.test2022 };
+  return s === undefined ? null : { pct: s, basis: 'early test on one young-driver profile', evidence: EVIDENCE.test2022 };
 }
 
 const fmt = (n: number) => (n > 0 ? '+' : '') + Math.round(n) + '%';
@@ -132,7 +132,7 @@ export function advise(a: Answers, community: Community = {}): Item[] {
       id: 'blackbox',
       title: 'Get a black box or app quote as well',
       why: young(a) || a.ncd === '0' || a.ncd === '1-2' ? 'It tends to help new or young drivers most.' : 'It tends to help new or young drivers most, so it may do less for you.',
-      size: f ? `${fmt(f.pct)} in the 2022 test (young driver)` : 'size unknown',
+      size: f ? `${fmt(f.pct)} in our early test (young driver)` : 'size unknown',
       basis: f?.basis ?? 'no data',
       effect: f ? effectFromPct(f.pct) : EFFECT_ASSUMED.moderate,
       fit: Math.round(base * (a.blackbox === 'maybe' ? 0.7 : 1)),
@@ -148,7 +148,7 @@ export function advise(a: Answers, community: Community = {}): Item[] {
     title: 'Check every job title that is genuinely accurate for you',
     why: 'Insurers rate job titles differently, and there is no single public list: each insurer uses its own. A formal title and the industry term for the same job can price differently. Also declare a genuine second job or part-time role if you have one.',
     size: 'reported to matter a lot, but we cannot yet say how much for you',
-    basis: 'industry sources and our 2022 survey (3 of 12 people named it as their biggest saving). Effect is assumed until community data exists.',
+    basis: 'industry sources and our early survey (3 of 12 people named it as their biggest saving). Effect is assumed until community data exists.',
     effect: EFFECT_ASSUMED.large,
     fit: a.job === 'student' || a.job === 'retired' ? 48 : 80,
     evidence: EVIDENCE.anecdotal,
@@ -166,7 +166,7 @@ export function advise(a: Answers, community: Community = {}): Item[] {
     gt5: { fit: 50, why: 'It is early. Set a reminder for about 26 days before the start date.' },
   };
   const t = timing[a.renewal ?? 'new'];
-  add({ id: 'timing', title: 'Time your quotes', why: t.why, size: 'free to do, effect varies', basis: 'MoneySavingExpert guidance and our 2022 survey (6 of 16 started in the last week). Effect is assumed.', effect: EFFECT_ASSUMED.timing, fit: t.fit, evidence: EVIDENCE.guidance, testLabel: 'Start date about 4 weeks ahead' });
+  add({ id: 'timing', title: 'Time your quotes', why: t.why, size: 'free to do, effect varies', basis: 'MoneySavingExpert guidance and our early survey (6 of 16 started in the last week). Effect is assumed.', effect: EFFECT_ASSUMED.timing, fit: t.fit, evidence: EVIDENCE.guidance, testLabel: 'Start date about 4 weeks ahead' });
 
   // 5. Compare several places
   add({ id: 'sites', title: 'Compare at least two or three sites, and a few insurers directly', why: 'Prices and insurers differ between comparison sites, and some insurers are not on them.', size: 'free to do', basis: 'MoneySavingExpert guidance. Effect is assumed.', effect: EFFECT_ASSUMED.sites, fit: 100, evidence: EVIDENCE.wellKnown });
@@ -183,7 +183,7 @@ export function advise(a: Answers, community: Community = {}): Item[] {
     title: a.claim === 'likely' ? 'Keep the voluntary excess low' : 'Test a higher voluntary excess',
     why: a.claim === 'likely' ? 'You feel a claim is quite likely, so a high excess could cost you more than it saves.' : 'A higher excess can lower the price, but you pay more if you claim. Weigh the saving against the excess times your claim chance.',
     size: 'mixed in our test: the pattern was not consistent',
-    basis: '2022 test (unreliable pattern). Effect is assumed.',
+    basis: 'early test (unreliable pattern). Effect is assumed.',
     effect: EFFECT_ASSUMED.moderate,
     fit: excessFit,
     evidence: EVIDENCE.mixed,
@@ -193,12 +193,12 @@ export function advise(a: Answers, community: Community = {}): Item[] {
   // 8. Cover type
   if (a.cover === 'Comprehensive') {
     const f = figure('cover_tp', community);
-    add({ id: 'cover', title: 'Also quote third party, fire and theft', why: 'Do not assume lower cover is cheaper. In our test third party only was dearer. Check, but compare what you give up.', size: f ? `third party only ${fmt(f.pct)} in 2022 (low confidence)` : 'size unknown', basis: f?.basis ?? 'no data', effect: EFFECT_ASSUMED.moderate, fit: 50, evidence: EVIDENCE.mixed, testLabel: 'Cover: third party, fire and theft' });
+    add({ id: 'cover', title: 'Also quote third party, fire and theft', why: 'Do not assume lower cover is cheaper. In our test third party only was dearer. Check, but compare what you give up.', size: f ? `third party only ${fmt(f.pct)} in our early test (low confidence)` : 'size unknown', basis: f?.basis ?? 'no data', effect: EFFECT_ASSUMED.moderate, fit: 50, evidence: EVIDENCE.mixed, testLabel: 'Cover: third party, fire and theft' });
   }
 
   // 9. Things that did not matter in the test (small measured effect)
-  add({ id: 'mileage', title: 'Fine-tuning mileage', why: 'Use an honest figure. Moving it by 40% changed quotes by only 1 to 3% in the 2022 test.', size: 'within noise in the test', basis: '2022 test: about 3% at most', effect: effectFromPct(3), fit: 30, evidence: EVIDENCE.smallTest, mustBeTrue: 'Use a figure you can support, for example from past MOT readings.' });
-  add({ id: 'value', title: 'Small changes to vehicle value, or adding a tracker', why: 'These moved quotes by about £0 to £2 in the 2022 test.', size: 'within noise', basis: '2022 test: about 0%', effect: 3, fit: 30, evidence: EVIDENCE.smallTest, mustBeTrue: 'Use the real value and declare any real tracker or modification.' });
+  add({ id: 'mileage', title: 'Fine-tuning mileage', why: 'Use an honest figure. Moving it by 40% changed quotes by only 1 to 3% in our early test.', size: 'within noise in the test', basis: 'early test: about 3% at most', effect: effectFromPct(3), fit: 30, evidence: EVIDENCE.smallTest, mustBeTrue: 'Use a figure you can support, for example from past MOT readings.' });
+  add({ id: 'value', title: 'Small changes to vehicle value, or adding a tracker', why: 'These moved quotes by about £0 to £2 in our early test.', size: 'within noise', basis: 'early test: about 0%', effect: 3, fit: 30, evidence: EVIDENCE.smallTest, mustBeTrue: 'Use the real value and declare any real tracker or modification.' });
 
   // One number drives both the order and the band, so they cannot disagree.
   items.sort((x, y) => y.score - x.score);

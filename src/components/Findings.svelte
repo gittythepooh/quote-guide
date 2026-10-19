@@ -36,10 +36,10 @@
 
 <div class="card panel">
   <div class="legend">
-    <span><i class="sw seed"></i>2022 starting point (one test)</span>
+    <span><i class="sw seed"></i>Starting point (one early test)</span>
     <span><i class="sw comm"></i>Community median</span>
     <span class="status">
-      {#if online === 'loading'}Loading community data…{:else if online === 'offline'}Community data not available here (showing the 2022 starting point).{:else}Community data loaded.{/if}
+      {#if online === 'loading'}Loading community data…{:else if online === 'offline'}Community data not available here (showing the starting point).{:else}Community data loaded.{/if}
     </span>
   </div>
 
@@ -53,7 +53,7 @@
               {#if r.c?.published}
                 <b class="{tone(r.c.medianPct!)}">{fmt(r.c.medianPct!)}</b> <small>median of {r.c.n} reports ({fmt(r.c.p25!)} to {fmt(r.c.p75!)})</small>
               {:else if r.seed}
-                <b class="{tone(r.seed.pct)}">{fmt(r.seed.pct)}</b> <small>2022 test</small>
+                <b class="{tone(r.seed.pct)}">{fmt(r.seed.pct)}</b> <small>early test</small>
               {/if}
             </span>
           </div>
@@ -81,7 +81,7 @@
 </div>
 
 <div class="card panel" style="margin-top:18px;">
-  <h2>2022 survey ({seedSurvey.n} people, {seedSurvey.when})</h2>
+  <h2>Early survey ({seedSurvey.n} people)</h2>
   <ul class="pts">{#each seedSurvey.points as p}<li>{p}</li>{/each}</ul>
   <p class="foot">Small, informal sample. Treat it as a hint, not a result.</p>
 </div>

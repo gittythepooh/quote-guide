@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site';
 const updated = '19 October 2026';
 ---
 
@@ -10,13 +11,13 @@ const updated = '19 October 2026';
     <p class="draft"><strong>Draft, not yet reviewed by a legal adviser.</strong> Items shown as square brackets highlighted in yellow must be completed before launch. Last updated {updated}.</p>
 
     <h2>1. What Fog Off is</h2>
-    <p>Fog Off is a free information service run by <span class="todo">[YOUR NAME OR TRADING NAME]</span> (contact: <span class="todo">[CONTACT EMAIL]</span>). It helps you understand what can change a UK car insurance quote, and it shows general findings from tests.</p>
+    <p>Fog Off is a free information service run by {SITE.operator ? <strong>{SITE.operator}</strong> : <span class="todo">[YOUR NAME OR COMPANY NAME]</span>} (contact: {SITE.email ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a> : <span class="todo">[CONTACT EMAIL]</span>}). It helps you understand what can change a UK car insurance quote, and it shows general findings from tests.</p>
 
     <h2>2. What Fog Off is not</h2>
     <ul>
       <li><strong>Not an insurer, broker or adviser.</strong> We are not authorised or regulated by the Financial Conduct Authority. We do not sell, arrange or advise on insurance, we do not show live quotes, and we do not recommend any insurer, policy, comparison site or job title.</li>
       <li><strong>Not personal advice.</strong> Lists such as "what is worth testing" and labels such as "fit for your answers" are general information based on broad categories and limited data. They are not a recommendation to you. Prices, rules and results change often and may be different for you.</li>
-      <li><strong>No commission.</strong> We are funded by donations. We have no affiliate links. <span class="todo">[Update if this changes.]</span></li>
+      <li><strong>No commission.</strong> We are funded by donations. We have no affiliate links.</li>
       <li>We are not connected to any comparison site or insurer. Names belong to their owners.</li>
     </ul>
 
@@ -52,7 +53,7 @@ const updated = '19 October 2026';
     </ul>
 
     <h2>8. Changes and law</h2>
-    <p>We may update these terms. The date above shows the latest version. These terms are governed by the law of <span class="todo">[England and Wales: confirm]</span>, and the courts there have jurisdiction, subject to any rights you have as a consumer where you live.</p>
+    <p>We may update these terms. The date above shows the latest version. These terms are governed by the law of England and Wales, and the courts there have jurisdiction, subject to any rights you have as a consumer where you live.</p>
   </article>
 </Base>
 

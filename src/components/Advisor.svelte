@@ -157,7 +157,7 @@
         <ul>
           <li><strong>Effect:</strong> how much the change moved prices in our tests (40% or more counts as the maximum). Where nothing is measured yet, the effect is an assumption and says so.</li>
           <li><strong>Fit:</strong> how well the change matches your answers (for example, a black box suits young drivers most).</li>
-          <li><strong>Evidence:</strong> how much we trust the numbers. A small 2022 test counts for less than community reports.</li>
+          <li><strong>Evidence:</strong> how much we trust the numbers. A small early test counts for less than community reports.</li>
         </ul>
         <p>Because the three are multiplied, a weak one pulls the score down. <strong>High</strong> is {BAND_HIGH} or more, <strong>Medium</strong> is {BAND_MEDIUM} to {BAND_HIGH - 1}, <strong>Low</strong> is under {BAND_MEDIUM}. The score will change as community data arrives. It is a general indicator, not a promise or a recommendation. <a href="/guide/#score">Read more in the guide</a>.</p>
       </div>

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site';
 const updated = '19 October 2026';
 ---
 
@@ -21,7 +22,7 @@ const updated = '19 October 2026';
     </div>
 
     <h2>1. Who we are</h2>
-    <p>The controller of any personal data described here is <span class="todo">[YOUR NAME OR TRADING NAME]</span>, operating "Fog Off". Contact for privacy questions and requests: <span class="todo">[CONTACT EMAIL]</span>. We have not appointed a Data Protection Officer.</p>
+    <p>The controller of any personal data described here is {SITE.operator ? <strong>{SITE.operator}</strong> : <span class="todo">[YOUR NAME OR COMPANY NAME]</span>}, operating "Fog Off". Contact for privacy questions and requests: {SITE.email ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a> : <span class="todo">[CONTACT EMAIL]</span>}. We have not appointed a Data Protection Officer.</p>
 
     <h2>2. What we handle, why, and for how long</h2>
     <div class="tablewrap">
@@ -83,7 +84,7 @@ const updated = '19 October 2026';
     <p>You can ask us to: tell you what we hold; correct it; delete it; restrict or object to our use of it; and, where we rely on consent, withdraw it at any time. You can also ask for a copy of data you provided.</p>
     <ul>
       <li><strong>Fastest route:</strong> delete a report yourself with the code shown after sending (the "Delete a report I sent" box on the Share step, at the end of the Findings page).</li>
-      <li><strong>Lost your code?</strong> Contact us at <span class="todo">[CONTACT EMAIL]</span>. Because reports are not linked to you, we may not be able to find yours. We will say so and explain what we can do. We reply within one month.</li>
+      <li><strong>Lost your code?</strong> Contact us at {SITE.email ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a> : <span class="todo">[CONTACT EMAIL]</span>}. Because reports are not linked to you, we may not be able to find yours. We will say so and explain what we can do. We reply within one month.</li>
       <li><strong>Complaints:</strong> you can complain to the Information Commissioner's Office (ico.org.uk, helpline 0303 123 1113). We would like the chance to put things right first.</li>
     </ul>
 

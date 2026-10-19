@@ -1,10 +1,10 @@
 import type { ChangeKey } from '../lib/report-schema';
 
 // Starting point only. One controlled test on a single dummy profile (young driver,
-// living at home, older small car) from 2022, plus a 17-person survey. Prices have
-// moved a lot since. Community reports replace these figures as they arrive.
+// living at home, older small car) from an early test, plus a 17-person survey. Prices have
+// moved since. Community reports replace these figures as they arrive.
 export const SEED_SOURCE =
-  '2022 controlled test: one dummy profile (18-year-old student, 2010 small petrol car). Not a general rule.';
+  'Early controlled test: one dummy profile (18-year-old student, 2010 small petrol car). Not a general rule.';
 
 export type SeedFinding = { change: ChangeKey; pct: number; note: string };
 
@@ -23,7 +23,6 @@ export const seedFindings: SeedFinding[] = [
 
 export const seedSurvey = {
   n: 17,
-  when: 'Feb 2022',
   points: [
     '12 of 16 adjusted answers to test prices; 8 of those 12 saved money.',
     'Additional drivers was the most-used lever (11 of 12) and the most-named saving (8 of 11).',
