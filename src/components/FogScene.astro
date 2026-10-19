@@ -132,7 +132,7 @@
   .skipbtn, .rail { display: none; }
 
   /* ---- live (scroll-driven) ---- */
-  .scene.live { height: 520dvh; }
+  .scene.live { height: 480dvh; }
   .live .stage { position: sticky; top: var(--hdr, 64px); height: calc(100dvh - var(--hdr, 64px)); min-height: 0; }
   .live .beats { position: absolute; inset: 0; width: auto; display: grid; place-items: center; padding: 0 24px; }
   .live .beat, .live .start { grid-area: 1 / 1; margin: 0; width: min(760px, 100%); will-change: opacity, transform; }
@@ -143,6 +143,10 @@
   .live .b3 { opacity: var(--b3); transform: translate3d(0, calc((1 - var(--b3)) * 24px), 0); }
   .live .start { opacity: var(--st); transform: translate3d(0, calc((1 - var(--st)) * 28px), 0); visibility: hidden; }
   .live[data-phase='hero'] .b0 { pointer-events: auto; }
+  .live:not([data-phase='hero']) .b0 { visibility: hidden; }
+  /* A soft clearing behind the words keeps them readable over the fog. */
+  .live .beat { position: relative; isolation: isolate; }
+  .live .beat::before { content: ''; position: absolute; inset: -40px -60px; z-index: -1; background: radial-gradient(closest-side, rgba(255,255,255,0.92), rgba(255,255,255,0.75) 55%, rgba(255,255,255,0)); border-radius: 50%; }
   .live[data-phase='start'] .start { visibility: visible; }
 
   .live .cl { will-change: transform, opacity; opacity: calc(0.96 - var(--clear) * 0.96); }
