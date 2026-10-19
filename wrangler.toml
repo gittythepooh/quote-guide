@@ -2,9 +2,12 @@ name = "quote-guide"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-10-01"
 
-# Run `npx wrangler d1 create quote-guide`, then paste the real database_id here.
-# The placeholder id works for local testing only.
-[[d1_databases]]
-binding = "DB"
-database_name = "quote-guide"
-database_id = "00000000-0000-0000-0000-000000000000"
+# Stage 3 (sharing): run `npx wrangler d1 create quote-guide`, paste the real database_id
+# below, remove the leading "# " from the four lines, then commit and push.
+# Left commented out so the static deploy does not fail on a database that does not exist yet.
+# For LOCAL testing with `wrangler pages dev`, uncomment these lines (the placeholder id works locally).
+#
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "quote-guide"
+# database_id = "00000000-0000-0000-0000-000000000000"

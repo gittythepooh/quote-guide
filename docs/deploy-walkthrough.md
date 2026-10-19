@@ -22,12 +22,12 @@ You do this in the Cloudflare dashboard (login is yours).
 1. Workers & Pages, Create, Pages, **Connect to Git**, pick `quote-guide`.
 2. Production branch `main`. Framework preset: **Astro**.
 3. Build command `npm run build`. Output directory `dist`.
-4. Environment variable `NODE_VERSION` = `22` (Astro 7 needs Node 22.22 or newer; if the build says the version is too old, set `NODE_VERSION` to `22.22.0` or `24`).
+4. Node version: the repo has a `.node-version` file (`22`), which Cloudflare reads. Astro 7 needs Node 22.22 or newer. If the build log says the version is too old, add an environment variable `NODE_VERSION` = `24`.
 5. Save and Deploy. You get `https://quote-guide.pages.dev`.
 6. Check every page loads: `/`, `/guide/`, `/explorer/`, `/compare/`, `/findings/`, `/privacy/`.
 7. The share panel will say "Sharing is switched off". That is correct for now.
 
-Note: `wrangler.toml` makes Pages read config from the file. If the deploy complains about the D1 placeholder id, remove the `[[d1_databases]]` block until Stage 3, or finish Stage 3 first.
+Note: `wrangler.toml` makes Pages read its config from the file. The `[[d1_databases]]` block is commented out so the static deploy does not fail on a database that does not exist yet. Uncomment it in Stage 3 with the real id.
 
 ## Stage 3. Turn on sharing (only when ready)
 Do this after the rate-limit rule and legal review are done (see `launch-checklist.md`).
