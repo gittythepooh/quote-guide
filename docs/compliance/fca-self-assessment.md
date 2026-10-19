@@ -8,7 +8,6 @@ Not legal advice. Facts to check with the adviser are marked **(verify)**.
 | Explains quote-form questions in general terms | Information |
 | Guided check ranks "what is worth testing" with a general fit label | General information. Wording avoids "you should", recommendations and named products. Open question for adviser. |
 | Test plan: user enters prices they obtained elsewhere; tool shows % change and noise | Calculation on the user's own data |
-| Comparer: expected cost = price + claim chance x excess + missing cover | Calculation on the user's own data. Label is "Lowest expected cost". Adviser to confirm this is not a recommendation. |
 | Community findings | Aggregate statistics, minimum 20 reports, no insurer or site ranking |
 | Live quotes, quote journeys, buy buttons, referral links | **None** |
 | Commission, affiliate links, paid placement | **None** |

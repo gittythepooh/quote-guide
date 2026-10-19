@@ -9,7 +9,7 @@ Prepared 19 Oct 2026. This is a briefing, not legal advice. Its purpose is to le
 | Does | Does not |
 |---|---|
 | Explains quote-form questions in general terms | Recommend an insurer, product or policy to a person |
-| Compares quotes the user types in (expected cost = price + claim chance × excess + missing cover) | Fetch, scrape or display live quotes |
+| Shows the effect of each test on the user's own prices (percentage change against their baseline) and builds a "recipe" of the changes that helped | Fetch, scrape or display live quotes |
 | Publishes aggregate findings ("typically X% lower in N reports") | Publish any individual report |
 | Warns that answers must be true when buying and warns about fronting | Suggest false answers |
 | Is funded by donations | Take commissions or affiliate fees |
@@ -22,7 +22,7 @@ Prepared 19 Oct 2026. This is a briefing, not legal advice. Its purpose is to le
 
 ## Questions
 ### FCA perimeter and promotions
-1. Is a free information tool of this kind outside the regulated activities for contracts of insurance (for example arranging, advising, assisting in administration)? Which parts, if any, are at risk: the expected-cost comparer, the "Lowest expected cost" label, the findings page, the guide wording?
+1. Is a free information tool of this kind outside the regulated activities for contracts of insurance (for example arranging, advising, assisting in administration)? Which parts, if any, are at risk: the Fog Off score and its High, Medium and Low bands, the "recipe", the findings page, the guide wording?
 2. Is wording such as "adding a parent cut the quote by about 15%" a financial promotion or personal recommendation? What wording or disclaimers should we use?
 3. Do any rules apply to publishing aggregated results that name comparison sites (the `site` field is collected, not yet published)?
 4. Do we need to be an appointed representative or have any permission if we later add affiliate links or a browser add-on?

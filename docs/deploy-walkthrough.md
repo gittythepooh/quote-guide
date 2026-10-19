@@ -3,7 +3,7 @@
 > **Update 19 Oct:** Cloudflare's Git import created a **Workers** project (it shows a "Deploy command" of `npx wrangler deploy`), not a Pages project. Cloudflare now steers new sites to Workers with static assets, so the repo is configured that way (`wrangler.toml` has an `[assets]` block). Stage 2 below still applies: leave Build command `npm run build` and Deploy command `npx wrangler deploy`. The API in `functions/` is Pages-style and is NOT served on Workers. For Stage 3 it has to become a Worker entry (`src/worker.ts`, `run_worker_first = ["/api/*"]`, D1 binding, `wrangler secret put TURNSTILE_SECRET`). Do that before turning sharing on.
 
 Safe order: put the site live first with sharing switched OFF (no Turnstile key, no database).
-The explorer, comparer, guide and findings page all work without the server. Turn sharing on later.
+The guided check, test plan, guide and findings page all work without the server. Turn sharing on later.
 
 ## Stage 1. GitHub (about 5 minutes)
 The local repo exists on branch `main` with one commit. Secrets are not tracked (`.env`, `.dev.vars` are ignored).
@@ -26,7 +26,7 @@ You do this in the Cloudflare dashboard (login is yours).
 3. Build command `npm run build`. Output directory `dist`.
 4. Node version: the repo has a `.node-version` file (`22`), which Cloudflare reads. Astro 7 needs Node 22.22 or newer. If the build log says the version is too old, add an environment variable `NODE_VERSION` = `24`.
 5. Save and Deploy. You get `https://quote-guide.pages.dev`.
-6. Check every page loads: `/`, `/guide/`, `/explorer/`, `/compare/`, `/findings/`, `/privacy/`.
+6. Check every page loads: `/`, `/guide/`, `/start/`, `/explorer/`, `/findings/`, `/privacy/`.
 7. The share panel will say "Sharing is switched off". That is correct for now.
 
 Note: `wrangler.toml` makes Pages read its config from the file. The `[[d1_databases]]` block is commented out so the static deploy does not fail on a database that does not exist yet. Uncomment it in Stage 3 with the real id.

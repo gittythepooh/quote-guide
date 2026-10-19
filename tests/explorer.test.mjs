@@ -1,5 +1,5 @@
 // Run with: npm test
-const store={}; globalThis.localStorage={getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v}};
+const store={}; globalThis.localStorage={getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},removeItem:k=>{delete store[k]}};
 const m=await import('./.build/explorer.mjs');
 const ok=(n,c)=>console.log(c?'PASS':'FAIL',n);
 // baseline + noise
@@ -90,7 +90,7 @@ ok('excess instruction says raise from X to Y when the current excess is known',
 }
 ok('refs migrate: old stores without excess still load',(()=>{ for(const k of Object.keys(store)) delete store[k]; store['qg-whatif-v2']=JSON.stringify({v:2,baselineRuns:[900],refs:{vehicleValue:4000,mileage:null},tests:{},custom:[],usingSample:false}); const L=m.load(); return L.refs.vehicleValue===4000&&L.refs.excess===null&&typeof L.stack==='object' })());
 
-// ---- plan -> comparer carry-over
+// ---- recipe and saving from the saved plan (used by the Share step)
 { const s4=m.emptyStore(); s4.baselineRuns=[1000]; s4.refs.excess=250;
   s4.tests.blackbox={params:{},runs:[700]}; s4.tests.drivers2={params:{...m.TESTS.drivers2.defaults},runs:[820]}; s4.tests.excess={params:{amount:'500'},runs:[930]};
   // before the combination is finished: best single change only
@@ -128,3 +128,10 @@ ok('refs migrate: old stores without excess still load',(()=>{ for(const k of Ob
   const kept=db.prepare("SELECT id FROM results ORDER BY id").all().map(r=>r.id).join(); const lk=db.prepare("SELECT bucket FROM limits").all().length;
   ok('purge SQL: keeps reports up to 730 days old, deletes older ones (kept ids '+kept+')',kept==='1,2,3');
   ok('purge SQL: keeps counters from the last 3 days only (kept '+lk+')',lk===2); }
+
+// the plan still loads if removing the old comparer keys fails (e.g. storage quirks)
+{ const keep=globalThis.localStorage; for(const k of Object.keys(store)) delete store[k];
+  store['qg-whatif-v2']=JSON.stringify({v:2,baselineRuns:[777],refs:{},tests:{},custom:[],usingSample:false});
+  globalThis.localStorage={getItem:k=>store[k]??null,setItem:()=>{},removeItem:()=>{throw new Error('blocked')}};
+  ok('plan loads even when removing old keys throws',m.load().baselineRuns[0]===777);
+  store['qg-compare-v2']='x'; globalThis.localStorage={...keep}; m.load(); ok('old comparer keys are removed on load',!('qg-compare-v2' in store)); }

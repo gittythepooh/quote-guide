@@ -81,10 +81,46 @@
         } as Report)
       : null,
   );
-  const canSend = $derived(!!payload && consent && ownData && !usingSample && !!token && !!siteKey && status !== 'sending');
+  // Exactly what still stops a report being sent, in plain words.
+  const missing = $derived.by(() => {
+    const m: { text: string; field?: string }[] = [];
+    if (!ageBand) m.push({ text: 'age band', field: 'sh-age' });
+    if (!region) m.push({ text: 'region', field: 'sh-region' });
+    if (!carAge) m.push({ text: 'car age', field: 'sh-car' });
+    if (!ncd) m.push({ text: 'no-claims years', field: 'sh-ncd' });
+    if (!cover) m.push({ text: 'baseline cover', field: 'sh-cover' });
+    if (!site) m.push({ text: 'comparison site', field: 'sh-site' });
+    if (usingSample) m.push({ text: 'your own results (this is example data)' });
+    else if (chosen.length === 0) m.push({ text: 'at least one test to share' });
+    if (noiseTooHigh) m.push({ text: 'baseline runs that agree more closely' });
+    if (dupes) m.push({ text: 'each test type only once' });
+    if (!ownData) m.push({ text: 'the "my own genuine quotes" tick', field: 'sh-own' });
+    if (!consent) m.push({ text: 'the consent tick', field: 'sh-consent' });
+    if (siteKey === null) m.push({ text: 'sharing to be switched on for this site' });
+    else if (!token) m.push({ text: 'the bot check' });
+    return m;
+  });
+  const canSend = $derived(missing.length === 0 && !!payload && status !== 'sending');
+  let tried = $state(false);
+
+  // The button is always clickable. If something is missing it says so and jumps to the first gap.
+  function trySend() {
+    if (status === 'sending') return;
+    if (!canSend) {
+      tried = true;
+      const first = missing.find((x) => x.field);
+      if (first) {
+        const el = document.getElementById(first.field!);
+        el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        (el as HTMLElement | null)?.focus({ preventScroll: true });
+      }
+      return;
+    }
+    send();
+  }
 
   async function send() {
-    if (!canSend || !payload) return;
+    if (!payload) return;
     status = 'sending';
     errorMsg = '';
     try {
@@ -147,17 +183,17 @@
     <h3>About your quotes</h3>
     <div class="fields">
       <label><span>Age band</span>
-        <select bind:value={ageBand}><option value="">Choose</option>{#each AGE_BANDS as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-age" bind:value={ageBand}><option value="">Choose</option>{#each AGE_BANDS as o}<option>{o}</option>{/each}</select></label>
       <label><span>Region</span>
-        <select bind:value={region}><option value="">Choose</option>{#each REGIONS as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-region" bind:value={region}><option value="">Choose</option>{#each REGIONS as o}<option>{o}</option>{/each}</select></label>
       <label><span>Car age</span>
-        <select bind:value={carAge}><option value="">Choose</option>{#each CAR_AGE_BANDS as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-car" bind:value={carAge}><option value="">Choose</option>{#each CAR_AGE_BANDS as o}<option>{o}</option>{/each}</select></label>
       <label><span>No-claims years</span>
-        <select bind:value={ncd}><option value="">Choose</option>{#each NCD_BANDS as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-ncd" bind:value={ncd}><option value="">Choose</option>{#each NCD_BANDS as o}<option>{o}</option>{/each}</select></label>
       <label><span>Baseline cover</span>
-        <select bind:value={cover}><option value="">Choose</option>{#each COVER as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-cover" bind:value={cover}><option value="">Choose</option>{#each COVER as o}<option>{o}</option>{/each}</select></label>
       <label><span>Comparison site</span>
-        <select bind:value={site}><option value="">Choose</option>{#each SITES as o}<option>{o}</option>{/each}</select></label>
+        <select id="sh-site" bind:value={site}><option value="">Choose</option>{#each SITES as o}<option>{o}</option>{/each}</select></label>
     </div>
 
     <h3>Which tests to share</h3>
@@ -166,8 +202,8 @@
       {#each rows as r (r.id)}
         <li>
           <label class="inc">
-            <input type="checkbox" checked={!excluded[r.id]} onchange={() => (excluded[r.id] = !excluded[r.id])} />
-            <span><strong>{r.label}</strong> <em>{CHANGES[r.change]}</em></span>
+            <input type="checkbox" checked={inShareRange(r.pct) && !excluded[r.id]} disabled={!inShareRange(r.pct)} onchange={() => (excluded[r.id] = !excluded[r.id])} />
+            <span><strong>{r.label}</strong> <em>{CHANGES[r.change]}</em>{#if !inShareRange(r.pct)}<em class="off">Not included: looks like a typo</em>{/if}</span>
           </label>
           <span class="pc">{r.pct > 0 ? '+' : ''}{r.pct.toFixed(1)}%</span>
         </li>
@@ -188,11 +224,11 @@
     </details>
 
     <label class="consent">
-      <input type="checkbox" bind:checked={ownData} />
+      <input id="sh-own" type="checkbox" bind:checked={ownData} />
       <span>These results come from my own genuine test quotes, and nothing here is personal data about anyone else.</span>
     </label>
     <label class="consent">
-      <input type="checkbox" bind:checked={consent} />
+      <input id="sh-consent" type="checkbox" bind:checked={consent} />
       <span>I agree to share this banded, anonymous report. I understand it is published only as group averages once enough people have contributed, and I can delete it with the code shown after sending. See the <a href="/privacy/">privacy notice</a> and <a href="/terms/">terms</a>.</span>
     </label>
 
@@ -205,9 +241,12 @@
       <p class="warn">Sharing is not switched on for this site yet. Your results are saved on this device and you can come back later.</p>
     {/if}
 
-    <button class="btn btn-primary" type="button" disabled={!canSend} onclick={send}>
+    <button class="btn btn-primary" class:dim={!canSend && status !== 'sending'} type="button" aria-disabled={!canSend} onclick={trySend}>
       {status === 'sending' ? 'Sending…' : 'Send report'}
     </button>
+    {#if missing.length}
+      <p class={tried ? 'warn' : 'hint'} role={tried ? 'alert' : undefined} aria-live="polite">Still needed to send: {missing.map((m) => m.text).join(', ')}.</p>
+    {/if}
 
     {#if status === 'done'}
       <div class="ok">
@@ -246,6 +285,7 @@
   .inc span { margin: 0; font-size: 0.92rem; color: var(--text); font-weight: 400; }
   .inc em { display: block; color: var(--muted); font-style: normal; font-size: 0.8rem; }
   .pc { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .off { color: var(--warn) !important; font-weight: 600; }
   details { margin-top: 16px; }
   summary { cursor: pointer; font-weight: 600; }
   pre { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; font-size: 0.78rem; max-height: 240px; }
@@ -253,7 +293,8 @@
   .consent a { color: var(--accent); font-weight: 600; }
   .consent input { width: 18px; height: 18px; accent-color: var(--accent); margin-top: 3px; flex: none; }
   .consent span { margin: 0; font-size: 0.88rem; color: var(--text); font-weight: 400; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn.dim { opacity: 0.65; }
+  .btn.dim:hover { transform: none; }
   .warn { background: var(--warn-soft); padding: 10px 14px; border-radius: 12px; font-size: 0.88rem; margin: 14px 0 0; }
   .ok { display: grid; gap: 6px; background: var(--good-soft); color: var(--good); padding: 14px; border-radius: 14px; margin-top: 14px; }
   .ok code { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.04em; user-select: all; }

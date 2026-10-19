@@ -1,4 +1,4 @@
-// Turns the saved test plan into starting rows for the comparer, so nothing has to be typed twice.
+// Works out the recipe (the changes that helped) and the saving from the saved test plan.
 import { TESTS } from './tests';
 import { baseline, allResults, stackCandidates, buildStack, type Store } from './explorer-store';
 import { CLAIM_PCT } from './advisor';

@@ -181,7 +181,7 @@ export function advise(a: Answers, community: Community = {}): Item[] {
   add({
     id: 'excess',
     title: a.claim === 'likely' ? 'Keep the voluntary excess low' : 'Test a higher voluntary excess',
-    why: a.claim === 'likely' ? 'You feel a claim is quite likely, so a high excess could cost you more than it saves.' : 'A higher excess can lower the price, but you pay more if you claim. Weigh the saving against the excess times your claim chance (the comparer does this).',
+    why: a.claim === 'likely' ? 'You feel a claim is quite likely, so a high excess could cost you more than it saves.' : 'A higher excess can lower the price, but you pay more if you claim. Weigh the saving against the excess times your claim chance.',
     size: 'mixed in our test: the pattern was not consistent',
     basis: '2022 test (unreliable pattern). Effect is assumed.',
     effect: EFFECT_ASSUMED.moderate,

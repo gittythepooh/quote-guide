@@ -12,12 +12,12 @@ Reviewed 19 Oct 2026 by walking the whole journey (home, guided check, results, 
 | Contribute | Worked technically, but hidden: the home page never mentioned it and sharing sat at the bottom of the test plan. | Home page has a community section, the test plan shows a prominent "share your N results" call-to-action once there are two, findings page invites first contributors. |
 | Modern, clean, usable by anyone | Clean cards and dark mode, but text-only hero, orphan card in the grid, font never actually loaded, scrolling nav on phones. | Self-hosted Manrope, hero with a live-style example result, icon steps, mobile menu, skip link, print styles. |
 
-## Journey, revised after testing (19 Oct)
-The comparer first felt disconnected from the tests: it opened on sample data and knew nothing about the plan. The journey is now **Check, Test, Choose, Share**:
+## Journey, simplified after testing (19 Oct)
+A comparer step ("Choose") was tried and then removed on the owner's call: after the tests it felt like a second tool that repeated the first, and the useful part (apply the recipe on a few sites and compare real prices) is now a plain instruction in the test plan's "What to do next" card. The journey is **Check, Test, Share**:
 1. **Check** (guided check) decides what to test.
-2. **Test** (test plan) learns what moves the price on one site, and builds a recipe.
-3. **Choose** (comparer) opens with the baseline, the recipe price, the excess and the claim feeling already filled in. The user adds the real quotes from two or three sites and insurers with the recipe applied. Only real quotes can win. It reports the saving against the baseline and how far the real quotes are from the tested price.
-4. **Share** (final step on the Findings page) lists the results and opens the share panel, with the profile bands prefilled from the guided check.
+2. **Test** (test plan) learns what moves the price on one site and builds a recipe.
+3. **Share** (final step on the Findings page) lists the results and opens the share panel, with the profile bands prefilled from the guided check.
+Old `/compare` links redirect to the test plan. The comparer's saved data is removed from the browser when the plan loads.
 
 ## Bugs found and fixed
 | # | Bug | Effect | Fix |

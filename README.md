@@ -28,7 +28,7 @@ npm run build      # outputs ./dist
 ```
 
 ## Structure
-- `src/pages/` home, `start` (guided check), `guide`, `explorer`, `compare`, `findings`, `privacy`
+- `src/pages/` home, `start` (guided check), `guide`, `explorer`, `findings`, `privacy`
 - `src/lib/advisor.ts` the guided-check questions and ranking rules; `src/components/Advisor.svelte` the chat-style form and summary
 - `src/components/Explorer.svelte` the step-by-step test plan (localStorage, JSON export/import); `src/lib/tests.ts` the test catalog and priority ordering; `src/lib/explorer-store.ts` saved state, v1 migration and the noise/result maths
 - `src/components/MustBeTrue.svelte` "true at purchase" checklist

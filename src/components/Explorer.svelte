@@ -442,10 +442,10 @@
         <ol>
           <li>If it is true for you, include <b>{stackOut.done && keptTitles.length > 1 ? keptTitles.join(' + ') : best.title}</b> when you get your final quotes.</li>
           <li>Check every answer against the <a href="/guide/">must-be-true list</a> before you buy.</li>
-          <li>Put your final quotes side by side in the <a href="/compare/">comparer</a>.</li>
+          <li>Get quotes with those changes applied from two or three sites and a few insurers directly. Compare the real prices and the excess, not just the headline price.</li>
         </ol>
         <div class="acts">
-          <a class="btn btn-primary sm" href="/compare/">Next: choose between real quotes →</a>
+          <a class="btn btn-primary sm" href="/findings/#share">Next: share what you found →</a>
           <button class="btn btn-ghost sm" type="button" onclick={printPage}>Print or save as PDF</button>
         </div>
       </div>

@@ -112,6 +112,8 @@ export function normalize(input: unknown): Store {
 }
 
 export function load(): Store {
+  // The comparer step was removed: tidy away its saved data. Never let this stop the plan loading.
+  try { localStorage.removeItem('qg-compare-v1'); localStorage.removeItem('qg-compare-v2'); } catch {}
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {

@@ -23,7 +23,7 @@
 </script>
 
 <section class="card step" id="share" aria-labelledby="sh2-h">
-  <span class="pill">Step 4 · Share</span>
+  <span class="pill">Step 3 · Share</span>
   <h2 id="sh2-h">Share what you found</h2>
 
   {#if rows.length > 0 && b.avg !== null}

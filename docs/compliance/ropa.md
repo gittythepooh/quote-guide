@@ -6,7 +6,7 @@ Controller: **[YOUR NAME OR TRADING NAME]**, contact **[CONTACT EMAIL]**. No DPO
 
 | # | Activity | Data | Purpose | Basis | Recipients | Transfers | Retention |
 |---|---|---|---|---|---|---|---|
-| 1 | Local tools (guided check, test plan, comparer, checklist) | Answers and prices typed by the user, in their browser only | Provide the tools, remember progress | Not received by the controller | none | none | Until the user clears it |
+| 1 | Local tools (guided check, test plan, checklist) | Answers and prices typed by the user, in their browser only | Provide the tools, remember progress | Not received by the controller | none | none | Until the user clears it |
 | 2 | Shared report | Banded profile (age band, region, car age band, no-claims band, cover, site), % changes, runs, baseline spread, week | Build community findings | Consent, Art. 6(1)(a) | Cloudflare (processor) | Cloudflare global network, incl. US: confirm safeguards | 24 months, monthly purge (`db/purge.sql`); backups up to 30 days |
 | 3 | Delete code hash | SHA-256 of a random code | Let contributors erase their own report | Consent / follow-through of erasure right | Cloudflare | as above | same as report |
 | 4 | Abuse counters | Counts per hour and day | Stop floods | Not personal data | Cloudflare | as above | 3 days |

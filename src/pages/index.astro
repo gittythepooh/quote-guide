@@ -4,8 +4,7 @@ import Base from '../layouts/Base.astro';
 const steps = [
   { n: 1, href: '/start/', title: 'Answer a few questions', text: 'A two-minute chat. You get a short list of what is worth testing, in priority order.', icon: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11' },
   { n: 2, href: '/explorer/', title: 'Run your test plan', text: 'Each card says exactly what to change on a comparison site. Enter the price and see if it really mattered.', icon: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6' },
-  { n: 3, href: '/compare/', title: 'Compare your final quotes', text: 'Put them side by side with the likely cost of the excess counted, so a low price with a high excess is judged fairly.', icon: 'M12 3v18M3 7l9-4 9 4M5 7l-3 8a4 4 0 0 0 6 0L5 7zM19 7l-3 8a4 4 0 0 0 6 0l-3-8z' },
-  { n: 4, href: '/findings/', title: 'Help the next person', text: 'Optionally share your results, anonymously. Together they become the figures that do not exist anywhere else.', icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
+  { n: 3, href: '/findings/', title: 'Help the next person', text: 'Optionally share your results, anonymously. Together they become the figures that do not exist anywhere else.', icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
 ];
 const bars = [
   { label: 'Black box quote', pct: -38 },
@@ -50,7 +49,7 @@ const bars = [
   </section>
 
   <section class="wrap block">
-    <h2>Four steps, about 30 minutes</h2>
+    <h2>Three steps, about 30 minutes</h2>
     <ol class="steps">
       {steps.map((s) => (
         <li>
