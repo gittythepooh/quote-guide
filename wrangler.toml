@@ -14,7 +14,7 @@ run_worker_first = ["/api/*"]
 #   TURNSTILE_SECRET   private key, set ONLY in the Cloudflare dashboard (Settings, Variables and secrets, type Secret)
 # Until both are set the share panel says sharing is not switched on yet.
 [vars]
-TURNSTILE_SITEKEY = ""
+TURNSTILE_SITEKEY = "0x4AAAAAAFbUzvPAoco8zmdq"   # public site key (safe to commit)
 
 # The database ID is not a secret. The tables create themselves on first use.
 [[d1_databases]]
