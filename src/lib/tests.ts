@@ -4,10 +4,12 @@ import type { ChangeKey } from './report-schema';
 import { advise, type Answers } from './advisor';
 
 export type Params = Record<string, string>;
-export type Refs = { vehicleValue: number | null; mileage: number | null };
+export type Refs = { vehicleValue: number | null; mileage: number | null; excess?: number | null };
 export type Opt = { value: string; label: string };
-export type ParamDef = { id: string; label: string; options: Opt[] };
-export type RefDef = { id: keyof Refs; label: string; unit: '£' | 'miles' };
+export type CustomDef = { id: string; label: string; prefix?: string; suffix?: string; min?: number; max?: number };
+export type DateDef = { id: string; label: string; maxDays: number };
+export type ParamDef = { id: string; label: string; options: Opt[]; custom?: CustomDef; date?: DateDef };
+export type RefDef = { id: 'vehicleValue' | 'mileage' | 'excess'; label: string; unit: '£' | 'miles' };
 
 export type TestDef = {
   id: string;
@@ -27,6 +29,33 @@ const num = (n: number) => Math.round(n).toLocaleString('en-GB');
 const label = (def: ParamDef | undefined, value: string) => def?.options.find((o) => o.value === value)?.label ?? value;
 
 const AGES = ['21-24', '25-29', '30-39', '40-49', '50-59', '60+'].map((v) => ({ value: v, label: v }));
+
+// ---- dates (all in the visitor's local time)
+const MS = 86400000;
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+export const isoDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const addDays = (n: number) => { const d = startOfDay(new Date()); d.setDate(d.getDate() + n); return d; };
+const fmtDate = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+export function daysUntil(iso: string | undefined): number | null {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+  const [y, m, d] = iso.split('-').map(Number);
+  return Math.round((new Date(y, m - 1, d).getTime() - startOfDay(new Date()).getTime()) / MS);
+}
+const WHEN: Record<string, { days: number; key: ChangeKey }> = {
+  '1d': { days: 1, key: 'start_later_1d' }, '1w': { days: 7, key: 'start_later_1w' }, '2w': { days: 14, key: 'start_later_2w' },
+  '3w': { days: 21, key: 'start_later_3w' }, '4w': { days: 26, key: 'start_later_4w' }, '6w': { days: 42, key: 'start_later_6w' }, '8w': { days: 56, key: 'start_later_8w' },
+};
+/** The preset closest to a number of days, if it is close enough to share as that preset. */
+export function nearestWhen(days: number | null): ChangeKey | null {
+  if (days === null) return null;
+  let best: ChangeKey | null = null, gap = Infinity;
+  for (const w of Object.values(WHEN)) {
+    const g = Math.abs(w.days - days);
+    if (g <= Math.max(1, Math.round(w.days * 0.12)) && g < gap) { best = w.key; gap = g; }
+  }
+  return best;
+}
+const signedPct = (n: number) => `${n > 0 ? '+' : '−'}${Math.abs(n)}%`;
 
 const WHO = [{ value: 'partner', label: 'Partner' }, { value: 'parent', label: 'Parent' }, { value: 'child', label: 'Adult child' }, { value: 'sibling', label: 'Sibling' }, { value: 'friend', label: 'Friend' }];
 const LICENCE = [{ value: 'lt2', label: 'Under 2' }, { value: '2-5', label: '2 to 5' }, { value: '5+', label: '5 or more' }];
@@ -95,19 +124,49 @@ const job: TestDef = {
 const timing: TestDef = {
   id: 'timing',
   title: 'Move the start date',
-  params: [{ id: 'when', label: 'Start date', options: [{ value: '4w', label: 'About 4 weeks ahead' }, { value: '1d', label: 'Tomorrow' }] }],
+  params: [{
+    id: 'when',
+    label: 'Start date',
+    options: [
+      { value: '1d', label: 'Tomorrow' }, { value: '1w', label: '1 week' }, { value: '2w', label: '2 weeks' }, { value: '3w', label: '3 weeks' },
+      { value: '4w', label: 'About 4 weeks' }, { value: '6w', label: '6 weeks' }, { value: '8w', label: '8 weeks' },
+    ],
+    date: { id: 'date', label: 'Or pick any date', maxDays: 120 },
+  }],
   defaults: { when: '4w' },
-  instruction: (p) => (p.when === '1d' ? 'Set the policy to start tomorrow and note the cheapest price.' : 'Set the policy to start about 4 weeks from today (the usual best window is 22 to 26 days ahead) and note the cheapest price.'),
-  change: (p) => (p.when === '1d' ? 'start_later_1d' : 'start_later_4w'),
+  instruction: (p) => {
+    const days = p.when === 'custom' ? daysUntil(p.date) : WHEN[p.when]?.days ?? null;
+    if (days === null || days < 0) return 'Pick a start date from today onwards, then note the cheapest price.';
+    const when = days === 0 ? 'today' : days === 1 ? 'tomorrow' : `${days} days from today`;
+    const window = days >= 22 && days <= 26 ? ' That is inside the usual best window (22 to 26 days ahead).' : '';
+    return `Set the policy to start on ${fmtDate(addDays(days))} (${when}). Keep every other answer the same.${window} Note the cheapest price.`;
+  },
+  change: (p) => (p.when === 'custom' ? nearestWhen(daysUntil(p.date)) : WHEN[p.when]?.key ?? null),
+  caution: 'Use a different start date from the one in your baseline, or there is nothing to compare.',
 };
 
 const excess: TestDef = {
   id: 'excess',
   title: 'Higher voluntary excess',
-  params: [{ id: 'amount', label: 'Add this much excess', options: [{ value: '250', label: '+£250' }, { value: '500', label: '+£500' }, { value: '1000', label: '+£1,000' }] }],
+  params: [{
+    id: 'amount',
+    label: 'Add this much excess',
+    options: [{ value: '250', label: '+£250' }, { value: '500', label: '+£500' }, { value: '1000', label: '+£1,000' }],
+    custom: { id: 'amountCustom', label: 'Or type an amount', prefix: '£', min: 50, max: 5000 },
+  }],
   defaults: { amount: '500' },
-  instruction: (p) => `Add £${Number(p.amount).toLocaleString('en-GB')} to your voluntary excess and note the cheapest price. Then weigh the saving against that extra amount if you claim.`,
-  change: (p) => (p.amount === '250' ? 'excess_250' : p.amount === '1000' ? 'excess_1000' : 'excess_500'),
+  ref: { id: 'excess', label: 'Voluntary excess in your baseline', unit: '£' },
+  instruction: (p, r) => {
+    const amt = p.amount === 'custom' ? Number(p.amountCustom) : Number(p.amount);
+    if (!Number.isFinite(amt) || amt <= 0) return 'Type the extra excess you want to try, then note the cheapest price.';
+    const from = r.excess ?? null;
+    const raise = from !== null && Number.isFinite(from) ? `Raise your voluntary excess from ${money(from)} to ${money(from + amt)} (${'+' + money(amt)})` : `Add ${money(amt)} to your voluntary excess`;
+    return `${raise} and note the cheapest price. Then weigh the saving against that extra amount if you claim.`;
+  },
+  change: (p) => {
+    const amt = p.amount === 'custom' ? Number(p.amountCustom) : Number(p.amount);
+    return amt === 250 ? 'excess_250' : amt === 500 ? 'excess_500' : amt === 1000 ? 'excess_1000' : null;
+  },
 };
 
 const pay: TestDef = {
@@ -130,31 +189,36 @@ const cover: TestDef = {
   caution: 'Lower cover is not always cheaper. Compare what you give up.',
 };
 
+const pctOf = (p: Params, preset: number) => (p.dir === 'custom' ? Number(p.pctCustom) : p.dir === 'up' ? preset : -preset);
+const PCT_CUSTOM = (max: number): CustomDef => ({ id: 'pctCustom', label: 'Or type a % change', suffix: '%', min: -80, max });
+
 const mileage: TestDef = {
   id: 'mileage',
   title: 'Annual mileage',
-  params: [{ id: 'dir', label: 'Change by', options: [{ value: 'down', label: '−40%' }, { value: 'up', label: '+40%' }] }],
+  params: [{ id: 'dir', label: 'Change by', options: [{ value: 'down', label: '−40%' }, { value: 'up', label: '+40%' }], custom: PCT_CUSTOM(200) }],
   defaults: { dir: 'down' },
   ref: { id: 'mileage', label: 'Your annual mileage on the form', unit: 'miles' },
   instruction: (p, r) => {
-    const f = p.dir === 'up' ? 1.4 : 0.6;
-    return r.mileage ? `Change annual mileage from ${num(r.mileage)} to ${num(r.mileage * f)} miles and note the cheapest price.` : `Change annual mileage by ${p.dir === 'up' ? '+' : '−'}40% and note the cheapest price.`;
+    const pct = pctOf(p, 40);
+    if (!Number.isFinite(pct) || pct === 0) return 'Type the % change you want to try, then note the cheapest price.';
+    return r.mileage ? `Change annual mileage from ${num(r.mileage)} to ${num(r.mileage * (1 + pct / 100))} miles (${signedPct(pct)}) and note the cheapest price.` : `Change annual mileage by ${signedPct(pct)} and note the cheapest price.`;
   },
-  change: (p) => (p.dir === 'up' ? 'mileage_up' : 'mileage_down'),
+  change: (p) => { const pct = pctOf(p, 40); return pct === 40 ? 'mileage_up' : pct === -40 ? 'mileage_down' : null; },
   mustBeTrue: 'Use a figure you can support, for example from past MOT readings.',
 };
 
 const value: TestDef = {
   id: 'value',
   title: 'Vehicle value',
-  params: [{ id: 'dir', label: 'Change by', options: [{ value: 'down', label: '−10%' }, { value: 'up', label: '+10%' }] }],
+  params: [{ id: 'dir', label: 'Change by', options: [{ value: 'down', label: '−10%' }, { value: 'up', label: '+10%' }], custom: PCT_CUSTOM(100) }],
   defaults: { dir: 'down' },
   ref: { id: 'vehicleValue', label: "Your car's value on the form", unit: '£' },
   instruction: (p, r) => {
-    const f = p.dir === 'up' ? 1.1 : 0.9;
-    return r.vehicleValue ? `Change the value from ${money(r.vehicleValue)} to ${money(r.vehicleValue * f)} and note the cheapest price.` : `Change the vehicle value by ${p.dir === 'up' ? '+' : '−'}10% and note the cheapest price.`;
+    const pct = pctOf(p, 10);
+    if (!Number.isFinite(pct) || pct === 0) return 'Type the % change you want to try, then note the cheapest price.';
+    return r.vehicleValue ? `Change the value from ${money(r.vehicleValue)} to ${money(r.vehicleValue * (1 + pct / 100))} (${signedPct(pct)}) and note the cheapest price.` : `Change the vehicle value by ${signedPct(pct)} and note the cheapest price.`;
   },
-  change: (p) => (p.dir === 'up' ? 'vehicle_value_up' : 'vehicle_value_down'),
+  change: (p) => { const pct = pctOf(p, 10); return pct === 10 ? 'vehicle_value_up' : pct === -10 ? 'vehicle_value_down' : null; },
   mustBeTrue: 'Use a fair, real value when you buy.',
 };
 

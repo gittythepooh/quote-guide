@@ -171,47 +171,41 @@
       {/if}
     </details>
 
+    {#snippet itemCard(it: Item, n: number)}
+      <li class="card item" class:lowtier={it.group === 'skip'}>
+        <div class="top">
+          <span class="num">{n}</span>
+          <div class="t">
+            <strong>{it.title}</strong>
+            <span class="badge {tone(it.likelihood)}" title="How well this matches your answers, and how strong the evidence is. A general indicator, not a promise.">Fit for your answers: {it.likelihood}</span>
+          </div>
+        </div>
+        <p>{it.why}</p>
+        <p class="size"><b>Size:</b> {it.size}</p>
+        {#if it.mustBeTrue}<p class="must">✓ {it.mustBeTrue}</p>{/if}
+        {#if it.caution}<p class="caut">⚠ {it.caution}</p>{/if}
+        <details><summary>Where this comes from</summary><p class="basis">{it.basis}</p></details>
+      </li>
+    {/snippet}
+
     <h3>Start here</h3>
     <ol class="cards">
-      {#each start as it, n (it.id)}
-        <li class="card item">
-          <div class="top">
-            <span class="num">{n + 1}</span>
-            <div class="t">
-              <strong>{it.title}</strong>
-              <span class="badge {tone(it.likelihood)}" title="How well this matches your answers, and how strong the evidence is. A general indicator, not a promise.">Fit for your answers: {it.likelihood}</span>
-            </div>
-          </div>
-          <p>{it.why}</p>
-          <p class="size"><b>Size:</b> {it.size}</p>
-          {#if it.mustBeTrue}<p class="must">✓ {it.mustBeTrue}</p>{/if}
-          {#if it.caution}<p class="caut">⚠ {it.caution}</p>{/if}
-          <details><summary>Where this comes from</summary><p class="basis">{it.basis}</p></details>
-        </li>
-      {/each}
+      {#each start as it, n (it.id)}{@render itemCard(it, n + 1)}{/each}
     </ol>
 
     {#if also.length}
-      <h3>Also worth a quick look</h3>
-      <ul class="plain">
-        {#each also as it (it.id)}
-          <li>
-            <strong>{it.title}</strong> <span class="badge {tone(it.likelihood)}">{it.likelihood}</span>
-            <span class="why">{it.why}</span>
-            {#if it.mustBeTrue}<span class="must small">✓ {it.mustBeTrue}</span>{/if}
-            {#if it.caution}<span class="caut small">⚠ {it.caution}</span>{/if}
-          </li>
-        {/each}
-      </ul>
+      <h3>Also worth testing</h3>
+      <ol class="cards">
+        {#each also as it, n (it.id)}{@render itemCard(it, start.length + n + 1)}{/each}
+      </ol>
     {/if}
 
     {#if skip.length}
-      <details class="skip">
-        <summary>Probably not worth your time ({skip.length})</summary>
-        <ul class="plain">
-          {#each skip as it (it.id)}<li><strong>{it.title}</strong><span class="why">{it.why}</span>{#if it.mustBeTrue}<span class="must small">✓ {it.mustBeTrue}</span>{/if}</li>{/each}
-        </ul>
-      </details>
+      <h3>Low priority <span class="opt">optional</span></h3>
+      <p class="lowhint">These fit you less, or rarely moved quotes in our data. Try them if you have time.</p>
+      <ol class="cards">
+        {#each skip as it, n (it.id)}{@render itemCard(it, start.length + also.length + n + 1)}{/each}
+      </ol>
     {/if}
 
     <h3>Before you buy, these must be true</h3>
@@ -269,6 +263,9 @@
   .ra { font-weight: 600; }
   .link { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; }
   .edit { padding: 10px 0 4px; }
+  .opt { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 2px 9px; vertical-align: 2px; margin-left: 6px; }
+  .lowhint { color: var(--muted); font-size: 0.88rem; margin: -4px 0 10px; }
+  .lowtier { opacity: 0.88; }
   .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .item { padding: 18px; }
   .item p { margin: 8px 0 0; }

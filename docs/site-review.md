@@ -22,6 +22,15 @@ Reviewed 19 Oct 2026 by walking the whole journey (home, guided check, results, 
 | 5 | Font declared (Manrope) but never loaded | Fell back to the system font | Self-hosted variable font, no third-party request. |
 | 6 | Findings notes said "labels in the sheet looked swapped" | Internal caveat shown to the public | Reworded to "low confidence: one small early test". |
 
+## Method risks and how the plan guards against them
+| Risk | Guard |
+|---|---|
+| A change left switched on from the last test contaminates the next result | Every card says "Reset first: put every answer back to your baseline". If a test returns exactly the same price as an earlier one, and both differ from the baseline, the card warns that the earlier change may still be on. |
+| Changes that only help together, or one that hurts and hides another that helps | "Build your best combination": helpful changes are added on top of each other, best first. Each is kept only if the price falls by more than the noise level, otherwise dropped. The end gives a recipe. |
+| One lucky or unlucky quote | Optional repeat runs per test, up to three baseline runs, and a noise threshold measured from them. |
+| Typos or mixed-up price types | Warning when a result is more than 100% away from the baseline, and the chart scale is capped. |
+| Presets that do not fit | Start dates have 7 presets plus a calendar; excess, mileage and vehicle value accept any custom number. Custom values still show results but are only shared when they match a standard type. |
+
 ## What a first-time visitor still has to do alone (friction)
 - Understand that the method means running quotes on a different website. The how-to explains it, but this is the biggest concept risk. **Test it with five real people before polishing further.**
 - Move between two browser tabs on a phone. Consider a "copy the instruction" button, or a compact floating "current test" bar.

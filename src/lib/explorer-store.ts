@@ -13,10 +13,11 @@ export type Store = {
   refs: Refs;
   tests: Record<string, TestState>;
   custom: Custom[];
+  stack: Record<string, number | null>; // price entered when each helpful change is added on top of the others
   usingSample: boolean;
 };
 
-export const emptyStore = (): Store => ({ v: 2, baselineRuns: [null], refs: { vehicleValue: null, mileage: null }, tests: {}, custom: [], usingSample: false });
+export const emptyStore = (): Store => ({ v: 2, baselineRuns: [null], refs: { vehicleValue: null, mileage: null, excess: null }, tests: {}, custom: [], stack: {}, usingSample: false });
 
 export function sampleStore(): Store {
   const t = (id: string, params: Params, price: number): [string, TestState] => [id, { params: { ...TESTS[id].defaults, ...params }, runs: [price] }];
@@ -90,7 +91,7 @@ export function load(): Store {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      if (d?.v === 2) return tidy({ ...emptyStore(), ...d });
+      if (d?.v === 2) return tidy({ ...emptyStore(), ...d, refs: { ...emptyStore().refs, ...(d.refs ?? {}) }, stack: d.stack ?? {} });
     }
     const old = localStorage.getItem('qg-whatif-v1');
     if (old) return tidy(fromV1(JSON.parse(old)));
@@ -157,3 +158,67 @@ export function allResults(s: Store): Result[] {
 export const gbp = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
 export const signed = (n: number) => (n > 0 ? '+' : n < 0 ? '−' : '') + gbp(Math.abs(n));
 export const pctText = (n: number) => (n > 0 ? '+' : n < 0 ? '−' : '') + Math.abs(n).toFixed(1) + '%';
+
+// ---------------------------------------------------------------- combinations
+/**
+ * Single tests cannot see combinations, and a change left switched on can hide another that helps.
+ * So the helpful changes are added on top of each other, best first, and each is kept only if it
+ * lowers the price by more than the noise level.
+ */
+export function stackCandidates(results: Result[]): Result[] {
+  let c = results.filter((r) => r.verdict === 'cheaper' && TESTS[r.id]);
+  // "second driver as well" already includes the first driver: keep whichever is cheaper
+  const one = c.find((r) => r.id === 'drivers');
+  const two = c.find((r) => r.id === 'drivers2');
+  if (one && two) c = c.filter((r) => r.id !== (two.avg <= one.avg ? 'drivers' : 'drivers2'));
+  return [...c].sort((a, b) => a.pct - b.pct);
+}
+
+export type StackStep = {
+  id: string;
+  title: string;
+  trial: string[]; // test ids switched on together for this step
+  price: number | null;
+  kept: boolean | null; // null until a price is entered
+  gainPct: number | null; // fall against the best price so far
+  bestBefore: number;
+};
+export type StackOut = { first: Result | null; steps: StackStep[]; keptIds: string[]; bestPrice: number | null; done: boolean };
+
+export function buildStack(cands: Result[], prices: Record<string, number | null | undefined>, noise: number): StackOut {
+  if (cands.length === 0) return { first: null, steps: [], keptIds: [], bestPrice: null, done: false };
+  const first = cands[0];
+  let best = first.avg;
+  const kept = [first.id];
+  const steps: StackStep[] = [];
+  let done = true;
+  for (let i = 1; i < cands.length; i++) {
+    const c = cands[i];
+    const price = prices[c.id];
+    const ok = typeof price === 'number' && Number.isFinite(price) && price > 0;
+    const step: StackStep = { id: c.id, title: c.title, trial: [...kept, c.id], price: ok ? (price as number) : null, kept: null, gainPct: null, bestBefore: best };
+    if (ok) {
+      step.gainPct = ((best - (price as number)) / best) * 100;
+      step.kept = step.gainPct >= noise;
+      if (step.kept) { kept.push(c.id); best = price as number; }
+    }
+    steps.push(step);
+    if (!ok) { done = false; break; } // later steps wait for this one
+  }
+  return { first, steps, keptIds: kept, bestPrice: best, done };
+}
+
+/** Tests whose price is exactly the same as an earlier test's, while both differ from the baseline.
+ *  That pattern suggests the earlier change was still switched on. */
+export function findSuspects(results: Result[], order: string[]): Record<string, string> {
+  const idx = (id: string) => { const i = order.indexOf(id); return i === -1 ? 999 : i; };
+  const out: Record<string, string> = {};
+  for (const r of results) {
+    if (r.verdict === 'noise') continue;
+    for (const o of results) {
+      if (o.id === r.id || o.verdict === 'noise') continue;
+      if (Math.abs(o.avg - r.avg) < 0.5 && idx(o.id) < idx(r.id)) { out[r.id] = o.title; break; }
+    }
+  }
+  return out;
+}

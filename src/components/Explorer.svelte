@@ -1,9 +1,9 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { TESTS, orderTests, type Ordered } from '../lib/tests';
+  import { TESTS, orderTests, isoDate, addDays, daysUntil, type Ordered } from '../lib/tests';
   import {
     load, save, emptyStore, sampleStore, baseline, allResults, gbp, signed, pctText, NOISE_FLOOR,
-    type Store, type Result,
+    stackCandidates, buildStack, findSuspects, type Store, type Result,
   } from '../lib/explorer-store';
   import SharePanel from './SharePanel.svelte';
 
@@ -38,16 +38,17 @@
   const startList = $derived(order.items.filter((i) => i.group === 'start'));
   const alsoList = $derived(order.items.filter((i) => i.group === 'also'));
   const addedList = $derived(order.items.filter((i) => (i.group === 'skip' || i.group === 'more') && on(i.test.id)));
-  const moreList = $derived(order.items.filter((i) => (i.group === 'skip' || i.group === 'more') && !on(i.test.id)));
+  const lowList = $derived(order.items.filter((i) => i.group === 'skip' && !on(i.test.id)));
+  const moreList = $derived(order.items.filter((i) => i.group === 'more' && !on(i.test.id)));
   const activeIds = $derived([...startList, ...alsoList, ...addedList].map((i) => i.test.id));
   const doneCount = $derived(activeIds.filter((id) => resMap[id]).length);
   const sorted = $derived([...results].sort((x, y) => x.pct - y.pct));
   const scale = $derived(Math.min(60, Math.max(15, ...results.map((r) => Math.abs(r.pct)))));
   const best = $derived(sorted.find((r) => r.verdict === 'cheaper'));
-  const realCheaper = $derived(
-    sorted.filter((r) => r.verdict === 'cheaper' && r.change).filter((r, _i, all) => !(r.id === 'drivers2' && all.some((x) => x.id === 'drivers'))),
-  );
-  const hasCombo = $derived(store.custom.some((c) => c.id === 'combo'));
+  const cands = $derived(stackCandidates(results));
+  const stackOut = $derived(buildStack(cands, store.stack, b.noise));
+  const suspects = $derived(findSuspects(results, order.items.map((i) => i.test.id)));
+  const keptTitles = $derived(stackOut.keptIds.map((id) => TESTS[id].title));
   const hasData = $derived(b.avg !== null);
 
   const shareRows = $derived(
@@ -72,9 +73,18 @@
   const numOrNull = (v: string) => (v.trim() === '' || !Number.isFinite(Number(v)) ? null : Number(v));
 
   const setParam = (id: string, pid: string, v: string) => { st(id).params[pid] = v; };
+  // A typed or picked value switches the choice to "custom" and keeps the value beside it.
+  const setCustom = (id: string, pid: string, cid: string, v: string) => { const p = st(id).params; p[cid] = v; p[pid] = v.trim() === '' ? TESTS[id].defaults[pid] : 'custom'; };
+  const todayIso = isoDate(new Date());
+  const maxIso = (n: number) => isoDate(addDays(n));
   const setRun = (id: string, i: number, v: string) => { st(id).runs[i] = numOrNull(v); };
   const addRun = (id: string) => { const s = st(id); if (s.runs.length < 3) s.runs.push(null); };
   const dropRun = (id: string, i: number) => { const s = st(id); if (s.runs.length > 1) s.runs.splice(i, 1); };
+  const setStack = (id: string, v: string) => { store.stack[id] = numOrNull(v); };
+  async function gotoStack() {
+    await tick();
+    document.getElementById('stack')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
   const setBase = (i: number, v: string) => { store.baselineRuns[i] = numOrNull(v); };
   const addBase = () => { if (store.baselineRuns.length < 3) store.baselineRuns.push(null); };
   const dropBase = (i: number) => { if (store.baselineRuns.length > 1) store.baselineRuns.splice(i, 1); };
@@ -103,11 +113,6 @@
   const printPage = () => window.print();
 
   function addCustom(label = '') { store.custom.push({ id: crypto.randomUUID(), label, price: null }); }
-  function addCombo() {
-    const [x, y] = realCheaper;
-    if (!x || !y || hasCombo) return;
-    store.custom.push({ id: 'combo', label: `Combine: ${x.title} + ${y.title}`, price: null });
-  }
   const dropCustom = (id: string) => { store.custom = store.custom.filter((c) => c.id !== id); };
 
   function loadSample() { store = sampleStore(); openId = null; msg = 'Example loaded. Start fresh to enter your own.'; }
@@ -162,6 +167,7 @@
       <div class="body">
         {#if item.why}<p class="why">{item.why}</p>{/if}
         <p class="inst"><b>What to change on the comparison site</b><br />{def.instruction(paramsOf(id), store.refs)}</p>
+        <p class="reset">↺ <strong>Reset first:</strong> put every answer back to your baseline, then change only this.</p>
 
         {#each def.params as p (p.id)}
           <div class="pgroup" role="group" aria-label={p.label}>
@@ -171,6 +177,26 @@
                 <button type="button" class="chip" class:on={param(id, p.id) === o.value} aria-pressed={param(id, p.id) === o.value} onclick={() => setParam(id, p.id, o.value)}>{o.label}</button>
               {/each}
             </div>
+            {#if p.custom}
+              <label class="cust">
+                <span>{p.custom.label}</span>
+                <span class="affix">
+                  {#if p.custom.prefix}<b>{p.custom.prefix}</b>{/if}
+                  <input type="number" inputmode="decimal" min={p.custom.min} max={p.custom.max} placeholder="Other" class:on={param(id, p.id) === 'custom'} value={store.tests[id]?.params[p.custom.id] ?? ''} oninput={(e) => setCustom(id, p.id, p.custom!.id, (e.target as HTMLInputElement).value)} />
+                  {#if p.custom.suffix}<b>{p.custom.suffix}</b>{/if}
+                </span>
+              </label>
+            {/if}
+            {#if p.date}
+              {@const dd = daysUntil(store.tests[id]?.params[p.date.id])}
+              <label class="cust">
+                <span>{p.date.label}</span>
+                <input type="date" min={todayIso} max={maxIso(p.date.maxDays)} class:on={param(id, p.id) === 'custom'} value={store.tests[id]?.params[p.date.id] ?? ''} onchange={(e) => setCustom(id, p.id, p.date!.id, (e.target as HTMLInputElement).value)} />
+                {#if param(id, p.id) === 'custom' && dd !== null}
+                  <small class="dd">{dd} day{dd === 1 ? '' : 's'} from today{dd >= 22 && dd <= 26 ? ' · inside the usual best window' : ''}</small>
+                {/if}
+              </label>
+            {/if}
           </div>
         {/each}
 
@@ -210,6 +236,7 @@
               {@const extra = ((r.avg - one.avg) / one.avg) * 100}
               <span class="vs">Compared with one extra driver ({gbp(one.avg)}): the second driver changes the price by <strong>{signed(r.avg - one.avg)} ({pctText(extra)})</strong>.</span>
             {/if}
+            {#if suspects[id]}<span class="warnline">This price is exactly the same as “{suspects[id]}”. If that earlier change is still switched on, this result is mixed up. Undo it and run this test again.</span>{/if}
             {#if Math.abs(r.pct) > 100}<span class="warnline">That is very far from your baseline. Check you entered the same kind of price: the cheapest yearly price for the same cover.</span>{/if}
             {#if r.repeatsDisagree}<span class="warnline">Your repeat runs differ by {r.disagreePct.toFixed(1)}%. Treat this result with care.</span>{/if}
           </div>
@@ -292,10 +319,15 @@
       <div class="stack">{#each addedList as it, i (it.test.id)}{@render card(it, startList.length + alsoList.length + i + 1)}{/each}</div>
     {/if}
 
+    {#if lowList.length}
+      <h2 class="grp">Low priority <span class="opt">optional</span></h2>
+      <div class="stack">{#each lowList as it, i (it.test.id)}{@render card(it, startList.length + alsoList.length + addedList.length + i + 1)}{/each}</div>
+    {/if}
+
     {#if moreList.length}
       <details class="more" bind:open={moreOpen}>
         <summary>More tests you can add ({moreList.length})</summary>
-        <p class="hint">These are low priority for you, or did not apply to your answers. Add any you are curious about.</p>
+        <p class="hint">These did not apply to your answers. Add any you are curious about.</p>
         <ul class="addlist">
           {#each moreList as it (it.test.id)}
             <li>
@@ -305,6 +337,51 @@
           {/each}
         </ul>
       </details>
+    {/if}
+
+    {#if cands.length >= 2 && b.avg !== null}
+      <section class="card stack" id="stack" aria-labelledby="st-h">
+        <h2 class="grp2" id="st-h">Build your best combination</h2>
+        <p class="lead">
+          One-at-a-time tests can miss combinations, and one change that makes things dearer can hide another that helps. So add the helpful changes <strong>on top of each other</strong>, best first. Keep a change only if the price falls by more than the noise level ({b.noise.toFixed(1)}%).
+        </p>
+        <ol class="ssteps">
+          <li class="s kept">
+            <span class="n">1</span>
+            <div>
+              <strong>Start with: {cands[0].title}</strong>
+              <p class="sdesc">Already tested: {gbp(cands[0].avg)} ({pctText(cands[0].pct)} against your baseline).</p>
+            </div>
+          </li>
+          {#each stackOut.steps as st, i (st.id)}
+            <li class="s {st.kept === true ? 'kept' : st.kept === false ? 'dropped' : 'openstep'}">
+              <span class="n">{i + 2}</span>
+              <div>
+                <strong>On top: {st.title}</strong>
+                <p class="sdesc">Switch on together: <b>{st.trial.map((id) => TESTS[id].title).join(' + ')}</b>. Keep every other answer at your baseline, then enter the cheapest price.</p>
+                <label class="field price">
+                  <span>Cheapest price with all of these on (£)</span>
+                  <input type="number" inputmode="decimal" min="0" placeholder="£" value={store.stack[st.id] ?? ''} oninput={(e) => setStack(st.id, (e.target as HTMLInputElement).value)} />
+                </label>
+                {#if st.kept === true && st.price !== null && st.gainPct !== null}
+                  <p class="verdict keep">Keep it. {gbp(st.price)} is {st.gainPct.toFixed(1)}% lower than {gbp(st.bestBefore)}.</p>
+                {:else if st.kept === false && st.price !== null && st.gainPct !== null}
+                  <p class="verdict drop">Drop it. {gbp(st.price)} is {pctText(-st.gainPct)} against {gbp(st.bestBefore)}, which is not a real gain. Leave it off from here on.</p>
+                {/if}
+              </div>
+            </li>
+          {/each}
+        </ol>
+        {#if stackOut.done && stackOut.bestPrice !== null}
+          <div class="final">
+            <strong>Best combination: {keptTitles.join(' + ')}</strong>
+            <span>{gbp(stackOut.bestPrice)} · {pctText(((stackOut.bestPrice - b.avg) / b.avg) * 100)} against your baseline</span>
+            <p class="recipe-h">Your final recipe, if every item is true for you:</p>
+            <ul class="recipe">{#each stackOut.keptIds as kid (kid)}<li>{TESTS[kid].instruction(paramsOf(kid), store.refs)}</li>{/each}</ul>
+            <p class="mustline">Use true answers when you buy. See the <a href="/guide/">must-be-true list</a>.</p>
+          </div>
+        {/if}
+      </section>
     {/if}
 
     <h2 class="grp">Your own tests</h2>
@@ -354,18 +431,22 @@
       <p class="empty-res">Enter your baseline and a test price to see what moved your quote.</p>
     {/if}
 
-    {#if realCheaper.length >= 2 && !hasCombo}
+    {#if cands.length >= 2}
       <div class="combo">
-        <strong>Try combining your best two</strong>
-        <span>{realCheaper[0].title} and {realCheaper[1].title}. Savings do not simply add up, so test them together.</span>
-        <button class="btn btn-primary sm" type="button" onclick={addCombo}>Add a combined test</button>
+        <strong>{stackOut.done ? 'Your best combination' : 'Next: build your best combination'}</strong>
+        {#if stackOut.done && stackOut.bestPrice !== null && b.avg !== null}
+          <span>{keptTitles.join(' + ')}: {gbp(stackOut.bestPrice)} ({pctText(((stackOut.bestPrice - b.avg) / b.avg) * 100)} against baseline).</span>
+        {:else}
+          <span>Changes can work together, or cancel each other out. Add the helpful ones on top of each other to find out.</span>
+        {/if}
+        <button class="btn btn-primary sm" type="button" onclick={gotoStack}>{stackOut.done ? 'See the steps' : 'Build it'}</button>
       </div>
     {/if}
     {#if best}
       <div class="next">
         <strong>What to do next</strong>
         <ol>
-          <li>If it is true for you, include <b>{best.title.toLowerCase()}</b> when you get your final quotes.</li>
+          <li>If it is true for you, include <b>{stackOut.done && keptTitles.length > 1 ? keptTitles.join(' + ') : best.title}</b> when you get your final quotes.</li>
           <li>Check every answer against the <a href="/guide/">must-be-true list</a> before you buy.</li>
           <li>Put your final quotes side by side in the <a href="/compare/">comparer</a>.</li>
         </ol>
@@ -414,6 +495,7 @@
   .count { color: var(--muted); font-size: 0.82rem; margin: 8px 0 4px; }
   .grp { margin: 22px 0 10px; font-size: 1rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.78rem; }
   .stack { display: grid; gap: 10px; }
+  .opt { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 2px 8px; margin-left: 6px; vertical-align: 1px; text-transform: uppercase; }
 
   .test { scroll-margin-top: 90px; overflow: hidden; }
   .test.open { border-color: var(--accent); }
@@ -439,10 +521,16 @@
   .chip { font: inherit; font-size: 0.85rem; font-weight: 600; padding: 7px 13px; border-radius: 999px; background: var(--surface); color: var(--text); border: 1.5px solid var(--line); cursor: pointer; transition: all 0.12s ease; }
   .chip:hover { border-color: var(--accent); }
   .chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .cust { display: grid; gap: 4px; max-width: 260px; margin-top: 4px; }
+  .cust > span:first-child { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+  .affix { display: flex; align-items: center; gap: 6px; }
+  .affix b { color: var(--muted); }
+  .cust input.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .dd { color: var(--muted); font-size: 0.8rem; }
   .field { display: grid; gap: 5px; }
   .field > span { font-size: 0.8rem; font-weight: 700; color: var(--muted); }
   .field i { font-weight: 400; font-style: normal; }
-  input[type='number'], input[type='text'] { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+  input[type='number'], input[type='text'], input[type='date'] { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
   input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
   .runs { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
   .pr { display: flex; gap: 6px; align-items: center; }
@@ -490,6 +578,24 @@
   .sharecta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; margin-bottom: 14px; background: var(--accent-soft); border-color: transparent; }
   .sharecta div { display: grid; gap: 2px; max-width: 60ch; }
   .sharecta span { color: var(--muted); font-size: 0.88rem; }
+  .reset { margin: 0; font-size: 0.86rem; color: var(--muted); }
+  .stack { padding: 22px; margin-top: 22px; }
+  .grp2 { margin: 0 0 8px; font-size: 1.15rem; letter-spacing: -0.01em; }
+  .ssteps { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 12px; }
+  .s { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 14px; border-radius: 14px; background: var(--surface-2); }
+  .s .n { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--surface); font-weight: 800; font-size: 0.85rem; color: var(--muted); }
+  .s.kept { background: var(--good-soft); } .s.kept .n { background: var(--good); color: var(--surface); }
+  .s.dropped { background: var(--warn-soft); } .s.dropped .n { background: var(--warn); color: var(--surface); }
+  .s.openstep { border: 1.5px solid var(--accent); background: var(--surface); } .s.openstep .n { background: var(--accent); color: var(--accent-text); }
+  .sdesc { margin: 4px 0 8px; font-size: 0.9rem; color: var(--muted); }
+  .sdesc b { color: var(--text); }
+  .verdict { margin: 8px 0 0; font-weight: 600; font-size: 0.9rem; }
+  .verdict.keep { color: var(--good); } .verdict.drop { color: var(--warn); }
+  .final { display: grid; gap: 6px; margin-top: 16px; padding: 16px; border-radius: 14px; background: var(--accent-soft); }
+  .recipe-h { margin: 8px 0 0; font-weight: 700; font-size: 0.86rem; }
+  .recipe { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 0.88rem; }
+  .mustline { margin: 4px 0 0; font-size: 0.85rem; color: var(--muted); }
+  .mustline a { color: var(--accent); font-weight: 600; }
   .combo { display: grid; gap: 8px; background: var(--accent-soft); border-radius: 14px; padding: 14px; margin-top: 16px; font-size: 0.9rem; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   li { position: relative; }

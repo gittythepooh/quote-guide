@@ -181,9 +181,12 @@ export function advise(a: Answers, community: Community = {}): Item[] {
   add({ id: 'value', title: 'Small changes to vehicle value, or adding a tracker', why: 'These moved quotes by about £0 to £2 in the 2022 test.', size: 'within noise', basis: '2022 test', score: 0.8, applicability: 0.3, confidence: 0.4, mustBeTrue: 'Use the real value and declare any real tracker or modification.' });
 
   items.sort((x, y) => y.score - x.score);
-  items.forEach((it, i) => {
-    it.group = it.score >= 5 && i < 4 ? 'start' : it.score >= 2.5 ? 'also' : 'skip';
-  });
+  // "Start here" = the biggest, best-fitting few. A Low-fit item never leads, however big its effect.
+  let started = 0;
+  for (const it of items) {
+    if (it.score >= 5 && it.likelihood !== 'Low' && started < 4) { it.group = 'start'; started++; }
+    else it.group = it.score >= 2.5 ? 'also' : 'skip';
+  }
   return items;
 }
 
