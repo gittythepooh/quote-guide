@@ -3,6 +3,12 @@
 Free, independent, information-only help for getting fair-value UK car insurance.
 Everything runs in the browser. No server, no accounts, no stored personal data.
 
+## Licence
+- **Code:** PolyForm Noncommercial License 1.0.0 (`LICENSE`). Source available, not open source: free for personal, research, educational and non-profit use. Companies and commercial use need permission from the owner.
+- **Guide text and published findings:** CC BY 4.0 (`CONTENT-LICENSE.md`).
+- **Name and logo:** all rights reserved. Individual reports are never published.
+- Outside code contributions are not accepted for now (the owner keeps the right to relicense). Bug reports and ideas are welcome as issues.
+
 ## Stack
 Astro (static) + Svelte islands + Tailwind v4. Hosted on Cloudflare Pages.
 

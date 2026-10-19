@@ -22,5 +22,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261019.1",
     "wrangler": "^4.151.1"
-  }
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "private": true
 }
