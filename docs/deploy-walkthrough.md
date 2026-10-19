@@ -41,4 +41,4 @@ Pages project, Custom domains, add yours. Cloudflare issues HTTPS. Turn on "Alwa
 - Legal review done and the privacy page updated with a contact address.
 - Donation link added (home page button currently links to `#`).
 - Monthly reminder for `db/purge.sql`.
-- Remove the placeholder brand "Quote Guide" if you rename.
+- Brand is "Fog Off" (repo, Worker and web address keep the technical name quote-guide until you move to your own domain).

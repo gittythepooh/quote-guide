@@ -1,5 +1,5 @@
 -- Storage limitation: delete raw rows older than 24 months. Run monthly:
---   npx wrangler d1 execute quote-guide --remote --file db/purge.sql
+--   npx wrangler d1 execute fog-off-main --remote --file db/purge.sql
 DELETE FROM results WHERE week < date('now', '-730 days');
 DELETE FROM limits  WHERE substr(bucket, 3, 10) < date('now', '-3 days');
 

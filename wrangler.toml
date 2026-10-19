@@ -1,3 +1,4 @@
+# The Worker keeps its technical name (it must match the Worker already deployed in Cloudflare).
 name = "quote-guide"
 compatibility_date = "2026-10-01"
 
@@ -26,5 +27,5 @@ directory = "./dist"
 #
 # [[d1_databases]]
 # binding = "DB"
-# database_name = "quote-guide"
+# database_name = "fog-off-main"
 # database_id = "PASTE_DATABASE_ID"

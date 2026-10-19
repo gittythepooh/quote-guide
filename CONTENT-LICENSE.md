@@ -9,9 +9,9 @@ https://creativecommons.org/licenses/by/4.0/ :
 - The published aggregate findings (community medians and ranges shown on the Findings page).
 - The 2022 starting-point figures in `src/data/findings-seed.ts`.
 
-You may share and adapt these, including commercially, if you give credit to "Quote Guide" and link to the licence.
+You may share and adapt these, including commercially, if you give credit to "Fog Off" and link to the licence.
 
 Not covered by CC BY, all rights reserved:
-- The name "Quote Guide" and any logo or branding.
+- The name "Fog Off" and any logo or branding.
 - Individual community reports (never published) and the database that holds them.
 - The code, which stays under the PolyForm Noncommercial License.

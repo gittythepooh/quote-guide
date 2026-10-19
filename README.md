@@ -1,4 +1,4 @@
-# Quote Guide (working name)
+# Fog Off
 
 Free, independent, information-only help for getting fair-value UK car insurance.
 Everything runs in the browser. No server, no accounts, no stored personal data.
@@ -44,14 +44,14 @@ npm run build      # outputs ./dist
 ### Local test of the API
 ```sh
 npm run build
-npx wrangler d1 execute quote-guide --local --file db/schema.sql
+npx wrangler d1 execute fog-off-main --local --file db/schema.sql
 npx wrangler pages dev ./dist --port 8788
 ```
 
 ### Go live
-1. `npx wrangler d1 create quote-guide`, paste the `database_id` into `wrangler.toml`.
-2. `npx wrangler d1 execute quote-guide --remote --file db/schema.sql`.
-3. In the Pages project: Settings, Functions, D1 bindings, add `DB` = quote-guide.
+1. `npx wrangler d1 create fog-off-main`, paste the `database_id` into `wrangler.toml`.
+2. `npx wrangler d1 execute fog-off-main --remote --file db/schema.sql`.
+3. In the Pages project: Settings, Functions, D1 bindings, add `DB` = fog-off-main.
 4. Add a Cloudflare rate-limiting rule on `/api/report` (for example 5 per minute per IP) and consider Turnstile.
 5. Do NOT enable request logging that stores IP addresses for `/api/report`.
 6. Get the privacy page and the information-only wording reviewed before launch.

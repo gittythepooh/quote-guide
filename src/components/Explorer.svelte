@@ -115,7 +115,7 @@
     const blob = new Blob([JSON.stringify($state.snapshot(store), null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'quote-guide-test-plan.json';
+    a.download = 'fog-off-test-plan.json';
     a.click();
     URL.revokeObjectURL(a.href);
     msg = 'Exported to a file on this device.';

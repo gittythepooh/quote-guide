@@ -3,7 +3,7 @@
 Prepared 19 Oct 2026. This is a briefing, not legal advice. Its purpose is to let an adviser (solicitor or compliance consultant with FCA and UK GDPR experience) answer the questions below in one short engagement.
 
 ## The product in one paragraph
-"Quote Guide" is a free, donation-funded, UK website. It helps people understand what changes a car-insurance quote on comparison sites. It does not sell insurance, take commission, show live quotes or give personal recommendations. People run their own test quotes elsewhere, type the resulting prices into tools on this site, and see which changes mattered. Everything runs in the browser by default. Optionally, a user can share an anonymous, banded result (percentage changes only) to build community averages that are published only once 20 people have reported a given change.
+"Fog Off" is a free, donation-funded, UK website. It helps people understand what changes a car-insurance quote on comparison sites. It does not sell insurance, take commission, show live quotes or give personal recommendations. People run their own test quotes elsewhere, type the resulting prices into tools on this site, and see which changes mattered. Everything runs in the browser by default. Optionally, a user can share an anonymous, banded result (percentage changes only) to build community averages that are published only once 20 people have reported a given change.
 
 ## What it does and does not do
 | Does | Does not |

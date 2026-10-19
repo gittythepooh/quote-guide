@@ -45,7 +45,7 @@ The comparer first felt disconnected from the tests: it opened on sample data an
 ## Ranked roadmap towards "award-winning"
 **High impact**
 1. **Usability test with 5 people** (think-aloud, phone first). Fix the top three problems found.
-2. **Brand identity**: a real name, logo, colour pairing, a small illustration and motion set, share images. "Quote Guide" is a placeholder.
+2. **Brand identity**: a real name, logo, colour pairing, a small illustration and motion set, share images. "Fog Off" is the working brand: run a UK IPO trademark search and check domain names before committing.
 3. **Accessibility audit**: axe scan, keyboard-only run, VoiceOver, colour contrast on every token, reduced-motion check. Aim for WCAG 2.2 AA.
 4. **Performance**: Lighthouse on a mid-range phone. The tools render in the browser only, so add a skeleton for the first paint.
 5. **Community loop**: show "N of 20 reports" per test inside the test card, a thank-you moment after sharing, and a contributor counter on the home page once real numbers exist.

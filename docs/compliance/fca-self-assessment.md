@@ -15,7 +15,7 @@ Not legal advice. Facts to check with the adviser are marked **(verify)**.
 | Names an insurer or comparison site as better or worse | **No.** The `site` field is collected but not published. |
 
 ## Why role clarity matters
-The FCA's earlier review of price comparison websites reported that some consumers wrongly believed a comparison site had advised them on which policy to choose, and that sites did not always make their role clear. That is why every page footer, the terms, the guided check and the share panel state that Quote Guide is not authorised by the FCA, does not sell or arrange insurance, and does not recommend an insurer or policy.
+The FCA's earlier review of price comparison websites reported that some consumers wrongly believed a comparison site had advised them on which policy to choose, and that sites did not always make their role clear. That is why every page footer, the terms, the guided check and the share panel state that Fog Off is not authorised by the FCA, does not sell or arrange insurance, and does not recommend an insurer or policy.
 
 ## Regulatory background to confirm (verify)
 - UK insurance distribution rules derive from the EU Insurance Distribution Directive. That directive's recitals exclude the mere provision of information, where the provider takes no further steps to help conclude a contract. Confirm how the UK Regulated Activities Order and FCA guidance (PERG 5) treat this today.

@@ -218,7 +218,7 @@
     {#if msg}<p class="warn" role="alert">{msg}</p>{/if}
     <p class="fine">
       The <a href="/explorer/">test plan</a> lists these changes in this order, tells you exactly what to change on a comparison site, and shows which really moved your price.
-      Information only, not advice or a recommendation. Quote Guide is not authorised by the FCA and does not sell or arrange insurance. We save your answers in this browser only. See the <a href="/terms/">terms</a>.
+      Information only, not advice or a recommendation. Fog Off is not authorised by the FCA and does not sell or arrange insurance. We save your answers in this browser only. See the <a href="/terms/">terms</a>.
     </p>
   </section>
 {/if}

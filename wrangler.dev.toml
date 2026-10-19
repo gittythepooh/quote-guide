@@ -1,5 +1,5 @@
 # LOCAL TESTING ONLY (npx wrangler dev -c wrangler.dev.toml). Not used for deployment.
-name = "quote-guide-dev"
+name = "fog-off-dev"
 main = "src/worker.ts"
 compatibility_date = "2026-10-01"
 
@@ -13,5 +13,5 @@ TURNSTILE_SITEKEY = "1x00000000000000000000AA"   # Cloudflare's public always-pa
 
 [[d1_databases]]
 binding = "DB"
-database_name = "quote-guide"
+database_name = "fog-off-main"
 database_id = "00000000-0000-0000-0000-000000000000"   # placeholder: fine for local

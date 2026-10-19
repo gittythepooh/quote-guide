@@ -3,12 +3,12 @@
 The site is a Cloudflare **Worker with static assets**. The small API for shared reports is in `src/worker.ts`. It is switched off until you add a database and a bot-check key. Everything below is done in the Cloudflare dashboard; nothing needs the command line.
 
 ## 1. Create the database
-Dashboard, Storage & databases, **D1 SQL database**, Create database. Name it `quote-guide`. Copy its **Database ID** (not a secret).
+Dashboard, Storage & databases, **D1 SQL database**, Create database. Name it `fog-off-main`. Copy its **Database ID** (not a secret).
 The tables create themselves the first time the Worker runs. There is no schema to run.
 
 ## 2. Create the bot check (Turnstile)
 Dashboard, **Turnstile**, Add widget:
-- Name `quote-guide`, widget mode **Managed**.
+- Name `fog-off`, widget mode **Managed**.
 - Hostnames: `quote-guide.cloudf-0c8.workers.dev` (and your own domain later).
 - Copy the **Site key** (public) and the **Secret key** (private).
 

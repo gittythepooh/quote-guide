@@ -38,7 +38,7 @@ const active = (href: string) => path.startsWith(href);
           <span class="site-logo" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
           </span>
-          <span>Quote Guide</span>
+          <span>Fog Off</span>
         </a>
 
         <nav aria-label="Main" class="site-nav">
@@ -67,7 +67,7 @@ const active = (href: string) => path.startsWith(href);
     <footer class="site-foot">
       <div class="wrap" style="display:grid; gap:10px;">
         <p style="margin:0; max-width:70ch;">
-          <strong style="color:var(--text);">Information only.</strong> Quote Guide is not authorised or regulated by the Financial Conduct Authority. We do not sell, arrange or advise on insurance, and we do not recommend any insurer or policy. Always answer quote questions truthfully: wrong answers can reduce or void a claim payout.
+          <strong style="color:var(--text);">Information only.</strong> Fog Off is not authorised or regulated by the Financial Conduct Authority. We do not sell, arrange or advise on insurance, and we do not recommend any insurer or policy. Always answer quote questions truthfully: wrong answers can reduce or void a claim payout.
         </p>
         <p style="margin:0;">
           Free and independent. Funded by donations. No affiliate links. Your answers stay in your browser unless you choose to share.
@@ -80,7 +80,7 @@ const active = (href: string) => path.startsWith(href);
     <script>
       // One click to remove everything this site stored on this device.
       document.getElementById('clear-data')?.addEventListener('click', () => {
-        if (!confirm('Remove everything Quote Guide saved on this device (answers, test plan, quotes)? This cannot be undone.')) return;
+        if (!confirm('Remove everything Fog Off saved on this device (answers, test plan, quotes)? This cannot be undone.')) return;
         try {
           Object.keys(localStorage).filter((k) => k.startsWith('qg-')).forEach((k) => localStorage.removeItem(k));
         } catch {}
