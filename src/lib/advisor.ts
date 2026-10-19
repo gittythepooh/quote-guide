@@ -46,7 +46,8 @@ export const CLAIM_PCT = { unlikely: 5, maybe: 15, likely: 30 } as const;
 export type Community = Partial<Record<ChangeKey, { n: number; published: boolean; medianPct: number | null }>>;
 
 // ---------------------------------------------------------------------------------------------
-// The Fog Off score (0 to 100) = Effect x Fit x Evidence, each taken as a percentage.
+// The FOG score (0 to 100) = Fit x Outcome x Grounding, each taken as a percentage.
+// (In code: outcome = `effect`, grounding = `evidence`.)
 //   Effect   how much this change could move a price
 //   Fit      how well it matches the person's answers
 //   Evidence how solid our data is

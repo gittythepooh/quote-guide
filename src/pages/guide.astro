@@ -41,23 +41,23 @@ import MustBeTrue from '../components/MustBeTrue.svelte';
       In the test, third-party-only cover was dearer than comprehensive. Always get a comprehensive quote too.
     </p>
 
-    <h2 class="h2" id="score">How the Fog Off score works</h2>
+    <h2 class="h2" id="score">How the FOG score works</h2>
     <p>
       Every suggestion gets a score from 0 to 100. It shows how much that change is <em>likely to matter for profiles like yours</em>, from limited data. It is a general indicator, not a promise and not a recommendation to you.
     </p>
-    <p><strong>Score = Effect × Fit × Evidence</strong>, each taken as a percentage.</p>
+    <p><strong>FOG score = Fit × Outcome × Grounding</strong>, each taken as a percentage. The letters spell the name: <strong>F</strong>it, <strong>O</strong>utcome, <strong>G</strong>rounding.</p>
     <div class="tbl">
-      <div><strong>Effect</strong><span>How much the change moved prices in our tests. A measured change of 40% or more counts as 100. Where we have measured nothing yet, we use a stated assumption: large 70, timing 40, comparing sites 35, other moderate effects 30.</span></div>
       <div><strong>Fit</strong><span>How well the change matches your answers. For example a black box fits a young driver at 100 and an experienced one at 20, and a higher excess fits someone who feels a claim is unlikely better than someone who feels one is likely.</span></div>
-      <div><strong>Evidence</strong><span>How much we trust the numbers: community reports 90, strong well-known rules 80, widely repeated advice 70, guidance 60, our small early test 50, one-off or anecdotal 35, mixed results 30.</span></div>
+      <div><strong>Outcome</strong><span>How much the change moved prices in our tests. A measured change of 40% or more counts as 100. Where we have measured nothing yet, we use a stated assumption: large 70, timing 40, comparing sites 35, other moderate effects 30.</span></div>
+      <div><strong>Grounding</strong><span>How solid the evidence is: community reports 90, strong well-known rules 80, widely repeated advice 70, guidance 60, our small early test 50, one-off or anecdotal 35, mixed results 30.</span></div>
     </div>
     <p>
-      <strong>Worked example.</strong> For a young driver, a black box measured about 38% cheaper in our early test. Effect 95, Fit 100, Evidence 50, so 95 × 100% × 50% = <strong>47</strong>, which is High.
-      For the job title, the effect is assumed large (70) but the evidence is weak (35) and the fit is 80, so 70 × 80% × 35% ≈ <strong>20</strong>, which only just reaches High.
+      <strong>Worked example.</strong> For a young driver, a black box measured about 38% cheaper in our early test. Fit 100%, Outcome 95, Grounding 50%, so 100% × 95 × 50% = <strong>47</strong>, which is High.
+      For the job title, the outcome is assumed large (70) but the grounding is weak (35) and the fit is 80%, so 80% × 70 × 35% ≈ <strong>20</strong>, which only just reaches High.
     </p>
     <p>
       <strong>Bands.</strong> High is 20 or more, Medium is 8 to 19, Low is under 8, using the whole-number score you see. The list is in score order, so the bands and the order always agree.
-      Because the three parts are multiplied, one weak part pulls the whole score down. That is deliberate: a change with a big possible effect but poor evidence should not outrank a solid, well-fitting one.
+      Because the three parts are multiplied, one weak part pulls the whole score down. That is deliberate: a change with a big possible outcome but weak grounding should not outrank a solid, well-fitting one.
     </p>
     <p>
       <strong>Limits.</strong> The numbers come from one small early test, a short survey and public guidance. They will change as community reports arrive, and the weights themselves are open to challenge. Your own results in the test plan always matter more than any score here.

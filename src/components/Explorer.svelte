@@ -162,7 +162,7 @@
 
     {#if open}
       <div class="body">
-        {#if item.score !== undefined}<p class="scoreline"><span class="sp {item.band}">Fog Off score {Math.round(item.score)} · {item.band}</span> <a href="/guide/#score">How is this scored?</a></p>{/if}
+        {#if item.score !== undefined}<p class="scoreline"><span class="sp {item.band}">FOG score {Math.round(item.score)} · {item.band}</span> <a href="/guide/#score">How is this scored?</a></p>{/if}
         {#if item.why}<p class="why">{item.why}</p>{/if}
         <p class="inst"><b>What to change on the comparison site</b><br />{def.instruction(paramsOf(id), store.refs)}</p>
         <p class="reset">↺ <strong>Reset first:</strong> put every answer back to your baseline, then change only this.</p>

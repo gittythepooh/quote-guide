@@ -174,18 +174,18 @@
       <button class="btn btn-primary" type="button" onclick={openPlan}>Open my test plan →</button>
     </div>
     <p class="lead">
-      General information for profiles like yours, from broad answers and limited data. Each item has a <strong>Fog Off score</strong> and the list is in score order. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
+      General information for profiles like yours, from broad answers and limited data. Each item has a <strong>FOG score</strong> and the list is in score order. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
       {#if claimPct !== null}Your claim feeling is treated as about {claimPct}% for the excess advice.{/if}
     </p>
 
     <details class="scoreinfo">
-      <summary>How the Fog Off score works</summary>
+      <summary>How the FOG score works</summary>
       <div class="si">
-        <p><strong>Score = Effect × Fit × Evidence</strong>, each as a percentage, giving 0 to 100. It shows how much a change is likely to matter for profiles like yours, based on limited data.</p>
+        <p><strong>FOG score = Fit × Outcome × Grounding</strong>, each as a percentage, giving 0 to 100. It shows how much a change is likely to matter for profiles like yours, based on limited data.</p>
         <ul>
-          <li><strong>Effect:</strong> how much the change moved prices in our tests (40% or more counts as the maximum). Where nothing is measured yet, the effect is an assumption and says so.</li>
-          <li><strong>Fit:</strong> how well the change matches your answers (for example, a black box suits young drivers most).</li>
-          <li><strong>Evidence:</strong> how much we trust the numbers. A small early test counts for less than community reports.</li>
+          <li><strong>F is for Fit:</strong> how well the change matches your answers (for example, a black box suits young drivers most).</li>
+          <li><strong>O is for Outcome:</strong> how much the change moved prices in our tests (40% or more counts as the maximum). Where nothing is measured yet, the outcome is an assumption and says so.</li>
+          <li><strong>G is for Grounding:</strong> how solid the evidence is. A small early test counts for less than community reports.</li>
         </ul>
         <p>Because the three are multiplied, a weak one pulls the score down. <strong>High</strong> is {BAND_HIGH} or more, <strong>Medium</strong> is {BAND_MEDIUM} to {BAND_HIGH - 1}, <strong>Low</strong> is under {BAND_MEDIUM}. The score will change as community data arrives. It is a general indicator, not a promise or a recommendation. <a href="/guide/#score">Read more in the guide</a>.</p>
       </div>
@@ -222,7 +222,7 @@
           <span class="num">{n}</span>
           <div class="t">
             <strong>{it.title}</strong>
-            <span class="badge {tone(it.band)}" title="The Fog Off score: effect x fit x evidence. A general indicator, not a promise or a recommendation.">Fog Off score <span use:countUp={Math.round(it.score)}>{Math.round(it.score)}</span> · {it.band}</span>
+            <span class="badge {tone(it.band)}" title="The FOG score: effect x fit x evidence. A general indicator, not a promise or a recommendation.">FOG score <span use:countUp={Math.round(it.score)}>{Math.round(it.score)}</span> · {it.band}</span>
           </div>
         </div>
         <p>{it.why}</p>
@@ -232,11 +232,11 @@
         <details>
           <summary>How this score was worked out</summary>
           <div class="parts" aria-label="Score breakdown">
-            <div><span>Effect</span><i><b style="width:{it.effect}%"></b></i><em>{it.effect}</em></div>
             <div><span>Fit</span><i><b style="width:{it.fit}%"></b></i><em>{it.fit}</em></div>
-            <div><span>Evidence</span><i><b style="width:{it.evidence}%"></b></i><em>{it.evidence}</em></div>
+            <div><span>Outcome</span><i><b style="width:{it.effect}%"></b></i><em>{it.effect}</em></div>
+            <div><span>Grounding</span><i><b style="width:{it.evidence}%"></b></i><em>{it.evidence}</em></div>
           </div>
-          <p class="basis">{it.effect} × {it.fit}% × {it.evidence}% = <strong>{it.score.toFixed(1)}</strong>. {it.basis}</p>
+          <p class="basis">{it.fit}% × {it.effect} × {it.evidence}% = <strong>{it.score.toFixed(1)}</strong>. {it.basis}</p>
         </details>
       </li>
     {/snippet}
