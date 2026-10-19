@@ -158,16 +158,20 @@
   .live .k6 { transform: translate3d(calc(var(--clear) * 50vw), calc(var(--clear) * -30dvh), 0); }
   .live .k7 { transform: translate3d(calc(var(--clear) * 60vw), calc(var(--clear) * 24dvh), 0); }
 
-  .live .art { position: absolute; inset: 0; height: auto; margin: 0; width: auto; pointer-events: none; --road: 15dvh; }
+  .live .art { position: absolute; inset: 0; height: auto; margin: 0; width: auto; pointer-events: none; --road: 15dvh; --pw: clamp(96px, 14vw, 180px); }
   .live .road { bottom: var(--road); opacity: var(--roadv); }
   .live .car-wrap { bottom: var(--road); opacity: var(--roadv);
     transform: translate3d(calc(-50% + var(--drive) * var(--drive) * (62vw + var(--car-w))), calc(var(--land) * 5px), 0); }
   .live .rim { transform: translate(-50%, -50%) rotate(calc(var(--drive) * 1900deg)); }
   .live .seated { opacity: var(--seat); }
-  .live .faller { display: block; position: absolute; left: 50%; width: clamp(120px, 17vw, 190px); bottom: calc(var(--road) + var(--car-w) * 0.3);
-    opacity: calc((1 - var(--seat)) * var(--fallv));
-    transform: translate3d(-50%, calc((var(--fall) * var(--fall) - 1) * 76dvh), 0) rotate(calc(sin(calc(var(--p) * 60)) * 8deg)); }
-  .faller img { display: block; width: 100%; height: auto; }
+  .live .faller { display: block; position: absolute; left: 50%; width: var(--pw); bottom: calc(var(--road) + var(--car-w) * 0.3);
+    opacity: calc(1 - var(--seat));
+    transform: translate3d(calc(-50% + (1 - var(--fall)) * (1 - var(--fall)) * 30vw), calc((var(--fall) - 1) * (100dvh - var(--hdr, 64px) - var(--road) - var(--car-w) * 0.3 - var(--pw) * 0.78 - 70px)), 0) rotate(calc(sin(calc(var(--p) * 60)) * 10deg)); }
+  .live .art { z-index: 0; }
+  .live .beat { z-index: 1; }
+  .faller img { display: block; width: 100%; height: auto; animation: bob 3.4s ease-in-out infinite alternate; }
+  @keyframes bob { from { transform: rotate(-4deg) translateY(-4px); } to { transform: rotate(4deg) translateY(6px); } }
+  @media (prefers-reduced-motion: reduce) { .faller img { animation: none; } }
 
   .live .skipbtn { display: block; position: absolute; top: 16px; right: 20px; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s, opacity 0.3s; }
   .live .skipbtn:hover { color: var(--accent); border-color: var(--accent); }
@@ -213,16 +217,15 @@
       set('--b1', win(p, 0.1, 0.18, 0.28, 0.36));
       set('--b2', win(p, 0.32, 0.4, 0.5, 0.58));
       set('--b3', win(p, 0.52, 0.58, 0.63, 0.68));
-      set('--roadv', win(p, 0.46, 0.56, 0.97, 1.0));
-      const f = Math.min(1, Math.max(0, (p - 0.63) / 0.17));
+      set('--roadv', win(p, 0.28, 0.4, 0.97, 1));
+      const f = Math.min(1, p / 0.72);
       set('--fall', f);
-      set('--fallv', Math.min(1, f * 30));
       set('--seat', f >= 1 ? 1 : 0);
-      const l = Math.min(1, Math.max(0, (p - 0.8) / 0.04));
-      set('--land', Math.sin(l * Math.PI));
-      set('--drive', Math.min(1, Math.max(0, (p - 0.85) / 0.12)));
-      set('--st', win(p, 0.9, 0.96, 1.1, 1.2));
-      scene.dataset.phase = p < 0.06 ? 'hero' : p < 0.93 ? 'story' : 'start';
+      const d0 = Math.min(1, Math.max(0, (p - 0.72) / 0.04));
+      set('--land', Math.sin(d0 * Math.PI));
+      set('--drive', Math.min(1, Math.max(0, (p - 0.8) / 0.14)));
+      set('--st', win(p, 0.88, 0.94, 1.1, 1.2));
+      scene.dataset.phase = p < 0.06 ? 'hero' : p < 0.91 ? 'story' : 'start';
     };
     const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     addEventListener('scroll', onScroll, { passive: true });
