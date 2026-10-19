@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import Comparer from '../components/Comparer.svelte';
+---
+
+<Base title="Quote comparer | Quote Guide">
+  <div class="wrap" style="padding-block:56px 28px;">
+    <span class="pill">Interactive</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 12px;">
+      Quote comparer
+    </h1>
+    <p style="color:var(--muted); font-size:1.08rem; max-width:62ch; margin:0 0 8px;">
+      The cheapest price is not always the cheapest policy. Enter your final quotes. The tool adds the likely cost of the excess, so a low price with a high excess is compared fairly.
+    </p>
+    <p style="color:var(--muted); font-size:0.92rem; margin:0;">
+      Information only. Check cover, limits and exclusions before you buy. See the <a href="/guide/" style="color:var(--accent); font-weight:600;">guide</a>.
+    </p>
+  </div>
+  <div class="wrap">
+    <Comparer client:load />
+  </div>
+</Base>

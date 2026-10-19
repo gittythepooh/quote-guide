@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+
+const tools = [
+  {
+    href: '/explorer/',
+    title: 'What-if explorer',
+    text: 'Enter your quotes from one profile. See which changes really moved the price, and which are just noise.',
+    tag: 'Interactive',
+  },
+  {
+    href: '/compare/',
+    title: 'Quote comparer',
+    text: 'Put your final quotes side by side. See the expected yearly cost once the excess and missing cover are counted.',
+    tag: 'Interactive',
+  },
+  {
+    href: '/guide/',
+    title: 'Quote form guide',
+    text: 'Plain-English notes for the questions that change your price. Includes the answers that must be true when you buy.',
+    tag: 'Read first',
+  },
+];
+
+const steps = [
+  { n: '1', t: 'Get a baseline', d: 'Fill in one comparison site with your real details. Note the cheapest price.' },
+  { n: '2', t: 'Test one change at a time', d: 'Change a single thing, such as an extra driver. Note the new price.' },
+  { n: '3', t: 'See what mattered', d: 'The explorer shows real effects and flags small gaps as likely noise.' },
+  { n: '4', t: 'Buy on true answers', d: 'Enter your real details on the quote you buy. Check the list in the guide.' },
+];
+---
+
+<Base title="Quote Guide: fair-value car insurance, explained">
+  <section class="wrap" style="padding-block:72px 40px;">
+    <span class="pill">Free · Independent · Your answers stay in your browser</span>
+    <h1 style="font-size:clamp(2.2rem,6vw,3.8rem); line-height:1.05; letter-spacing:-0.03em; margin:20px 0 16px; font-weight:800; max-width:16ch;">
+      Know what really moves your car insurance price.
+    </h1>
+    <p style="font-size:1.15rem; color:var(--muted); max-width:56ch; margin:0 0 28px;">
+      Comparison sites show a price. Quote Guide helps you understand it. Test changes, spot the noise, and fill in every form honestly.
+    </p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <a class="btn btn-primary" href="/explorer/">Try the explorer →</a>
+      <a class="btn btn-ghost" href="/guide/">Read the guide</a>
+    </div>
+  </section>
+
+  <section class="wrap" style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+    {tools.map((t) => (
+      <a href={t.href} class="card tool" style="padding:26px; text-decoration:none; color:inherit; display:grid; gap:10px;">
+        <span class="pill" style="justify-self:start;">{t.tag}</span>
+        <h2 style="margin:0; font-size:1.3rem; letter-spacing:-0.01em;">{t.title}</h2>
+        <p style="margin:0; color:var(--muted);">{t.text}</p>
+        <span style="color:var(--accent); font-weight:700;">Open →</span>
+      </a>
+    ))}
+  </section>
+
+  <section class="wrap" style="padding-top:64px;">
+    <h2 style="font-size:1.6rem; letter-spacing:-0.02em; margin:0 0 20px;">How it works</h2>
+    <ol style="list-style:none; padding:0; margin:0; display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+      {steps.map((s) => (
+        <li class="card" style="padding:20px;">
+          <span style="display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-weight:800; margin-bottom:12px;">{s.n}</span>
+          <strong>{s.t}</strong>
+          <p style="margin:6px 0 0; color:var(--muted); font-size:0.95rem;">{s.d}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="wrap" style="padding-top:64px;">
+    <div class="card" style="padding:28px; display:grid; gap:10px; background:var(--surface-2);">
+      <h2 style="margin:0; font-size:1.3rem;">Free, and kept free by donations</h2>
+      <p style="margin:0; color:var(--muted); max-width:62ch;">
+        No adverts, no affiliate links, no account needed. If this saved you money, a small donation keeps it running.
+      </p>
+      <div><a class="btn btn-ghost" href="#" aria-disabled="true" title="Add your Ko-fi or Stripe link here">Donate (link coming soon)</a></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tool { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .tool:hover { transform: translateY(-3px); }
+</style>

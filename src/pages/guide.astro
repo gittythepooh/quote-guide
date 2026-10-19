@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import MustBeTrue from '../components/MustBeTrue.svelte';
+---
+
+<Base title="Quote form guide | Quote Guide">
+  <article class="wrap" style="padding-block:56px 0; max-width:760px;">
+    <span class="pill">Guide</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0;">
+      Getting a fair car insurance quote
+    </h1>
+    <p style="color:var(--muted); font-size:1.1rem;">
+      Short, plain notes on the questions that move your price. This is information, not personal advice.
+    </p>
+
+    <h2 class="h2">1. Additional drivers</h2>
+    <p>
+      In one controlled test, adding a parent who really drove the car cut the quote by about 15%. Adding both parents cut it by about 22%. In a small 2022 survey, it was the change people named most often.
+    </p>
+    <div class="callout">
+      <strong>Fronting warning.</strong> List a person only if they will genuinely drive the car. If a young driver is the main driver, do not name an older relative as the main driver to get a lower price. That is called fronting. It can void your policy.
+    </div>
+
+    <h2 class="h2">2. Timing</h2>
+    <p>
+      Prices often look best about 22 to 26 days before the policy starts. Buying in the last week is often dearer. Set a reminder about 4 weeks before renewal.
+    </p>
+
+    <h2 class="h2">3. Black box (telematics)</h2>
+    <p>
+      A black box gave the biggest drop in the 2022 test, about 38% for a new young driver. It also records how you drive, and poor scores can raise your price. Compare both, and read the terms.
+    </p>
+
+    <h2 class="h2">4. Things that changed little</h2>
+    <p>
+      Small changes to vehicle value, a tracker, or course type moved the price by less than 1% in the test. Differences under about 5% are often noise, because the cheapest insurer can change between runs.
+    </p>
+
+    <h2 class="h2">5. Third-party only is not always cheaper</h2>
+    <p>
+      In the test, third-party-only cover was dearer than comprehensive. Always get a comprehensive quote too.
+    </p>
+
+    <h2 class="h2">Answers that must be true when you buy</h2>
+    <p>
+      It is fine to test changes while you learn how the price works. The quote you <em>buy</em> must use your real details. Tick each item as you check it.
+    </p>
+    <MustBeTrue client:load />
+  </article>
+</Base>
+
+<style>
+  .h2 { font-size: 1.45rem; letter-spacing: -0.02em; margin: 44px 0 10px; }
+  p { margin: 0 0 14px; }
+  .callout {
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+    color: var(--text);
+    padding: 16px 18px;
+    border-radius: 14px;
+    margin: 18px 0;
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import Findings from '../components/Findings.svelte';
+---
+
+<Base title="What worked | Quote Guide">
+  <div class="wrap" style="padding-block:56px 28px;">
+    <span class="pill">Community findings</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 12px;">
+      What changes the price
+    </h1>
+    <p style="color:var(--muted); font-size:1.08rem; max-width:62ch; margin:0 0 8px;">
+      We start with one 2022 test. As people share their own anonymous test results, these figures are replaced by community medians. A figure is shown only once 20 people have reported it.
+    </p>
+    <p style="color:var(--muted); font-size:0.92rem; margin:0;">
+      Run your own test in the <a href="/explorer/" style="color:var(--accent); font-weight:600;">explorer</a> and share it from there. Information only, not advice.
+    </p>
+  </div>
+  <div class="wrap">
+    <Findings client:load />
+  </div>
+</Base>

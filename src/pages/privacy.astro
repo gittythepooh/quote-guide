@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Privacy | Quote Guide">
+  <article class="wrap" style="padding-block:56px 0; max-width:760px;">
+    <span class="pill">Privacy</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0;">How your data is handled</h1>
+    <p class="draft"><strong>Draft.</strong> This text must be reviewed by a qualified adviser before launch.</p>
+
+    <h2>By default, nothing leaves your browser</h2>
+    <p>The explorer, comparer and checklist run on your device. What you type is saved in your browser's local storage only. Clear your browser data to remove it. You can also export it to a file.</p>
+
+    <h2>If you choose to share a report</h2>
+    <p>Sharing is optional and starts only when you press "Send report". We receive:</p>
+    <ul>
+      <li>Broad bands: age band, region, car age band, no-claims band, cover type, comparison site.</li>
+      <li>The percentage change for each test you choose to share, how many runs you did, and your baseline spread.</li>
+      <li>The day it was received (no time).</li>
+    </ul>
+    <p>We do <strong>not</strong> receive prices, your name, address, postcode, date of birth, email, registration number, free text, or your IP address. The panel shows the exact data before you send it.</p>
+
+    <h2>Deleting a report</h2>
+    <p>After sending, you get a random code once. We store only a one-way hash of it. Enter the code in the explorer's "Delete a report I sent" box to remove your rows. If you lose the code we cannot find your report, because it is not linked to you.</p>
+
+    <h2>What we publish</h2>
+    <p>Only group figures (median and range) for a type of change, and only once at least 20 people have reported it. Individual reports are never published. Reports older than two years are not used.</p>
+
+    <h2>Bot check</h2>
+    <p>When you open the share panel, a Cloudflare Turnstile bot check loads from Cloudflare. Your browser contacts Cloudflare to run it. We do not send your IP address to Cloudflare when we verify the result. We do not store any IP address.</p>
+
+    <h2>Limits</h2>
+    <p>To stop floods of fake reports we count how many reports are accepted per hour and per day. These counts are not linked to any person.</p>
+
+    <h2>Cookies and tracking</h2>
+    <p>No advertising, no tracking cookies and no accounts.</p>
+
+    <h2>Not advice</h2>
+    <p>Quote Guide gives general information. It does not give personal recommendations or sell insurance. Always answer insurance questions truthfully.</p>
+  </article>
+</Base>
+
+<style>
+  h2 { font-size: 1.3rem; letter-spacing: -0.02em; margin: 36px 0 8px; }
+  p, li { margin: 0 0 12px; }
+  ul { padding-left: 20px; }
+  .draft { background: var(--warn-soft); padding: 12px 16px; border-radius: 12px; }
+</style>
