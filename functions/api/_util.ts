@@ -1,4 +1,5 @@
-// Shared helpers for the API. Files starting with "_" are not routed by Pages Functions.
+// Shared helpers for the API (used by the Worker in src/worker.ts).
+import { SCHEMA_STATEMENTS } from '../../src/lib/schema-sql';
 
 export const SEC_HEADERS = {
   'content-type': 'application/json',
@@ -97,4 +98,16 @@ export async function underCap(db: D1Database, perHour = 60, perDay = 400): Prom
 export async function sha256Hex(s: string) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+let schemaReady: Promise<unknown> | null = null;
+/** Create the tables if they do not exist yet. Runs once per Worker instance; retries if it failed. */
+export function ensureSchema(db: D1Database): Promise<unknown> {
+  if (!schemaReady) {
+    schemaReady = db.batch(SCHEMA_STATEMENTS.map((q) => db.prepare(q))).catch((e) => {
+      schemaReady = null;
+      throw e;
+    });
+  }
+  return schemaReady;
 }

@@ -1,5 +1,5 @@
 import { validateReport } from '../../src/lib/report-schema';
-import { json, readJson, sameOrigin, sha256Hex, underCap, verifyTurnstile, weekStart } from './_util';
+import { ensureSchema, json, readJson, sameOrigin, sha256Hex, underCap, verifyTurnstile, weekStart } from './_util';
 
 interface Env {
   DB: D1Database;
@@ -17,6 +17,7 @@ function newCode() {
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!sameOrigin(request)) return json({ error: 'forbidden' }, 403);
   if (!env.TURNSTILE_SECRET) return json({ error: 'sharing is not configured' }, 503); // fail closed
+  await ensureSchema(env.DB);
   const body = await readJson(request);
   if (!body.ok) return body.res;
   const { token, report: raw } = (body.body ?? {}) as { token?: unknown; report?: unknown };
@@ -47,6 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 // The code travels in the body, not the URL, so it does not end up in access logs.
 export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
   if (!sameOrigin(request)) return json({ error: 'forbidden' }, 403);
+  await ensureSchema(env.DB);
   const body = await readJson(request, 512);
   if (!body.ok) return body.res;
   const code = String((body.body as any)?.code ?? '').trim().toUpperCase();

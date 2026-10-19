@@ -27,6 +27,10 @@ Reviewed 19 Oct 2026. Items marked DONE are in the code. The rest need your acti
 - DONE Docs: `docs/cloudflare-setup.md` (exact steps) and `docs/legal-review-brief.md` (questions for an adviser).
 - TESTED in Node with a fake D1 and fake verifier (10 checks pass). The real Turnstile call could NOT be tested here (the local Cloudflare runtime has no outbound network in this sandbox). Test it on a preview deployment with a real site key.
 
+## Added 19 Oct (sharing on Workers)
+- DONE The API now runs inside a Worker (`src/worker.ts`) so it works with the Workers deploy. Tables create themselves. `/api/config` gives the public bot-check key. Tested locally: pages, routes, validation, auto-created tables. The real Turnstile check and a real shared report can only be tested live.
+- STILL HUMAN: create the D1 database and Turnstile widget, set the `TURNSTILE_SECRET` secret, edit `wrangler.toml` (see `cloudflare-setup.md`).
+
 ## Must do before launch
 1. **Rate limiting rule (HIGH, you).** Create the Cloudflare WAF rule in `docs/cloudflare-setup.md`. The in-app cap is a backstop, not a substitute.
 2. **Turnstile keys (HIGH, you).** Create the widget, set `PUBLIC_TURNSTILE_SITEKEY` and the `TURNSTILE_SECRET` Pages secret. Then send one real test report on the preview URL.

@@ -1,5 +1,5 @@
 import { CHANGES, MIN_GROUP, type ChangeKey } from '../../src/lib/report-schema';
-import { SEC_HEADERS } from './_util';
+import { ensureSchema, SEC_HEADERS } from './_util';
 
 interface Env {
   DB: D1Database;
@@ -26,6 +26,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env, waitUntil
   const hit = await cache.match(key);
   if (hit) return hit;
 
+  await ensureSchema(env.DB);
   const since = new Date(Date.now() - 730 * 86400_000).toISOString().slice(0, 10);
   const { results } = await env.DB.prepare('SELECT change_key, pct, noise_pct FROM results WHERE week >= ?1 LIMIT 200000')
     .bind(since)

@@ -4,19 +4,28 @@
   type Row = { id: string; label: string; pct: number; change: ChangeKey; repeats: number };
   let { rows, baselineRuns, noisePct, usingSample, answers, open = $bindable(false) }: { rows: Row[]; baselineRuns: number; noisePct: number; usingSample: boolean; answers: any; open?: boolean } = $props();
 
-  const SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY as string | undefined;
+  // undefined = not asked yet, null = sharing is not switched on for this site
+  let siteKey = $state<string | null | undefined>(undefined);
   let token = $state('');
   let tsEl = $state<HTMLDivElement>();
   let tsId: string | undefined;
 
   // Load the Turnstile bot check only when the user opens the share panel.
   $effect(() => {
-    if (!open || !SITEKEY || !tsEl || tsId) return;
+    if (!open || siteKey !== undefined) return;
+    fetch('/api/config')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => { siteKey = d.turnstileSiteKey ?? null; })
+      .catch(() => { siteKey = null; });
+  });
+
+  $effect(() => {
+    if (!open || !siteKey || !tsEl || tsId) return;
     const render = () => {
       const w = window as any;
       if (!w.turnstile || !tsEl || tsId) return;
       tsId = w.turnstile.render(tsEl, {
-        sitekey: SITEKEY,
+        sitekey: siteKey,
         callback: (t: string) => (token = t),
         'expired-callback': () => (token = ''),
         'error-callback': () => (token = ''),
@@ -62,7 +71,7 @@
         } as Report)
       : null,
   );
-  const canSend = $derived(!!payload && consent && ownData && !usingSample && !!token && !!SITEKEY && status !== 'sending');
+  const canSend = $derived(!!payload && consent && ownData && !usingSample && !!token && !!siteKey && status !== 'sending');
 
   async function send() {
     if (!canSend || !payload) return;
@@ -171,11 +180,13 @@
       <span>I agree to share this banded, anonymous report. I understand it is published only as group averages once enough people have contributed, and I can delete it with the code shown after sending. See the <a href="/privacy/">privacy notice</a> and <a href="/terms/">terms</a>.</span>
     </label>
 
-    {#if SITEKEY}
+    {#if siteKey}
       <div class="ts" bind:this={tsEl}></div>
       <p class="hint">A Cloudflare bot check runs here. It does not use tracking cookies.</p>
+    {:else if siteKey === undefined}
+      <p class="hint">Checking that sharing is available…</p>
     {:else}
-      <p class="warn">Sharing is switched off: no bot-check key is configured on this build.</p>
+      <p class="warn">Sharing is not switched on for this site yet. Your results are saved on this device and you can come back later.</p>
     {/if}
 
     <button class="btn btn-primary" type="button" disabled={!canSend} onclick={send}>

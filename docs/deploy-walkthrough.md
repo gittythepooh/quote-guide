@@ -31,16 +31,8 @@ You do this in the Cloudflare dashboard (login is yours).
 
 Note: `wrangler.toml` makes Pages read its config from the file. The `[[d1_databases]]` block is commented out so the static deploy does not fail on a database that does not exist yet. Uncomment it in Stage 3 with the real id.
 
-## Stage 3. Turn on sharing (only when ready)
-Do this after the rate-limit rule and legal review are done (see `launch-checklist.md`).
-1. `npx wrangler login` (opens your browser).
-2. `npx wrangler d1 create quote-guide`. Copy the `database_id` into `wrangler.toml`, commit and push.
-3. `npx wrangler d1 execute quote-guide --remote --file db/schema.sql`
-4. Pages project, Settings, Functions, D1 database bindings: add `DB` = `quote-guide` (production and preview).
-5. Turnstile: create the widget (hostnames: your domain and `quote-guide.pages.dev`). Put the **site key** in Pages env var `PUBLIC_TURNSTILE_SITEKEY`. Add the **secret** yourself: `npx wrangler pages secret put TURNSTILE_SECRET --project-name quote-guide` (type it at the prompt; do not paste it into chat or a file).
-6. WAF rate-limit rule for `/api/report` (see `cloudflare-setup.md`).
-7. Redeploy. Open a **preview** deployment first. Run a test in the explorer, share it, and confirm you get a delete code. Then delete it with the code.
-8. Check no IP logging is switched on for `/api/*`.
+## Stage 3. Turn on sharing
+Follow `cloudflare-setup.md` (database, Turnstile, secret, then one edit to `wrangler.toml`). Do this after the rate-limit rule and legal review are in hand if you want to be cautious.
 
 ## Stage 4. Domain
 Pages project, Custom domains, add yours. Cloudflare issues HTTPS. Turn on "Always use HTTPS" and HSTS. Add the domain to the Turnstile hostnames.
