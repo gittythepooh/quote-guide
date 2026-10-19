@@ -4,23 +4,20 @@ import Comparer from '../components/Comparer.svelte';
 import Journey from '../components/Journey.astro';
 ---
 
-<Base title="Quote comparer | Quote Guide">
+<Base title="Choose | Quote Guide">
   <Journey current={3} />
   <div class="wrap" style="padding-block:56px 28px;">
-    <span class="pill">Interactive</span>
+    <span class="pill">Step 3 · Choose</span>
     <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 12px;">
-      Quote comparer
+      Choose between your real quotes
     </h1>
-    <p style="color:var(--muted); font-size:1.08rem; max-width:62ch; margin:0 0 8px;">
-      The cheapest price is not always the cheapest policy. Enter your final quotes. The tool adds the likely cost of the excess, so a low price with a high excess is compared fairly.
-    </p>
-    <p style="color:var(--muted); font-size:0.92rem; margin:0;">
-      Information only. Check cover, limits and exclusions before you buy. See the <a href="/guide/" style="color:var(--accent); font-weight:600;">guide</a>.
+    <p style="color:var(--muted); font-size:1.08rem; max-width:62ch; margin:0;">
+      Your tests found what to change, on one site. Now apply those changes honestly on a few sites and insurers, enter the quotes you get, and see which is really the best value once the excess is counted.
     </p>
   </div>
   <div class="wrap">
     <Comparer client:only="svelte" />
-    <p class="nextstep"><a href="/findings/">Next: see what the community has found →</a></p>
+    <p class="nextstep"><a href="/findings/#share">Next: share what you found →</a></p>
   </div>
 </Base>
 

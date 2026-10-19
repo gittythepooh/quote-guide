@@ -5,7 +5,6 @@
     load, save, emptyStore, sampleStore, baseline, allResults, gbp, signed, pctText, NOISE_FLOOR,
     stackCandidates, buildStack, findSuspects, type Store, type Result,
   } from '../lib/explorer-store';
-  import SharePanel from './SharePanel.svelte';
 
   let store = $state<Store>(emptyStore());
   let answers = $state<any>(null);
@@ -14,7 +13,6 @@
   let initOpen = false;
   let moreOpen = $state(false);
   let msg = $state('');
-  let shareOpen = $state(false);
 
   $effect.pre(() => {
     if (loaded) return;
@@ -105,11 +103,6 @@
     if (el) window.scrollTo({ top: Math.max(0, window.scrollY + el.getBoundingClientRect().top - 90), behavior: 'smooth' });
   }
 
-  async function openShare() {
-    shareOpen = true;
-    await tick();
-    document.getElementById('share')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-  }
   const printPage = () => window.print();
 
   function addCustom(label = '') { store.custom.push({ id: crypto.randomUUID(), label, price: null }); }
@@ -450,24 +443,24 @@
           <li>Check every answer against the <a href="/guide/">must-be-true list</a> before you buy.</li>
           <li>Put your final quotes side by side in the <a href="/compare/">comparer</a>.</li>
         </ol>
-        <button class="btn btn-ghost sm" type="button" onclick={printPage}>Print or save as PDF</button>
+        <div class="acts">
+          <a class="btn btn-primary sm" href="/compare/">Next: choose between real quotes →</a>
+          <button class="btn btn-ghost sm" type="button" onclick={printPage}>Print or save as PDF</button>
+        </div>
       </div>
     {/if}
     <p class="note">Information only, not advice. Buy only on true answers: see the <a href="/guide/">guide</a>.</p>
   </aside>
 
-  <div class="area-share" id="share">
-    {#if shareRows.length >= 2 && !shareOpen}
+  <div class="area-share">
+    {#if shareRows.length >= 2}
       <div class="card sharecta">
         <div>
           <strong>You have {shareRows.length} results. Help others by sharing them?</strong>
           <span>Anonymous, takes a minute, and only percentages are sent. Findings unlock once 20 people report the same change.</span>
         </div>
-        <button class="btn btn-primary" type="button" onclick={openShare}>Share anonymously</button>
+        <a class="btn btn-primary" href="/findings/#share">Share anonymously →</a>
       </div>
-    {/if}
-    {#if shareOpen || shareRows.length < 2}
-    <SharePanel bind:open={shareOpen} rows={shareRows} baselineRuns={b.runs} noisePct={Math.round(b.spreadPct * 10) / 10} usingSample={store.usingSample} {answers} />
     {/if}
   </div>
 </div>

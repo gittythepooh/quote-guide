@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Journey from '../components/Journey.astro';
 import Findings from '../components/Findings.svelte';
+import ShareStep from '../components/ShareStep.svelte';
 ---
 
 <Base title="Findings | Quote Guide" description="What changed car insurance quotes in tests, from a starting point and from community reports.">
@@ -9,26 +10,14 @@ import Findings from '../components/Findings.svelte';
   <div class="wrap" style="padding-block:28px 24px;">
     <span class="pill">Community findings</span>
     <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 12px;">
-      What changes the price
+      Share, and see what changes the price
     </h1>
     <p style="color:var(--muted); font-size:1.08rem; max-width:62ch; margin:0 0 8px;">
       We start with figures from one early test. As people share their own results anonymously, community medians replace them. A figure only appears once 20 people have reported the same change.
     </p>
-    <div class="card join">
-      <div>
-        <strong>Be one of the first contributors</strong>
-        <span>Run the tests that fit you and share the percentages. Each report brings a figure closer to being published.</span>
-      </div>
-      <a class="btn btn-primary" href="/start/">Start the check →</a>
-    </div>
   </div>
   <div class="wrap">
+    <ShareStep client:only="svelte" />
     <Findings client:load />
   </div>
 </Base>
-
-<style>
-  .join { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; padding: 18px 20px; margin-top: 18px; background: var(--accent-soft); border-color: transparent; }
-  .join div { display: grid; gap: 2px; max-width: 58ch; }
-  .join span { color: var(--muted); font-size: 0.9rem; }
-</style>
