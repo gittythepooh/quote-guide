@@ -80,29 +80,9 @@
     window.scrollTo({ top: 0 });
   }
 
-  // Add this plan's tests to the explorer without touching quotes the user already entered.
-  function planExplorer() {
-    const labels = [...start, ...also].map((i) => i.testLabel).filter((l): l is string => !!l);
-    try {
-      let baseline: number | null = null;
-      let scenarios: { id: string; label: string; price: number | null }[] = [];
-      const raw = localStorage.getItem('qg-whatif-v1');
-      if (raw) {
-        const d = JSON.parse(raw);
-        if (d && !d.usingSample) {
-          baseline = typeof d.baseline === 'number' ? d.baseline : null;
-          scenarios = (d.scenarios ?? []).filter((s: any) => (s.label ?? '').trim() || typeof s.price === 'number');
-        }
-      }
-      const have = new Set(scenarios.map((s) => s.label.trim().toLowerCase()));
-      for (const label of labels) {
-        if (!have.has(label.toLowerCase())) scenarios.push({ id: crypto.randomUUID(), label, price: null });
-      }
-      localStorage.setItem('qg-whatif-v1', JSON.stringify({ baseline, usingSample: false, scenarios }));
-      location.href = '/explorer/';
-    } catch {
-      msg = 'Could not save your plan in this browser.';
-    }
+  // The explorer builds the test plan itself from these answers, so there is nothing to copy across.
+  function openPlan() {
+    location.href = '/explorer/';
   }
 
   const tone = (l: Item['likelihood']) => (l === 'High' ? 'hi' : l === 'Medium' ? 'mid' : 'lo');
@@ -222,12 +202,12 @@
     <ul class="check">{#each MUST_BE_TRUE as m}<li>{m}</li>{/each}</ul>
 
     <div class="actions">
-      <button class="btn btn-primary" type="button" onclick={planExplorer}>Add these tests to my explorer →</button>
+      <button class="btn btn-primary" type="button" onclick={openPlan}>Open my test plan →</button>
       <button class="btn btn-ghost" type="button" onclick={restart}>Start over</button>
     </div>
     {#if msg}<p class="warn" role="alert">{msg}</p>{/if}
     <p class="fine">
-      This adds the changes above to the <a href="/explorer/">explorer</a> and keeps any quotes you already entered. Run each one on a comparison site, type in the prices, and see which really moved yours.
+      The <a href="/explorer/">test plan</a> lists these changes in this order, tells you exactly what to change on a comparison site, and shows which really moved your price.
       Information only, not advice. We save your answers in this browser only.
     </p>
   </section>

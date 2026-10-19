@@ -22,9 +22,8 @@ npm run build      # outputs ./dist
 ## Structure
 - `src/pages/` home, `start` (guided check), `guide`, `explorer`, `compare`, `findings`, `privacy`
 - `src/lib/advisor.ts` the guided-check questions and ranking rules; `src/components/Advisor.svelte` the chat-style form and summary
-- `src/components/WhatIf.svelte` the what-if explorer (localStorage, JSON export/import)
+- `src/components/Explorer.svelte` the step-by-step test plan (localStorage, JSON export/import); `src/lib/tests.ts` the test catalog and priority ordering; `src/lib/explorer-store.ts` saved state, v1 migration and the noise/result maths
 - `src/components/MustBeTrue.svelte` "true at purchase" checklist
-- `src/data/sample.ts` sample data from the 2022 controlled test (dummy profile)
 - `docs/controlled-test-template.xlsx` controlled quote test (dummy data; Runs, Summary, Profile sheets)
 - `public/_headers` Cloudflare security headers (CSP, no-referrer)
 

@@ -1,13 +1,10 @@
 <script lang="ts">
-  import {
-    CHANGES, AGE_BANDS, REGIONS, CAR_AGE_BANDS, NCD_BANDS, COVER, SITES,
-    type ChangeKey, type Report,
-  } from '../lib/report-schema';
+  import { CHANGES, AGE_BANDS, REGIONS, CAR_AGE_BANDS, NCD_BANDS, COVER, SITES, type ChangeKey, type Report } from '../lib/report-schema';
 
-  let { rows, usingSample }: { rows: { id: string; label: string; pct: number }[]; usingSample: boolean } = $props();
+  type Row = { id: string; label: string; pct: number; change: ChangeKey; repeats: number };
+  let { rows, baselineRuns, noisePct, usingSample, answers }: { rows: Row[]; baselineRuns: number; noisePct: number; usingSample: boolean; answers: any } = $props();
 
   const SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY as string | undefined;
-  const NONE = '';
   let open = $state(false);
   let token = $state('');
   let tsEl = $state<HTMLDivElement>();
@@ -33,6 +30,7 @@
     s.onload = render;
     document.head.appendChild(s);
   });
+
   let consent = $state(false);
   let status = $state<'idle' | 'sending' | 'done' | 'error'>('idle');
   let code = $state('');
@@ -40,36 +38,31 @@
   let delCode = $state('');
   let delMsg = $state('');
 
-  let ageBand = $state(NONE), region = $state(NONE), carAge = $state(NONE), ncd = $state(NONE), cover = $state(NONE), site = $state(NONE);
-  let baselineRuns = $state<number | null>(3);
-  let noisePct = $state<number | null>(null);
-  let mapping = $state<Record<string, { change: string; repeats: number }>>({});
+  // Bands from the guided check are used when they match the allowed bands. The rest is chosen here.
+  const pre = (v: unknown, list: readonly string[]) => (typeof v === 'string' && list.includes(v) ? v : '');
+  let ageBand = $state(pre(answers?.age, AGE_BANDS));
+  let ncd = $state(pre(answers?.ncd, NCD_BANDS));
+  let cover = $state(pre(answers?.cover, COVER));
+  let region = $state('');
+  let carAge = $state('');
+  let site = $state('');
+  let excluded = $state<Record<string, boolean>>({});
 
-  const changeOptions = Object.entries(CHANGES) as [ChangeKey, string][];
-
-  const chosen = $derived(
-    rows
-      .map((r) => ({ ...r, ...(mapping[r.id] ?? { change: NONE, repeats: 1 }) }))
-      .filter((r) => r.change !== NONE),
-  );
+  const chosen = $derived(rows.filter((r) => !excluded[r.id]));
   const dupes = $derived(new Set(chosen.map((c) => c.change)).size !== chosen.length);
 
   const payload = $derived<Report | null>(
-    ageBand && region && carAge && ncd && cover && site && baselineRuns && noisePct !== null && chosen.length && !dupes
+    ageBand && region && carAge && ncd && cover && site && baselineRuns >= 1 && chosen.length && !dupes
       ? ({
           v: 1,
           profile: { ageBand, region, carAge, ncd, cover, site } as Report['profile'],
-          baselineRuns: baselineRuns!,
-          noisePct: noisePct!,
-          results: chosen.map((c) => ({ change: c.change as ChangeKey, pct: Math.round(c.pct * 10) / 10, repeats: c.repeats })),
+          baselineRuns: Math.min(10, baselineRuns),
+          noisePct: Math.min(50, noisePct),
+          results: chosen.map((c) => ({ change: c.change, pct: Math.round(c.pct * 10) / 10, repeats: Math.min(10, c.repeats) })),
         } as Report)
       : null,
   );
   const canSend = $derived(!!payload && consent && !usingSample && !!token && !!SITEKEY && status !== 'sending');
-
-  function setMap(id: string, patch: Partial<{ change: string; repeats: number }>) {
-    mapping[id] = { change: mapping[id]?.change ?? NONE, repeats: mapping[id]?.repeats ?? 1, ...patch };
-  }
 
   async function send() {
     if (!canSend || !payload) return;
@@ -122,14 +115,17 @@
     <button class="btn btn-ghost" type="button" onclick={() => (open = !open)} aria-expanded={open}>{open ? 'Close' : 'Share anonymously'}</button>
   </div>
   <p class="lead">
-    Optional. Share <strong>only the percentage changes</strong> from your own test, with broad bands for your profile. No prices, name, address, email or IP address are sent.
+    Optional. Share <strong>only the percentage changes</strong> from your tests, with broad bands for your profile. No prices, name, address, email or IP address are sent.
   </p>
 
   {#if open}
     {#if usingSample}
-      <p class="warn">You are looking at sample data. Enter your own quotes first, then share.</p>
+      <p class="warn">You are looking at example data. Enter your own prices first, then share.</p>
+    {:else if rows.length === 0}
+      <p class="warn">Finish at least one test (with a baseline) to share it.</p>
     {/if}
 
+    <h3>About your quotes</h3>
     <div class="fields">
       <label><span>Age band</span>
         <select bind:value={ageBand}><option value="">Choose</option>{#each AGE_BANDS as o}<option>{o}</option>{/each}</select></label>
@@ -143,32 +139,27 @@
         <select bind:value={cover}><option value="">Choose</option>{#each COVER as o}<option>{o}</option>{/each}</select></label>
       <label><span>Comparison site</span>
         <select bind:value={site}><option value="">Choose</option>{#each SITES as o}<option>{o}</option>{/each}</select></label>
-      <label><span>Baseline runs you did</span>
-        <input type="number" min="1" max="10" bind:value={baselineRuns} /></label>
-      <label><span>Baseline spread (%)</span>
-        <input type="number" min="0" max="50" step="0.1" placeholder="(max−min)/avg" bind:value={noisePct} /></label>
     </div>
 
-    <h3>Match each of your changes to a standard type</h3>
-    <p class="hint">Leave a row blank to keep it private. Name, spelling and other personal-detail tests cannot be shared.</p>
+    <h3>Which tests to share</h3>
+    <p class="hint">Only tests with a standard type can be shared. Your own custom tests and anything about names or personal details never are.</p>
     <ul class="map">
       {#each rows as r (r.id)}
         <li>
-          <div class="l"><strong>{r.label || 'Unnamed change'}</strong><span>{r.pct > 0 ? '+' : ''}{r.pct.toFixed(1)}%</span></div>
-          <select aria-label="Standard type" value={mapping[r.id]?.change ?? ''} onchange={(e) => setMap(r.id, { change: (e.target as HTMLSelectElement).value })}>
-            <option value="">Do not share</option>
-            {#each changeOptions as [k, label]}<option value={k}>{label}</option>{/each}
-          </select>
-          <label class="rep"><span>Runs</span>
-            <input type="number" min="1" max="10" value={mapping[r.id]?.repeats ?? 1} oninput={(e) => setMap(r.id, { repeats: Math.max(1, Number((e.target as HTMLInputElement).value) || 1) })} /></label>
+          <label class="inc">
+            <input type="checkbox" checked={!excluded[r.id]} onchange={() => (excluded[r.id] = !excluded[r.id])} />
+            <span><strong>{r.label}</strong> <em>{CHANGES[r.change]}</em></span>
+          </label>
+          <span class="pc">{r.pct > 0 ? '+' : ''}{r.pct.toFixed(1)}%</span>
         </li>
       {/each}
     </ul>
+    <p class="hint">Baseline runs: {baselineRuns}. Measured noise: {noisePct.toFixed(1)}%.</p>
     {#if dupes}<p class="warn">Each standard type can be used once per report.</p>{/if}
 
     <details open={!!payload}>
       <summary>Exactly what will be sent</summary>
-      <pre>{payload ? JSON.stringify(payload, null, 2) : 'Complete every field and match at least one change to see the report.'}</pre>
+      <pre>{payload ? JSON.stringify(payload, null, 2) : 'Complete every field above to see the report.'}</pre>
     </details>
 
     <label class="consent">
@@ -208,23 +199,22 @@
 </section>
 
 <style>
-  .panel { padding: 24px; margin-top: 18px; grid-column: 1 / -1; }
+  .panel { padding: 22px; }
   .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  h2 { margin: 0; font-size: 1.2rem; letter-spacing: -0.01em; }
-  h3 { margin: 22px 0 4px; font-size: 1rem; }
+  h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.01em; }
+  h3 { margin: 20px 0 6px; font-size: 0.95rem; }
   .lead { color: var(--muted); margin: 10px 0 0; max-width: 70ch; }
-  .hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 10px; }
-  .fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-top: 16px; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 6px 0; }
+  .fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
   label span { display: block; font-size: 0.76rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-  select, input[type='number'], input[type='text'] {
-    font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line);
-    border-radius: 12px; padding: 9px 11px; width: 100%; box-sizing: border-box;
-  }
-  .map { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .map li { display: grid; grid-template-columns: 1.1fr 1.4fr 80px; gap: 10px; align-items: end; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  @media (max-width: 640px) { .map li { grid-template-columns: 1fr 80px; } .map li .l { grid-column: 1 / -1; } }
-  .l { display: flex; justify-content: space-between; gap: 8px; align-self: center; font-size: 0.92rem; }
-  .l span { color: var(--muted); font-variant-numeric: tabular-nums; }
+  select, input[type='text'] { font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
+  .map { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .map li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .inc { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .inc input { width: 18px; height: 18px; accent-color: var(--accent); margin-top: 3px; flex: none; }
+  .inc span { margin: 0; font-size: 0.92rem; color: var(--text); font-weight: 400; }
+  .inc em { display: block; color: var(--muted); font-style: normal; font-size: 0.8rem; }
+  .pc { font-variant-numeric: tabular-nums; color: var(--muted); }
   details { margin-top: 16px; }
   summary { cursor: pointer; font-weight: 600; }
   pre { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; font-size: 0.78rem; max-height: 240px; }
