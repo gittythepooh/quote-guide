@@ -1,160 +1,37 @@
 ---
-// The landing story: fog clears as you scroll, a person falls through the clouds into a car,
-// the car drives off and the first question of the guided check is revealed.
-// Everything is SVG + CSS driven by one number (--p, scroll progress 0 to 1). No images, no video.
-// Without JavaScript, or with reduced motion, it is a calm static page (the pinned animation only
-// switches on when JS adds the "live" class).
+// Landing scroll story: a calm, type-led intro. Fog covers the page and lifts as you scroll;
+// the first question of the guided check is revealed underneath.
+// Without JavaScript, or with reduced motion, it is a static stack of the same text.
 import { STEPS } from '../lib/advisor';
 const firstQuestion = STEPS[0];
+const question = firstQuestion.question.replace('Hi! Let us work out what is worth testing on your car insurance. First, ', '').replace(/^./, (c) => c.toUpperCase());
 ---
 
-<section class="scene" data-scene data-phase="hero" style="--p:0.78" aria-label="Why Fog Off exists">
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-    <defs>
-      <symbol id="fo-cloud" viewBox="0 0 220 110">
-        <clipPath id="fo-cloud-clip"><path d="M36 98 Q6 98 6 74 Q6 50 34 46 Q34 22 64 20 Q84 6 108 20 Q126 2 152 14 Q176 22 176 46 Q208 46 212 74 Q214 98 184 98 Z" /></clipPath>
-        <path d="M36 98 Q6 98 6 74 Q6 50 34 46 Q34 22 64 20 Q84 6 108 20 Q126 2 152 14 Q176 22 176 46 Q208 46 212 74 Q214 98 184 98 Z" fill="currentColor" />
-        <rect x="0" y="82" width="220" height="20" fill="#5b7a8c" opacity="0.13" clip-path="url(#fo-cloud-clip)" />
-      </symbol>
-    </defs>
-  </svg>
-
+<section class="scene" data-scene data-phase="hero" aria-labelledby="fs-h1">
   <div class="stage">
-    <div class="art" aria-hidden="true">
-      <!-- sky -->
-      <div class="sky sky-clear"></div>
-      <div class="sky sky-fog"></div>
-      <div class="sun"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="currentColor" /><g stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M50 8v10M50 82v10M8 50h10M82 50h10M20 20l7 7M73 73l7 7M80 20l-7 7M27 73l-7 7" /></g></svg></div>
-      <div class="stars"></div>
-
-      <!-- far fog (covers the screen at the start) -->
-      <div class="layer l1">
-        <svg class="cl" style="left:-12%;top:2%;width:78%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:40%;top:10%;width:82%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:-6%;top:28%;width:70%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:46%;top:34%;width:74%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:-14%;top:52%;width:84%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:38%;top:60%;width:80%"><use href="#fo-cloud" /></svg>
-      </div>
-
-      <!-- hills and road -->
-      <div class="hills">
-        <svg viewBox="0 0 1200 300" preserveAspectRatio="none"><path class="h2" d="M0 170 Q180 60 360 150 T720 120 T1200 160 L1200 300 L0 300 Z" /><path class="h1" d="M0 220 Q240 120 480 200 T960 190 T1200 210 L1200 300 L0 300 Z" /></svg>
-      </div>
-      <div class="road"></div>
-
-      <!-- the car, with the person seated once they have landed -->
-      <div class="car-wrap">
-        <svg class="speed" viewBox="0 0 120 80" aria-hidden="true"><g stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="0.9"><path d="M110 14H20" /><path d="M96 38H4" /><path d="M110 62H34" /></g></svg>
-        <svg class="car" viewBox="0 0 400 190">
-          <ellipse cx="200" cy="178" rx="176" ry="9" fill="#000" opacity="0.18" />
-          <!-- seat and person -->
-          <rect x="116" y="64" width="38" height="46" rx="12" fill="#b8402f" />
-          <g class="p-seat">
-            <path class="hair-wind" d="M148 46 Q122 40 108 52 Q124 50 146 56 Z" fill="#2f2118" />
-            <path d="M158 70 Q150 76 150 110 L196 110 Q196 80 184 70 Z" fill="#0f766e" />
-            <circle cx="172" cy="52" r="17" fill="#e8b48b" />
-            <path d="M154 50 Q154 32 174 32 Q190 32 190 48 Q182 40 170 41 Q160 41 154 50 Z" fill="#2f2118" />
-            <rect x="170" y="46" width="22" height="9" rx="4.5" fill="#1d2a31" />
-            <path d="M174 49 h6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.6" />
-            <path d="M176 62 Q184 68 192 60" stroke="#8a3b3b" stroke-width="2.6" stroke-linecap="round" fill="none" />
-            <path d="M178 80 Q208 78 236 86" stroke="#0f766e" stroke-width="12" stroke-linecap="round" fill="none" />
-          </g>
-          <!-- body -->
-          <path d="M16 152 L16 128 Q16 113 36 109 L120 101 L262 101 L318 109 Q364 113 382 125 Q390 131 390 152 Z" fill="#f2664d" />
-          <path d="M16 142 H390 V152 H16 Z" fill="#d9553f" />
-          <path d="M128 106 H248 V144 H128 Z" fill="none" stroke="#d9553f" stroke-width="3" stroke-linejoin="round" />
-          <rect x="212" y="117" width="24" height="6" rx="3" fill="#ffd9d2" />
-          <rect x="10" y="143" width="12" height="9" rx="3" fill="#cfd8de" />
-          <rect x="384" y="143" width="10" height="9" rx="3" fill="#cfd8de" />
-          <rect x="13" y="119" width="9" height="13" rx="3" fill="#ff3b3b" />
-          <ellipse cx="383" cy="126" rx="6" ry="9" fill="#ffe27a" />
-          <!-- wheel arches and wheels -->
-          <circle cx="92" cy="152" r="33" fill="#1a2530" />
-          <circle cx="306" cy="152" r="33" fill="#1a2530" />
-          <g class="wheel"><circle cx="92" cy="152" r="26" fill="#25313b" /><circle cx="92" cy="152" r="14" fill="#cfd8de" /><path d="M92 140v24M80 152h24M83.5 143.5l17 17M100.5 143.5l-17 17" stroke="#8a99a6" stroke-width="2.4" stroke-linecap="round" /><circle cx="92" cy="152" r="4.5" fill="#6b7a87" /></g>
-          <g class="wheel"><circle cx="306" cy="152" r="26" fill="#25313b" /><circle cx="306" cy="152" r="14" fill="#cfd8de" /><path d="M306 140v24M294 152h24M297.5 143.5l17 17M314.5 143.5l-17 17" stroke="#8a99a6" stroke-width="2.4" stroke-linecap="round" /><circle cx="306" cy="152" r="4.5" fill="#6b7a87" /></g>
-          <!-- windscreen, dashboard, wheel, hand -->
-          <path d="M260 101 L242 60 L254 58 L292 106 Z" fill="#dff3fb" opacity="0.7" stroke="#d9553f" stroke-width="3.5" stroke-linejoin="round" />
-          <path d="M250 101 L290 101 L290 94 Q270 86 250 92 Z" fill="#b8402f" />
-          <ellipse cx="243" cy="84" rx="4" ry="15" transform="rotate(-16 243 84)" fill="#2a343c" />
-          <circle class="p-seat" cx="238" cy="86" r="6.5" fill="#e8b48b" />
-          <path class="beam" d="M390 126 L520 96 L520 160 Z" fill="#ffe27a" />
-        </svg>
-      </div>
-
-      <div class="poof"><svg viewBox="0 0 160 80"><g fill="#fff"><circle cx="30" cy="52" r="20" /><circle cx="64" cy="40" r="26" /><circle cx="102" cy="44" r="24" /><circle cx="132" cy="56" r="18" /></g></svg></div>
-
-      <!-- mid and front clouds (move up faster, so it feels like falling through them) -->
-      <div class="layer l2">
-        <svg class="cl" style="left:6%;top:14%;width:46%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:58%;top:24%;width:42%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:-4%;top:46%;width:44%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:52%;top:56%;width:50%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:20%;top:76%;width:40%"><use href="#fo-cloud" /></svg>
-      </div>
-
-      <!-- the person, falling -->
-      <div class="faller">
-        <svg class="paper pa1" viewBox="0 0 44 56"><rect x="3" y="3" width="38" height="50" rx="4" fill="#fff" stroke="#c4ced4" stroke-width="2" /><path d="M10 14h24M10 22h18M10 30h22" stroke="#c4ced4" stroke-width="3" stroke-linecap="round" /><text x="22" y="48" text-anchor="middle" font-size="14" font-weight="800" fill="#e5533d">£?</text></svg>
-        <svg class="paper pa2" viewBox="0 0 44 56"><rect x="3" y="3" width="38" height="50" rx="4" fill="#fff" stroke="#c4ced4" stroke-width="2" /><path d="M10 14h24M10 22h20" stroke="#c4ced4" stroke-width="3" stroke-linecap="round" /><text x="22" y="46" text-anchor="middle" font-size="14" font-weight="800" fill="#e5533d">£!!</text></svg>
-        <svg class="paper pa3" viewBox="0 0 44 56"><rect x="3" y="3" width="38" height="50" rx="4" fill="#fff" stroke="#c4ced4" stroke-width="2" /><path d="M10 14h24M10 22h16M10 30h22" stroke="#c4ced4" stroke-width="3" stroke-linecap="round" /><text x="22" y="48" text-anchor="middle" font-size="14" font-weight="800" fill="#e5533d">?</text></svg>
-        <svg class="person" viewBox="0 0 140 210">
-          <!-- legs -->
-          <path d="M58 130 Q48 158 40 180" stroke="#1e3a5f" stroke-width="19" stroke-linecap="round" fill="none" />
-          <path d="M82 130 Q100 150 108 172" stroke="#1e3a5f" stroke-width="19" stroke-linecap="round" fill="none" />
-          <ellipse cx="37" cy="187" rx="14" ry="8" transform="rotate(-24 37 187)" fill="#fff" stroke="#1e3a5f" stroke-width="3" />
-          <ellipse cx="111" cy="179" rx="14" ry="8" transform="rotate(28 111 179)" fill="#fff" stroke="#1e3a5f" stroke-width="3" />
-          <!-- arms up -->
-          <path d="M48 78 Q22 68 13 38" stroke="#0f766e" stroke-width="17" stroke-linecap="round" fill="none" />
-          <path d="M92 78 Q118 68 127 38" stroke="#0f766e" stroke-width="17" stroke-linecap="round" fill="none" />
-          <!-- torso -->
-          <path d="M44 74 Q44 62 57 60 L83 60 Q96 62 96 74 L99 132 Q99 141 90 141 L50 141 Q41 141 41 132 Z" fill="#0f766e" />
-          <rect x="54" y="108" width="32" height="17" rx="6" fill="#14917f" />
-          <path d="M64 66v22M76 66v22" stroke="#e9f6f3" stroke-width="2.5" stroke-linecap="round" />
-          <!-- hands -->
-          <circle cx="11" cy="31" r="9.5" fill="#e8b48b" />
-          <circle cx="129" cy="31" r="9.5" fill="#e8b48b" />
-          <!-- head -->
-          <ellipse cx="70" cy="60" rx="26" ry="10" fill="#0c5a53" />
-          <circle cx="48" cy="42" r="5" fill="#d99f74" />
-          <circle cx="92" cy="42" r="5" fill="#d99f74" />
-          <circle cx="70" cy="40" r="22" fill="#e8b48b" />
-          <path d="M47 38 Q49 14 70 14 Q92 14 93 38 Q84 27 70 29 Q57 27 47 38 Z" fill="#2f2118" />
-          <path d="M60 15 Q64 3 76 9 Q70 10 68 16 Z" fill="#2f2118" />
-          <circle cx="62" cy="41" r="5.5" fill="#fff" /><circle cx="78" cy="41" r="5.5" fill="#fff" />
-          <circle cx="62" cy="42" r="2.6" fill="#2a1f1a" /><circle cx="78" cy="42" r="2.6" fill="#2a1f1a" />
-          <path d="M55 32 Q62 27 68 32M72 32 Q78 27 85 32" stroke="#2f2118" stroke-width="2.6" stroke-linecap="round" fill="none" />
-          <ellipse cx="70" cy="54" rx="6" ry="7.5" fill="#7a2b2b" /><ellipse cx="70" cy="58" rx="3.6" ry="2.6" fill="#e5707a" />
-          <circle cx="55" cy="49" r="4" fill="#f08a7a" opacity="0.55" /><circle cx="85" cy="49" r="4" fill="#f08a7a" opacity="0.55" />
-        </svg>
-      </div>
-
-      <div class="layer l3">
-        <svg class="cl" style="left:-10%;top:20%;width:60%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:50%;top:40%;width:64%"><use href="#fo-cloud" /></svg>
-        <svg class="cl" style="left:10%;top:68%;width:56%"><use href="#fo-cloud" /></svg>
-      </div>
+    <div class="fog" aria-hidden="true">
+      <i class="f f1"></i><i class="f f2"></i><i class="f f3"></i>
     </div>
 
     <div class="beats">
       <div class="beat b0">
-        <h1>See through the fog on car insurance prices.</h1>
-        <p>Quotes change for reasons nobody explains. Fog Off shows you which honest changes really move yours.</p>
-        <div class="row">
-          <button type="button" class="btn btn-primary big" data-skip>Get started ↓</button>
-          <span class="cue">or scroll to clear the fog</span>
+        <p class="eyebrow">Fog Off</p>
+        <h1 id="fs-h1">See through the fog on car insurance prices.</h1>
+        <p class="sub">Quotes change for reasons nobody explains. Fog Off shows you which honest changes really move yours.</p>
+        <div class="acts">
+          <button type="button" class="go" data-skip>Get started</button>
+          <span class="cue">or scroll</span>
         </div>
       </div>
 
       <div class="beat b1">
         <h2>Same car. Same you. Different prices.</h2>
-        <p>Your job title. An extra driver. Even the day you ask. Insurers rarely say why a price moves, so most people just accept it.</p>
+        <p>Your job title. An extra driver. Even the day you ask. Insurers rarely say why a price moves.</p>
       </div>
 
       <div class="beat b2">
         <h2>So we went looking for answers.</h2>
-        <p>Fog Off turns your own test quotes into clear numbers, then lets you share what worked with everyone else, anonymously.</p>
+        <p>Fog Off turns your own test quotes into clear numbers, then lets you share what worked, anonymously.</p>
       </div>
 
       <div class="beat b3">
@@ -163,8 +40,8 @@ const firstQuestion = STEPS[0];
       </div>
 
       <div class="start" data-start>
-        <p class="eyebrow">Fog cleared. Let us begin.</p>
-        <h2 class="q">{firstQuestion.question.replace('Hi! Let us work out what is worth testing on your car insurance. First, ', '').replace(/^./, (c) => c.toUpperCase())}</h2>
+        <p class="eyebrow">Clear skies. Let us begin.</p>
+        <h2 class="q">{question}</h2>
         <div class="chips" role="group" aria-label="Answer options">
           {firstQuestion.options.map((o) => (<button type="button" class="chip" data-age={o.value}>{o.label}</button>))}
         </div>
@@ -172,142 +49,83 @@ const firstQuestion = STEPS[0];
       </div>
     </div>
 
-    <button type="button" class="skipbtn" data-skip aria-label="Skip the intro and get started">Skip intro ↓</button>
+    <button type="button" class="skipbtn" data-skip aria-label="Skip the intro and get started">Skip intro</button>
+    <div class="rail" aria-hidden="true"><b></b></div>
   </div>
 </section>
 
 <style>
-  /* ------------------------------------------------------------------ tokens */
   .scene {
-    --sky-a: #7ec8f0; --sky-b: #e9f7ff; --fog-a: #cdd6da; --fog-b: #e7edef;
-    --cloud-far: #f1f5f6; --cloud-mid: #ffffff; --cloud-front: #ffffff;
-    --hill-a: #7bc99c; --hill-b: #4fa883; --road: #3b4750; --sunc: #ffd166;
-    --pw: clamp(84px, 13vw, 140px);
-    --car-w: clamp(250px, 46vw, 470px);
-    --car-h: calc(var(--car-w) * 0.475);
-    --road-h: clamp(54px, 10dvh, 96px);
-    position: relative;
+    --fog: rgba(190, 202, 198, 0.95);
+    --fog-soft: rgba(190, 202, 198, 0);
+    --p: 0; --clear: 0; --b0: 1; --b1: 0; --b2: 0; --b3: 0; --st: 0;
+    background: var(--bg);
+    color: var(--text);
   }
   @media (prefers-color-scheme: dark) {
-    .scene {
-      --sky-a: #0b2538; --sky-b: #17415b; --fog-a: #1b2830; --fog-b: #26353d;
-      --cloud-far: #3b4e59; --cloud-mid: #4b616d; --cloud-front: #5c7482;
-      --hill-a: #1b4b43; --hill-b: #123631; --road: #182026; --sunc: #f4f1de;
-    }
+    :root:not([data-theme='light']) .scene { --fog: rgba(60, 78, 72, 0.95); --fog-soft: rgba(60, 78, 72, 0); }
   }
+  :root[data-theme='dark'] .scene { --fog: rgba(60, 78, 72, 0.95); --fog-soft: rgba(60, 78, 72, 0); }
 
-  /* ------------------------------------------------------- static layout (default) */
-  .stage { position: relative; }
-  .art { position: relative; height: clamp(320px, 62vh, 540px); overflow: hidden; contain: layout paint; background: var(--sky-b); }
-  .art > * { position: absolute; }
-  .sky { inset: 0; }
-  .sky-clear { background: linear-gradient(var(--sky-a), var(--sky-b)); }
-  .sky-fog { background: linear-gradient(var(--fog-a), var(--fog-b)); opacity: 0; }
-  .sun { top: 9%; right: 10%; width: clamp(54px, 9vw, 96px); color: var(--sunc); }
-  .stars { inset: 0; opacity: 0; background-image: radial-gradient(1.5px 1.5px at 20% 18%, #fff, transparent), radial-gradient(1.5px 1.5px at 62% 10%, #fff, transparent), radial-gradient(2px 2px at 80% 26%, #fff, transparent), radial-gradient(1.5px 1.5px at 36% 32%, #fff, transparent), radial-gradient(1.5px 1.5px at 90% 8%, #fff, transparent), radial-gradient(1.5px 1.5px at 10% 40%, #fff, transparent); }
-  @media (prefers-color-scheme: dark) { .stars { opacity: 0.9; } }
-  .layer { inset: 0; opacity: 0; pointer-events: none; }
-  .cl { position: absolute; height: auto; aspect-ratio: 2 / 1; overflow: visible; }
-  .l1 .cl { color: var(--cloud-far); opacity: 0.85; }
-  .l2 .cl { color: var(--cloud-mid); }
-  .l3 .cl { color: var(--cloud-front); }
-  .hills { left: 0; right: 0; bottom: 0; height: 46%; }
-  .hills svg { width: 100%; height: 100%; display: block; }
-  .hills .h1 { fill: var(--hill-b); } .hills .h2 { fill: var(--hill-a); }
-  .road { left: 0; right: 0; bottom: 0; height: var(--road-h); background: var(--road); }
-  .road::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 4px; transform: translateY(-50%); background: repeating-linear-gradient(90deg, rgba(255,255,255,0.85) 0 36px, transparent 36px 84px); background-position-x: var(--road-x, 0); }
-  .faller { left: calc(50% - var(--car-w) * 0.075); bottom: calc(var(--road-h) + var(--car-h) * 0.5); width: var(--pw); transform: translateX(-50%); opacity: 0; }
-  .person { width: 100%; height: auto; display: block; overflow: visible; }
-  .paper { position: absolute; width: calc(var(--pw) * 0.36); height: auto; overflow: visible; }
-  .pa1 { left: -62%; top: -6%; transform: rotate(-18deg); } .pa2 { right: -66%; top: 6%; transform: rotate(16deg); } .pa3 { left: -34%; top: -34%; transform: rotate(8deg); }
-  .poof { left: calc(50% - var(--car-w) * 0.075); bottom: calc(var(--road-h) + var(--car-h) * 0.38); width: calc(var(--car-w) * 0.5); transform: translateX(-50%); opacity: 0; }
-  .poof svg { width: 100%; height: auto; display: block; }
-  .car-wrap { left: 50%; bottom: calc(var(--road-h) - 8px); width: var(--car-w); transform: translateX(-50%); }
-  .car { width: 100%; height: auto; display: block; overflow: visible; }
-  .wheel { transform-box: fill-box; transform-origin: center; }
-  .beam { opacity: 0; } .speed { position: absolute; right: 100%; top: 28%; width: 26%; height: auto; opacity: 0; }
-  .hair-wind { transform-box: fill-box; transform-origin: right center; }
+  .stage { position: relative; overflow: hidden; min-height: calc(100dvh - 64px); display: grid; place-items: center; padding: 56px 24px; }
+  .fog { position: absolute; inset: 0; pointer-events: none; }
+  .f { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--fog), var(--fog-soft)); }
+  .f1 { width: 90vmax; height: 60vmax; left: -25vmax; top: -10vmax; }
+  .f2 { width: 80vmax; height: 55vmax; right: -30vmax; top: 15vmax; }
+  .f3 { width: 100vmax; height: 50vmax; left: -10vmax; bottom: -22vmax; }
+  .static-hide { display: none; }
 
-  .beats { padding: 28px 20px 8px; max-width: 760px; margin-inline: auto; display: grid; gap: 14px; }
-  .beat, .start { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow); padding: 20px 22px; }
-  .beat h1, .beat h2, .start h2 { margin: 0 0 8px; letter-spacing: -0.03em; line-height: 1.08; }
-  .beat h1 { font-size: clamp(2rem, 5.6vw, 3.2rem); font-weight: 800; }
-  .beat h2 { font-size: clamp(1.45rem, 3.6vw, 2.1rem); font-weight: 800; }
-  .beat p { margin: 0; color: var(--muted); font-size: 1.04rem; max-width: 52ch; }
-  .row { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; margin-top: 16px; }
+  .beats { position: relative; width: min(760px, 100%); }
+  .beat { text-align: center; }
+  .beat + .beat { margin-top: 72px; }
+  .eyebrow { margin: 0 0 14px; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  h1, h2 { margin: 0; font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; text-wrap: balance; }
+  h1 { font-size: clamp(2.3rem, 6.4vw, 4.4rem); }
+  h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+  .beat p:not(.eyebrow) { margin: 20px auto 0; max-width: 46ch; color: var(--muted); font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.55; }
+  .acts { margin-top: 30px; display: flex; gap: 16px; align-items: center; justify-content: center; }
+  .go { font: inherit; font-weight: 600; color: var(--accent-text); background: var(--accent); border: 0; border-radius: 999px; padding: 14px 28px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+  .go:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15, 118, 110, 0.28); }
   .cue { color: var(--muted); font-size: 0.9rem; }
-  .big { padding: 14px 24px; font-size: 1rem; }
-  .skipbtn { display: none; }
-  .eyebrow { margin: 0 0 6px; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
-  .start h2.q { font-size: clamp(1.4rem, 3.4vw, 1.9rem); }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
-  .chip { font: inherit; font-weight: 700; font-size: 0.98rem; padding: 11px 18px; min-height: 44px; border-radius: 999px; background: var(--surface); color: var(--text); border: 1.5px solid var(--accent); cursor: pointer; transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease; }
-  .chip:hover { background: var(--accent); color: var(--accent-text); transform: translateY(-1px); }
-  .alt { margin: 0; color: var(--muted); font-size: 0.9rem; } .alt a { color: var(--accent); font-weight: 700; }
 
-  /* ---------------------------------------------- live (animated) layout: JS adds .live */
-  .scene.live {
-    height: 520dvh;
-    --hdr: 64px;
-    /* progress windows. --p runs 0 to 1 over the whole scene */
-    --clear: clamp(0, calc((var(--p) - 0.04) / 0.82), 1);
-    --tf: clamp(0, calc((var(--p) - 0.40) / 0.30), 1);
-    --tl: clamp(0, calc((var(--p) - 0.70) / 0.07), 1);
-    --td: clamp(0, calc((var(--p) - 0.80) / 0.20), 1);
-    --ts: clamp(0, calc((var(--p) - 0.86) / 0.09), 1);
-    --seated: clamp(0, calc((var(--p) - 0.695) * 200), 1);
-    --b0: calc(1 - clamp(0, calc((var(--p) - 0.07) / 0.06), 1));
-    --b1: min(clamp(0, calc((var(--p) - 0.14) / 0.05), 1), clamp(0, calc((0.38 - var(--p)) / 0.05), 1));
-    --b2: min(clamp(0, calc((var(--p) - 0.42) / 0.05), 1), clamp(0, calc((0.62 - var(--p)) / 0.05), 1));
-    --b3: min(clamp(0, calc((var(--p) - 0.64) / 0.05), 1), clamp(0, calc((0.82 - var(--p)) / 0.04), 1));
-    --road-x: calc(var(--td) * -140vw);
-  }
-  .live .stage { position: sticky; top: var(--hdr); height: calc(100dvh - var(--hdr)); overflow: hidden; }
-  .live .art { position: absolute; inset: 0; height: auto; }
-  .live .sky-fog { opacity: calc(1 - var(--clear)); }
-  .live .sun { opacity: var(--clear); transform: translateY(calc((1 - var(--clear)) * 22dvh)); }
-  .live .layer { opacity: 1; will-change: transform, opacity; }
-  .live .l1 { transform: translate3d(calc(var(--p) * -6vw), calc(var(--p) * -42dvh), 0); opacity: calc(1 - var(--clear)); }
-  .live .l2 { transform: translate3d(calc(var(--p) * 5vw), calc(var(--p) * -95dvh), 0); opacity: calc(1 - clamp(0, calc((var(--p) - 0.5) * 3), 1)); }
-  .live .l3 { transform: translate3d(calc(var(--p) * -4vw), calc(var(--p) * -175dvh), 0); opacity: calc(1 - clamp(0, calc((var(--p) - 0.55) * 3), 1)); }
-  .live .hills { transform: translateY(calc((1 - var(--clear)) * 38dvh)); will-change: transform; }
-  .live .faller { opacity: calc((1 - var(--seated)) * clamp(0, calc(var(--tf) * 40), 1)); transform: translate3d(-50%, calc((var(--tf) * var(--tf) - 1) * 100dvh), 0) rotate(calc(sin(calc(var(--p) * 55)) * 7deg)); will-change: transform; }
-  .live .paper { animation: flutter 1.4s ease-in-out infinite alternate; }
-  .live .pa2 { animation-duration: 1.1s; animation-delay: -0.4s; } .live .pa3 { animation-duration: 1.7s; animation-delay: -0.9s; }
-  .live .poof { opacity: calc(sin(calc(var(--tl) * 3.14159)) * 0.95); transform: translateX(-50%) scale(calc(0.45 + var(--tl) * 1.1)); }
-  .live .car-wrap { transform: translate3d(calc(-50% + var(--td) * var(--td) * (62vw + var(--car-w))), calc(sin(calc(var(--tl) * 3.14159)) * 7px), 0); will-change: transform; }
-  .live .p-seat { opacity: var(--seated); }
-  .live .wheel { transform: rotate(calc(var(--td) * 2100deg)); }
-  .live .speed { opacity: calc(var(--td) * 0.9); }
-  .live .beam { opacity: calc(var(--td) * 0.28); }
-  .live .hair-wind { transform: skewY(calc(var(--td) * -10deg)) scaleX(calc(1 + var(--td) * 0.5)); }
+  .start { margin-top: 72px; text-align: center; }
+  .start .q { font-size: clamp(1.8rem, 4.4vw, 2.8rem); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 28px auto 0; max-width: 560px; }
+  .chip { font: inherit; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 12px 22px; cursor: pointer; transition: border-color 0.2s, transform 0.2s, color 0.2s; }
+  .chip:hover, .chip:focus-visible { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .alt { margin: 26px 0 0; font-size: 0.92rem; color: var(--muted); }
+  .alt a { color: var(--accent); font-weight: 600; }
 
-  .live .beats { position: absolute; inset: 0; max-width: none; margin: 0; padding: 0; display: block; pointer-events: none; }
-  .live .beat { position: absolute; left: max(5vw, 18px); top: 50%; width: min(440px, calc(100vw - 36px)); will-change: opacity, transform; }
-  .live .b0 { opacity: var(--b0); transform: translateY(calc(-50% + (1 - var(--b0)) * -26px)); }
-  .live .b0 .row { pointer-events: auto; }
-  .live .b1 { opacity: var(--b1); transform: translateY(calc(-50% + (1 - var(--b1)) * 26px)); }
-  .live .b2 { opacity: var(--b2); transform: translateY(calc(-50% + (1 - var(--b2)) * 26px)); }
-  .live .b3 { opacity: var(--b3); transform: translateY(calc(-50% + (1 - var(--b3)) * 26px)); }
-  .live .start { position: absolute; left: 50%; top: 46%; width: min(560px, calc(100vw - 36px)); opacity: var(--ts); transform: translate(-50%, calc(-50% + (1 - var(--ts)) * 40px)); visibility: hidden; }
-  .live[data-phase='start'] .start { visibility: visible; pointer-events: auto; }
-  .live .skipbtn { display: inline-flex; position: absolute; top: 14px; right: 14px; z-index: 5; align-items: center; gap: 6px; font: inherit; font-weight: 700; font-size: 0.9rem; padding: 9px 16px; min-height: 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); box-shadow: var(--shadow); cursor: pointer; transition: opacity 0.2s ease; }
-  .live .skipbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .skipbtn, .rail { display: none; }
+
+  /* ---- live (scroll-driven) ---- */
+  .scene.live { height: 480dvh; }
+  .live .stage { position: sticky; top: var(--hdr, 64px); height: calc(100dvh - var(--hdr, 64px)); min-height: 0; }
+  .live .beats { position: absolute; inset: 0; width: auto; display: grid; place-items: center; padding: 0 24px; }
+  .live .beat, .live .start { grid-area: 1 / 1; margin: 0; width: min(760px, 100%); will-change: opacity, transform; }
+  .live .b0 { opacity: var(--b0); transform: translate3d(0, calc((1 - var(--b0)) * -24px), 0); pointer-events: none; }
+  .live .b1 { opacity: var(--b1); transform: translate3d(0, calc((1 - var(--b1)) * 24px), 0); }
+  .live .b2 { opacity: var(--b2); transform: translate3d(0, calc((1 - var(--b2)) * 24px), 0); }
+  .live .b3 { opacity: var(--b3); transform: translate3d(0, calc((1 - var(--b3)) * 24px), 0); }
+  .live .start { opacity: var(--st); transform: translate3d(0, calc((1 - var(--st)) * 28px), 0); visibility: hidden; }
+  .live[data-phase='hero'] .b0 { pointer-events: auto; }
+  .live[data-phase='start'] .start { visibility: visible; }
+
+  .live .f1 { transform: translate3d(calc(var(--clear) * -40vmax), calc(var(--clear) * -20vmax), 0); opacity: calc(1 - var(--clear) * 0.95); }
+  .live .f2 { transform: translate3d(calc(var(--clear) * 45vmax), calc(var(--clear) * -10vmax), 0); opacity: calc(1 - var(--clear) * 0.95); }
+  .live .f3 { transform: translate3d(calc(var(--clear) * -20vmax), calc(var(--clear) * 30vmax), 0); opacity: calc(1 - var(--clear) * 0.95); }
+  .live .f { will-change: transform, opacity; }
+
+  .live .skipbtn { display: block; position: absolute; top: 16px; right: 20px; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s, opacity 0.3s; }
+  .live .skipbtn:hover { color: var(--accent); border-color: var(--accent); }
   .live[data-phase='start'] .skipbtn { opacity: 0; pointer-events: none; }
+  .live .rail { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--line); }
+  .live .rail b { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p)); }
 
-  /* phones: text sits at the top so the person and car stay clear */
   @media (max-width: 720px) {
-    .live .beat { top: 12px; left: 50%; width: calc(100vw - 28px); padding: 16px 18px; }
-    .live .b0 { transform: translate(-50%, calc((1 - var(--b0)) * -26px)); }
-    .live .b1 { transform: translate(-50%, calc((1 - var(--b1)) * 26px)); }
-    .live .b2 { transform: translate(-50%, calc((1 - var(--b2)) * 26px)); }
-    .live .b3 { transform: translate(-50%, calc((1 - var(--b3)) * 26px)); }
-    .live .beat p { font-size: 0.96rem; }
-    .live .skipbtn { top: auto; bottom: 14px; right: 14px; }
-    .live .start { top: 40%; }
-    .cue { display: none; }
+    .stage { padding: 40px 18px; }
+    .live .skipbtn { top: 10px; right: 14px; }
   }
-  @keyframes flutter { from { translate: 0 0; rotate: -6deg; } to { translate: 4px 10px; rotate: 8deg; } }
 </style>
 
 <script>
@@ -320,6 +138,11 @@ const firstQuestion = STEPS[0];
     scene.classList.add('live');
     let ticking = false;
 
+    // Each beat fades in, holds, fades out. Triangle with a plateau.
+    const win = (p: number, a: number, b: number, c: number, d: number) =>
+      Math.max(0, Math.min(1, p < b ? (p - a) / (b - a) : p > c ? (d - p) / (d - c) : 1));
+    const set = (k: string, v: number) => scene.style.setProperty(k, v.toFixed(4));
+
     const measure = () => {
       const hdr = header ? header.offsetHeight : 64;
       scene.style.setProperty('--hdr', hdr + 'px');
@@ -331,25 +154,30 @@ const firstQuestion = STEPS[0];
       const total = scene.offsetHeight - stage.offsetHeight;
       const top = scene.getBoundingClientRect().top;
       const p = Math.min(1, Math.max(0, (hdr - top) / total));
-      scene.style.setProperty('--p', p.toFixed(4));
-      scene.dataset.phase = p < 0.08 ? 'hero' : p < 0.87 ? 'story' : 'start';
+      set('--p', p);
+      set('--clear', Math.min(1, Math.max(0, (p - 0.08) / 0.78)));
+      set('--b0', 1 - Math.min(1, p / 0.12));
+      set('--b1', win(p, 0.12, 0.22, 0.34, 0.44));
+      set('--b2', win(p, 0.4, 0.5, 0.6, 0.68));
+      set('--b3', win(p, 0.64, 0.72, 0.8, 0.86));
+      set('--st', win(p, 0.86, 0.94, 1.1, 1.2));
+      scene.dataset.phase = p < 0.06 ? 'hero' : p < 0.9 ? 'story' : 'start';
     };
     const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
     update();
 
-    // "Get started": rush down to the first question (speeds up, then eases in).
+    // "Get started": glide down to the first question (speeds up, then eases in).
     let rushing = false;
-    const stopRush = () => { rushing = false; };
-    ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, stopRush, { passive: true }));
+    ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, () => { rushing = false; }, { passive: true }));
     const rush = () => {
       const hdr = measure();
       const total = scene.offsetHeight - stage.offsetHeight;
       const target = scene.getBoundingClientRect().top + scrollY - hdr + total;
       const from = scrollY;
       const dist = target - from;
-      const dur = Math.min(1400, 700 + Math.abs(dist) / 6);
+      const dur = Math.min(1500, 800 + Math.abs(dist) / 6);
       const t0 = performance.now();
       rushing = true;
       const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -364,11 +192,9 @@ const firstQuestion = STEPS[0];
     };
     document.querySelectorAll('[data-skip]').forEach((b) => b.addEventListener('click', rush));
   } else {
-    // Static version: the skip buttons are not needed; "Get started" just goes to the guided check.
     document.querySelectorAll('[data-skip]').forEach((b) => b.addEventListener('click', () => (location.href = '/start/')));
   }
 
-  // First question: remember the answer and carry on in the guided check.
   document.querySelectorAll<HTMLElement>('[data-age]').forEach((chip) =>
     chip.addEventListener('click', () => {
       try {
