@@ -94,3 +94,8 @@ body { margin: 0; min-height: 100dvh; line-height: 1.6; }
   .card { box-shadow: none !important; border-color: #bbb !important; break-inside: avoid; }
   .area-res { position: static !important; }
 }
+
+/* Smooth cross-fade between pages in browsers that support it. */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.35s; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }

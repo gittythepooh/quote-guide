@@ -2,9 +2,6 @@
 // Landing scroll story: a calm, type-led intro. Fog covers the page and lifts as you scroll;
 // the first question of the guided check is revealed underneath.
 // Without JavaScript, or with reduced motion, it is a static stack of the same text.
-import { STEPS } from '../lib/advisor';
-const firstQuestion = STEPS[0];
-const question = firstQuestion.question.replace('Hi! Let us work out what is worth testing on your car insurance. First, ', '').replace(/^./, (c) => c.toUpperCase());
 ---
 
 <section class="scene" data-scene data-phase="hero" aria-labelledby="fs-h1">
@@ -59,12 +56,11 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
       </div>
 
       <div class="start" data-start>
-        <p class="eyebrow">Clear skies. Let us begin.</p>
-        <h2 class="q">{question}</h2>
-        <div class="chips" role="group" aria-label="Answer options">
-          {firstQuestion.options.map((o) => (<button type="button" class="chip" data-age={o.value}>{o.label}</button>))}
-        </div>
-        <p class="alt"><a href="/start/">Take the 2-minute guided check</a> · <a href="/explorer/">Open the test plan</a></p>
+        <p class="eyebrow">Fog cleared</p>
+        <h2 class="q">Let us find what is worth testing on your quote.</h2>
+        <p class="lede">Eleven quick questions, about two minutes. Nothing leaves your browser.</p>
+        <p class="acts"><a class="go" href="/start/" data-begin>Start the check</a></p>
+        <p class="alt"><a href="/explorer/">Already started? Open the test plan</a></p>
       </div>
     </div>
 
@@ -113,9 +109,9 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
 
   .start { margin-top: 72px; text-align: center; }
   .start .q { font-size: clamp(1.8rem, 4.4vw, 2.8rem); }
-  .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 28px auto 0; max-width: 560px; }
-  .chip { font: inherit; font-weight: 600; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 12px 22px; cursor: pointer; transition: border-color 0.2s, transform 0.2s, color 0.2s; }
-  .chip:hover, .chip:focus-visible { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .start .lede { margin: 16px auto 0; max-width: 44ch; color: var(--muted); font-size: clamp(1rem, 1.7vw, 1.15rem); }
+  a.go { display: inline-block; text-decoration: none; }
+  .start .acts { margin-top: 28px; }
   .alt { margin: 26px 0 0; font-size: 0.92rem; color: var(--muted); }
   .alt a { color: var(--accent); font-weight: 600; }
 
@@ -232,39 +228,28 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
     // "Get started": glide down to the first question (speeds up, then eases in).
     let rushing = false;
     ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, () => { rushing = false; }, { passive: true }));
-    const rush = () => {
+    const rush = (slow: boolean) => {
       const hdr = measure();
       const total = scene.offsetHeight - stage.offsetHeight;
       const target = scene.getBoundingClientRect().top + scrollY - hdr + total;
       const from = scrollY;
       const dist = target - from;
-      const dur = Math.min(1500, 800 + Math.abs(dist) / 6);
+      const dur = slow ? 5200 : 1800;
       const t0 = performance.now();
       rushing = true;
-      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const ease = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
       const step = (now: number) => {
         if (!rushing) return;
         const t = Math.min(1, (now - t0) / dur);
         scrollTo({ top: from + dist * ease(t), behavior: 'instant' });
         if (t < 1) requestAnimationFrame(step);
-        else { rushing = false; update(); (document.querySelector('[data-age]') as HTMLElement | null)?.focus({ preventScroll: true }); }
+        else { rushing = false; update(); (document.querySelector('[data-begin]') as HTMLElement | null)?.focus({ preventScroll: true }); }
       };
       requestAnimationFrame(step);
     };
-    document.querySelectorAll('[data-skip]').forEach((b) => b.addEventListener('click', rush));
+    document.querySelectorAll<HTMLElement>('[data-skip]').forEach((b) => b.addEventListener('click', () => rush(!b.classList.contains('skipbtn'))));
   } else {
     document.querySelectorAll('[data-skip]').forEach((b) => b.addEventListener('click', () => (location.href = '/start/')));
   }
 
-  document.querySelectorAll<HTMLElement>('[data-age]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      try {
-        const raw = localStorage.getItem('qg-advisor-v1');
-        const cur = raw ? JSON.parse(raw) : {};
-        cur.age = chip.dataset.age;
-        localStorage.setItem('qg-advisor-v1', JSON.stringify(cur));
-      } catch {}
-      location.href = '/start/';
-    }),
-  );
 </script>
