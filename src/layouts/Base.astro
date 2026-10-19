@@ -6,7 +6,7 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = 'Plain-English help to get fair value on car insurance. Information only. Your answers stay in your browser.' } = Astro.props;
+const { title, description = 'Plain-English help to get fair value on car insurance. Information only. Your answers stay in your browser unless you choose to share.' } = Astro.props;
 const path = Astro.url.pathname;
 const links = [
   { href: '/start/', label: 'Start' },

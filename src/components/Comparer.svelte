@@ -197,7 +197,7 @@
         <button class="btn btn-ghost" type="button" onclick={clearAll}>Clear all</button>
         <button class="btn btn-ghost" type="button" onclick={example}>Load example</button>
       </div>
-      <p class="note" aria-live="polite">{msg || 'Saved on this device only. Nothing is sent anywhere.'}</p>
+      <p class="note" aria-live="polite">{msg || 'Saved on this device only. This page never sends your quotes anywhere.'}</p>
     </section>
 
     <section class="card panel" aria-labelledby="r-h">
