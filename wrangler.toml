@@ -1,31 +1,23 @@
 # The Worker keeps its technical name (it must match the Worker already deployed in Cloudflare).
 name = "quote-guide"
+main = "src/worker.ts"
 compatibility_date = "2026-10-01"
 
-# Cloudflare Workers with static assets: serves the built site from ./dist.
+# Pages come from ./dist. Only /api/* runs Worker code first; everything else is static.
 [assets]
 directory = "./dist"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
-# ---------------------------------------------------------------------------------------------
-# SHARING (turn on once the database and bot-check exist; see docs/cloudflare-setup.md)
-# 1. Create the D1 database in the Cloudflare dashboard and paste its Database ID below.
-# 2. Create a Turnstile widget and paste its PUBLIC site key below. Put the SECRET key in the
-#    Worker's Settings, Variables and secrets, as a Secret named TURNSTILE_SECRET (never in this file).
-# 3. Delete the active [assets] block at the top of this file (only one [assets] table may exist),
-#    then remove the "# " from every line in the block below, commit and push.
-# The Worker (src/worker.ts) then serves /api/*; the database tables create themselves.
-# ---------------------------------------------------------------------------------------------
-# main = "src/worker.ts"
-#
-# [assets]
-# directory = "./dist"
-# binding = "ASSETS"
-# run_worker_first = ["/api/*"]
-#
-# [vars]
-# TURNSTILE_SITEKEY = "PASTE_PUBLIC_SITE_KEY"
-#
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "fog-off-main"
-# database_id = "PASTE_DATABASE_ID"
+# Sharing needs two more things (see docs/cloudflare-setup.md):
+#   TURNSTILE_SITEKEY  public bot-check key, set below once the Turnstile widget exists
+#   TURNSTILE_SECRET   private key, set ONLY in the Cloudflare dashboard (Settings, Variables and secrets, type Secret)
+# Until both are set the share panel says sharing is not switched on yet.
+[vars]
+TURNSTILE_SITEKEY = ""
+
+# The database ID is not a secret. The tables create themselves on first use.
+[[d1_databases]]
+binding = "DB"
+database_name = "fog-off-main"
+database_id = "209c3486-599e-428d-b0fd-53aed7f05218"
