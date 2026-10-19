@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+const repo = 'https://github.com/gittythepooh/quote-guide';
+---
+
+<Base title="Open by design | Fog Off" description="Everything behind Fog Off can be read: the code, the scoring, the test list and the published findings.">
+  <article class="wrap" style="padding-block:56px 0; max-width:800px;">
+    <span class="pill">Open by design</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0;">Nothing here is a black box</h1>
+    <p style="color:var(--muted); font-size:1.08rem;">Insurance prices are hard to see through. Fog Off should not add to that. You can check how it works, what it stores and where the numbers come from.</p>
+
+    <h2>What you can read</h2>
+    <ul>
+      <li><strong>The code.</strong> The whole site and its server are public: <a href={repo}>{repo.replace('https://', '')}</a>.</li>
+      <li><strong>The scoring.</strong> Every item shows its Fog Off score (effect × fit × evidence). The <a href="/guide/#score">guide</a> explains it and the weights are in the code (<code>src/lib/advisor.ts</code>).</li>
+      <li><strong>The test list.</strong> Each test, what to change and what must stay true is in <code>src/lib/tests.ts</code>.</li>
+      <li><strong>What is stored.</strong> The <a href="/privacy/">privacy notice</a> lists everything. When you share, the panel shows the exact payload before it leaves your browser.</li>
+    </ul>
+
+    <h2>The data</h2>
+    <p>Group medians are published only when at least 20 people have reported the same change. The raw feed is public: <a href="/api/findings">/api/findings</a>. It contains medians only, never individual reports. You may reuse the findings with credit to "Fog Off" (CC BY 4.0).</p>
+
+    <h2>Licence, in plain words</h2>
+    <ul>
+      <li><strong>Code:</strong> source-available under the PolyForm Noncommercial License 1.0.0. You may read it, run it and learn from it for personal, research, education and non-profit use. Commercial use needs permission.</li>
+      <li><strong>Guide text and findings:</strong> CC BY 4.0.</li>
+      <li><strong>Name and logo:</strong> reserved.</li>
+    </ul>
+
+    <h2>Spot a mistake?</h2>
+    <p>Corrections are welcome. Please <a href={`${repo}/issues`}>open an issue</a> or email <a href="mailto:hello@fogoff.wtf">hello@fogoff.wtf</a>. We are not taking outside code changes for now, but a clear report of an error or a doubtful number helps a lot.</p>
+  </article>
+</Base>

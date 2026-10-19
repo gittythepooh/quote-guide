@@ -46,7 +46,7 @@ npm run build      # outputs ./dist
 - `src/components/SharePanel.svelte` optional anonymous share panel on the explorer (shows the exact payload).
 - `functions/api/report.ts` POST stores a report in D1 and returns a one-time delete code; DELETE removes it.
 - `functions/api/findings.ts` GET returns group medians only once a change has 20 reports (rolling 2 years).
-- `src/data/findings-seed.ts` the 2022 starting point, replaced per change by community medians.
+- `src/data/findings-seed.ts` the early starting point, replaced per change by community medians.
 - `db/schema.sql`, `wrangler.toml` D1 table and binding.
 
 ### Local test of the API
