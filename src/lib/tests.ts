@@ -257,7 +257,7 @@ const FROM_ADVISOR: Record<string, string[]> = {
 };
 const DEFAULT_ORDER = ['drivers', 'drivers2', 'blackbox', 'job', 'timing', 'excess', 'pay', 'cover', 'mileage', 'value', 'tracker', 'parking'];
 
-export type Ordered = { test: TestDef; group: 'start' | 'also' | 'skip' | 'more'; why?: string };
+export type Ordered = { test: TestDef; group: 'start' | 'also' | 'skip' | 'more'; why?: string; score?: number; band?: 'High' | 'Medium' | 'Low' };
 
 /** Order tests by the guided check's priority when answers exist, otherwise a generic order. */
 export function orderTests(answers: Answers | null): { items: Ordered[]; personal: boolean } {
@@ -271,11 +271,11 @@ export function orderTests(answers: Answers | null): { items: Ordered[]; persona
     for (const id of FROM_ADVISOR[it.id] ?? []) {
       if (seen.has(id)) continue;
       seen.add(id);
-      items.push({ test: TESTS[id], group: it.group, why: it.why });
+      items.push({ test: TESTS[id], group: it.group, why: it.why, score: it.score, band: it.band });
       // Two other genuine drivers: also test the second one, right after the first.
       if (id === 'drivers' && (answers as Answers).household === 'two' && !seen.has('drivers2')) {
         seen.add('drivers2');
-        items.push({ test: TESTS.drivers2, group: it.group, why: 'Shows what the second driver adds on top of the first.' });
+        items.push({ test: TESTS.drivers2, group: it.group, why: 'Shows what the second driver adds on top of the first.', score: it.score, band: it.band });
       }
     }
   }

@@ -158,6 +158,7 @@
 
     {#if open}
       <div class="body">
+        {#if item.score !== undefined}<p class="scoreline"><span class="sp {item.band}">Fog Off score {Math.round(item.score)} · {item.band}</span> <a href="/guide/#score">How is this scored?</a></p>{/if}
         {#if item.why}<p class="why">{item.why}</p>{/if}
         <p class="inst"><b>What to change on the comparison site</b><br />{def.instruction(paramsOf(id), store.refs)}</p>
         <p class="reset">↺ <strong>Reset first:</strong> put every answer back to your baseline, then change only this.</p>
@@ -304,7 +305,7 @@
       <div class="stack">{#each startList as it, i (it.test.id)}{@render card(it, i + 1)}{/each}</div>
     {/if}
     {#if alsoList.length}
-      <h2 class="grp">Also worth a try</h2>
+      <h2 class="grp">Also worth testing</h2>
       <div class="stack">{#each alsoList as it, i (it.test.id)}{@render card(it, startList.length + i + 1)}{/each}</div>
     {/if}
     {#if addedList.length}
@@ -505,6 +506,10 @@
   .chev { color: var(--muted); }
   .body { padding: 0 16px 16px 56px; display: grid; gap: 12px; }
   @media (max-width: 520px) { .body { padding-left: 16px; } .head { grid-template-columns: 30px 1fr 18px; } .status { grid-column: 2; grid-row: 2; justify-self: start; } .chev { grid-row: 1; grid-column: 3; } }
+  .scoreline { margin: 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 0.82rem; }
+  .scoreline a { color: var(--accent); font-weight: 600; }
+  .sp { font-weight: 700; font-size: 0.74rem; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+  .sp.High { background: var(--good-soft); color: var(--good); } .sp.Medium { background: var(--warn-soft); color: var(--warn); }
   .why { margin: 0; color: var(--muted); font-size: 0.9rem; }
   .inst { margin: 0; background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 0.92rem; }
   .inst b { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }

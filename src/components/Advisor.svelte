@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { STEPS, advise, CLAIM_PCT, MUST_BE_TRUE, type Answers, type Community, type Item } from '../lib/advisor';
+  import { STEPS, advise, CLAIM_PCT, MUST_BE_TRUE, BAND_HIGH, BAND_MEDIUM, type Answers, type Community, type Item } from '../lib/advisor';
 
   const KEY = 'qg-advisor-v1';
   const SHORT: Record<string, string> = {
@@ -85,7 +85,7 @@
     location.href = '/explorer/';
   }
 
-  const tone = (l: Item['likelihood']) => (l === 'High' ? 'hi' : l === 'Medium' ? 'mid' : 'lo');
+  const tone = (l: Item['band']) => (l === 'High' ? 'hi' : l === 'Medium' ? 'mid' : 'lo');
 </script>
 
 <header class="intro">
@@ -146,9 +146,22 @@
       <button class="btn btn-primary" type="button" onclick={openPlan}>Open my test plan →</button>
     </div>
     <p class="lead">
-      General information for profiles like yours, from broad answers and limited data. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
+      General information for profiles like yours, from broad answers and limited data. Each item has a <strong>Fog Off score</strong> and the list is in score order. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
       {#if claimPct !== null}Your claim feeling is treated as about {claimPct}% for the excess advice.{/if}
     </p>
+
+    <details class="scoreinfo">
+      <summary>How the Fog Off score works</summary>
+      <div class="si">
+        <p><strong>Score = Effect × Fit × Evidence</strong>, each as a percentage, giving 0 to 100. It shows how much a change is likely to matter for profiles like yours, based on limited data.</p>
+        <ul>
+          <li><strong>Effect:</strong> how much the change moved prices in our tests (40% or more counts as the maximum). Where nothing is measured yet, the effect is an assumption and says so.</li>
+          <li><strong>Fit:</strong> how well the change matches your answers (for example, a black box suits young drivers most).</li>
+          <li><strong>Evidence:</strong> how much we trust the numbers. A small 2022 test counts for less than community reports.</li>
+        </ul>
+        <p>Because the three are multiplied, a weak one pulls the score down. <strong>High</strong> is {BAND_HIGH} or more, <strong>Medium</strong> is {BAND_MEDIUM} to {BAND_HIGH - 1}, <strong>Low</strong> is under {BAND_MEDIUM}. The score will change as community data arrives. It is a general indicator, not a promise or a recommendation. <a href="/guide/#score">Read more in the guide</a>.</p>
+      </div>
+    </details>
 
     <details class="answers">
       <summary>Your answers ({STEPS.length}) · change any</summary>
@@ -181,31 +194,39 @@
           <span class="num">{n}</span>
           <div class="t">
             <strong>{it.title}</strong>
-            <span class="badge {tone(it.likelihood)}" title="How well this matches your answers, and how strong the evidence is. A general indicator, not a promise.">Fit for your answers: {it.likelihood}</span>
+            <span class="badge {tone(it.band)}" title="The Fog Off score: effect x fit x evidence. A general indicator, not a promise or a recommendation.">Fog Off score {Math.round(it.score)} · {it.band}</span>
           </div>
         </div>
         <p>{it.why}</p>
         <p class="size"><b>Size:</b> {it.size}</p>
         {#if it.mustBeTrue}<p class="must">✓ {it.mustBeTrue}</p>{/if}
         {#if it.caution}<p class="caut">⚠ {it.caution}</p>{/if}
-        <details><summary>Where this comes from</summary><p class="basis">{it.basis}</p></details>
+        <details>
+          <summary>How this score was worked out</summary>
+          <div class="parts" aria-label="Score breakdown">
+            <div><span>Effect</span><i><b style="width:{it.effect}%"></b></i><em>{it.effect}</em></div>
+            <div><span>Fit</span><i><b style="width:{it.fit}%"></b></i><em>{it.fit}</em></div>
+            <div><span>Evidence</span><i><b style="width:{it.evidence}%"></b></i><em>{it.evidence}</em></div>
+          </div>
+          <p class="basis">{it.effect} × {it.fit}% × {it.evidence}% = <strong>{it.score.toFixed(1)}</strong>. {it.basis}</p>
+        </details>
       </li>
     {/snippet}
 
-    <h3>Start here</h3>
+    <h3>Start here <span class="tierhint">High · {BAND_HIGH}+</span></h3>
     <ol class="cards">
       {#each start as it, n (it.id)}{@render itemCard(it, n + 1)}{/each}
     </ol>
 
     {#if also.length}
-      <h3>Also worth testing</h3>
+      <h3>Also worth testing <span class="tierhint">Medium · {BAND_MEDIUM} to {BAND_HIGH - 1}</span></h3>
       <ol class="cards">
         {#each also as it, n (it.id)}{@render itemCard(it, start.length + n + 1)}{/each}
       </ol>
     {/if}
 
     {#if skip.length}
-      <h3>Low priority <span class="opt">optional</span></h3>
+      <h3>Low priority <span class="tierhint">Low · under {BAND_MEDIUM}</span> <span class="opt">optional</span></h3>
       <p class="lowhint">These fit you less, or rarely moved quotes in our data. Try them if you have time.</p>
       <ol class="cards">
         {#each skip as it, n (it.id)}{@render itemCard(it, start.length + also.length + n + 1)}{/each}
@@ -269,6 +290,15 @@
   .ra { font-weight: 600; }
   .link { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; }
   .edit { padding: 10px 0 4px; }
+  .scoreinfo { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: 0 0 12px; }
+  .si { font-size: 0.9rem; color: var(--muted); display: grid; gap: 8px; margin-top: 10px; }
+  .si p { margin: 0; } .si ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; } .si strong { color: var(--text); }
+  .parts { display: grid; gap: 6px; margin: 10px 0 6px; }
+  .parts div { display: grid; grid-template-columns: 70px 1fr 34px; gap: 8px; align-items: center; font-size: 0.8rem; color: var(--muted); }
+  .parts i { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; display: block; }
+  .parts b { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .parts em { font-style: normal; text-align: right; font-variant-numeric: tabular-nums; }
+  .tierhint { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 9px; vertical-align: 2px; margin-left: 6px; }
   .opt { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 2px 9px; vertical-align: 2px; margin-left: 6px; }
   .lowhint { color: var(--muted); font-size: 0.88rem; margin: -4px 0 10px; }
   .lowtier { opacity: 0.88; }
