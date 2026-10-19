@@ -39,6 +39,34 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
         <p>No adverts, no sign-up, no commission. Your answers stay in your browser unless you choose to share.</p>
       </div>
 
+      <div class="art" aria-hidden="true">
+        <div class="road"></div>
+        <div class="car-wrap">
+          <svg class="car" viewBox="0 0 260 112" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <g class="seated" stroke="var(--accent)" transform="translate(0 -7)">
+              <circle cx="126" cy="27" r="11" />
+              <path d="M124 38 L120 62 M123 46 L147 52" />
+              <path d="M120 21 q6 -6 13 -1" />
+            </g>
+            <path class="body" d="M8 86 V72 Q8 63 18 61 L68 55 Q86 53 96 43 L112 39 L126 42 L136 58 L236 62 Q254 64 254 76 V86 Z" />
+            <path d="M96 43 L112 60 M236 62 L230 86" />
+            <path d="M246 70 h8" stroke="var(--accent)" />
+            <g transform="translate(62 86)"><g class="wheel"><circle r="17" class="tyre" /><circle r="3" /><path d="M0 -17 V17 M-17 0 H17" opacity="0.5" /></g></g>
+            <g transform="translate(204 86)"><g class="wheel"><circle r="17" class="tyre" /><circle r="3" /><path d="M0 -17 V17 M-17 0 H17" opacity="0.5" /></g></g>
+          </svg>
+        </div>
+        <div class="faller">
+          <svg viewBox="0 0 84 112" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="42" cy="20" r="12" />
+            <circle cx="38" cy="18" r="1" fill="var(--accent)" /><circle cx="46" cy="18" r="1" fill="var(--accent)" />
+            <ellipse cx="42" cy="25" rx="2.6" ry="3.2" />
+            <path d="M42 32 V68 M42 42 L18 22 M42 42 L66 22 M42 68 L26 98 M42 68 L58 92" />
+            <path d="M14 14 l4 -3 M70 14 l-4 -3" opacity="0.6" />
+          </svg>
+          <i class="paper p1">£?</i><i class="paper p2">?!</i>
+        </div>
+      </div>
+
       <div class="start" data-start>
         <p class="eyebrow">Clear skies. Let us begin.</p>
         <h2 class="q">{question}</h2>
@@ -49,7 +77,7 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
       </div>
     </div>
 
-    <button type="button" class="skipbtn" data-skip aria-label="Skip the intro and get started">Skip intro</button>
+    <button type="button" class="skipbtn" data-skip aria-label="Skip intro">Skip intro</button>
     <div class="rail" aria-hidden="true"><b></b></div>
   </div>
 </section>
@@ -58,7 +86,7 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .scene {
     --fog: rgba(190, 202, 198, 0.95);
     --fog-soft: rgba(190, 202, 198, 0);
-    --p: 0; --clear: 0; --b0: 1; --b1: 0; --b2: 0; --b3: 0; --st: 0;
+    --p: 0; --clear: 0; --b0: 1; --b1: 0; --b2: 0; --b3: 0; --st: 0; --fall: 0; --fallv: 0; --seat: 0; --land: 0; --drive: 0; --roadv: 0;
     background: var(--bg);
     color: var(--text);
   }
@@ -96,13 +124,26 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .alt { margin: 26px 0 0; font-size: 0.92rem; color: var(--muted); }
   .alt a { color: var(--accent); font-weight: 600; }
 
+
+  /* ---- line-art character and car ---- */
+  .art { position: relative; height: 150px; margin: 56px auto 0; width: min(420px, 100%); color: var(--text); }
+  .road { position: absolute; left: -40vw; right: -40vw; bottom: 8px; height: 0; border-top: 2px dashed var(--line); }
+  .car-wrap { position: absolute; left: 50%; bottom: 3px; width: var(--car-w); transform: translateX(-50%); }
+  .car { display: block; width: 100%; overflow: visible; }
+  .car .body { fill: var(--bg); }
+  .car .tyre { fill: var(--bg); }
+  .wheel { transform-box: fill-box; transform-origin: center; }
+  .faller { display: none; }
+  .scene { --car-w: clamp(240px, 38vw, 400px); }
+
   .skipbtn, .rail { display: none; }
 
   /* ---- live (scroll-driven) ---- */
-  .scene.live { height: 480dvh; }
+  .scene.live { height: 520dvh; }
   .live .stage { position: sticky; top: var(--hdr, 64px); height: calc(100dvh - var(--hdr, 64px)); min-height: 0; }
   .live .beats { position: absolute; inset: 0; width: auto; display: grid; place-items: center; padding: 0 24px; }
   .live .beat, .live .start { grid-area: 1 / 1; margin: 0; width: min(760px, 100%); will-change: opacity, transform; }
+  .live .b1, .live .b2, .live .b3 { align-self: start; margin-top: 11dvh; }
   .live .b0 { opacity: var(--b0); transform: translate3d(0, calc((1 - var(--b0)) * -24px), 0); pointer-events: none; }
   .live .b1 { opacity: var(--b1); transform: translate3d(0, calc((1 - var(--b1)) * 24px), 0); }
   .live .b2 { opacity: var(--b2); transform: translate3d(0, calc((1 - var(--b2)) * 24px), 0); }
@@ -115,6 +156,21 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .live .f2 { transform: translate3d(calc(var(--clear) * 45vmax), calc(var(--clear) * -10vmax), 0); opacity: calc(1 - var(--clear) * 0.95); }
   .live .f3 { transform: translate3d(calc(var(--clear) * -20vmax), calc(var(--clear) * 30vmax), 0); opacity: calc(1 - var(--clear) * 0.95); }
   .live .f { will-change: transform, opacity; }
+
+
+  .live .art { position: absolute; inset: 0; height: auto; margin: 0; width: auto; pointer-events: none; --road: 15dvh; }
+  .live .road { bottom: var(--road); opacity: var(--roadv); }
+  .live .car-wrap { bottom: calc(var(--road) - 3px); opacity: var(--roadv);
+    transform: translate3d(calc(-50% + var(--drive) * var(--drive) * (62vw + var(--car-w))), calc(var(--land) * 5px), 0); }
+  .live .wheel { transform: rotate(calc(var(--drive) * 1900deg)); }
+  .live .seated { opacity: var(--seat); }
+  .live .faller { display: block; position: absolute; left: 50%; width: 84px; bottom: calc(var(--road) + var(--car-w) * 0.3);
+    opacity: calc((1 - var(--seat)) * var(--fallv));
+    transform: translate3d(-50%, calc((var(--fall) * var(--fall) - 1) * 76dvh), 0) rotate(calc(sin(calc(var(--p) * 60)) * 8deg)); }
+  .faller svg { display: block; width: 100%; }
+  .paper { position: absolute; font-style: normal; font-size: 0.7rem; font-weight: 700; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 4px; padding: 3px 5px; background: var(--bg); }
+  .p1 { left: -34px; top: 16px; transform: rotate(-12deg); }
+  .p2 { right: -34px; top: 40px; transform: rotate(10deg); }
 
   .live .skipbtn { display: block; position: absolute; top: 16px; right: 20px; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s, opacity 0.3s; }
   .live .skipbtn:hover { color: var(--accent); border-color: var(--accent); }
@@ -157,11 +213,19 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
       set('--p', p);
       set('--clear', Math.min(1, Math.max(0, (p - 0.08) / 0.78)));
       set('--b0', 1 - Math.min(1, p / 0.12));
-      set('--b1', win(p, 0.12, 0.22, 0.34, 0.44));
-      set('--b2', win(p, 0.4, 0.5, 0.6, 0.68));
-      set('--b3', win(p, 0.64, 0.72, 0.8, 0.86));
-      set('--st', win(p, 0.86, 0.94, 1.1, 1.2));
-      scene.dataset.phase = p < 0.06 ? 'hero' : p < 0.9 ? 'story' : 'start';
+      set('--b1', win(p, 0.1, 0.18, 0.28, 0.36));
+      set('--b2', win(p, 0.32, 0.4, 0.5, 0.58));
+      set('--b3', win(p, 0.52, 0.58, 0.63, 0.68));
+      set('--roadv', win(p, 0.46, 0.56, 0.97, 1.0));
+      const f = Math.min(1, Math.max(0, (p - 0.63) / 0.17));
+      set('--fall', f);
+      set('--fallv', Math.min(1, f * 30));
+      set('--seat', f >= 1 ? 1 : 0);
+      const l = Math.min(1, Math.max(0, (p - 0.8) / 0.04));
+      set('--land', Math.sin(l * Math.PI));
+      set('--drive', Math.min(1, Math.max(0, (p - 0.85) / 0.12)));
+      set('--st', win(p, 0.9, 0.96, 1.1, 1.2));
+      scene.dataset.phase = p < 0.06 ? 'hero' : p < 0.93 ? 'story' : 'start';
     };
     const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     addEventListener('scroll', onScroll, { passive: true });
