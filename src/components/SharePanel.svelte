@@ -32,6 +32,7 @@
   });
 
   let consent = $state(false);
+  let ownData = $state(false);
   let status = $state<'idle' | 'sending' | 'done' | 'error'>('idle');
   let code = $state('');
   let errorMsg = $state('');
@@ -62,7 +63,7 @@
         } as Report)
       : null,
   );
-  const canSend = $derived(!!payload && consent && !usingSample && !!token && !!SITEKEY && status !== 'sending');
+  const canSend = $derived(!!payload && consent && ownData && !usingSample && !!token && !!SITEKEY && status !== 'sending');
 
   async function send() {
     if (!canSend || !payload) return;
@@ -163,8 +164,12 @@
     </details>
 
     <label class="consent">
+      <input type="checkbox" bind:checked={ownData} />
+      <span>These results come from my own genuine test quotes, and nothing here is personal data about anyone else.</span>
+    </label>
+    <label class="consent">
       <input type="checkbox" bind:checked={consent} />
-      <span>I agree to share this banded, anonymous report. I understand it is published only as group averages once enough people have contributed, and I can delete it with the code shown after sending.</span>
+      <span>I agree to share this banded, anonymous report. I understand it is published only as group averages once enough people have contributed, and I can delete it with the code shown after sending. See the <a href="/privacy/">privacy notice</a> and <a href="/terms/">terms</a>.</span>
     </label>
 
     {#if SITEKEY}
@@ -218,7 +223,8 @@
   details { margin-top: 16px; }
   summary { cursor: pointer; font-weight: 600; }
   pre { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow: auto; font-size: 0.78rem; max-height: 240px; }
-  .consent { display: flex; gap: 10px; align-items: flex-start; margin: 16px 0; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0; }
+  .consent a { color: var(--accent); font-weight: 600; }
   .consent input { width: 18px; height: 18px; accent-color: var(--accent); margin-top: 3px; flex: none; }
   .consent span { margin: 0; font-size: 0.88rem; color: var(--text); font-weight: 400; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }

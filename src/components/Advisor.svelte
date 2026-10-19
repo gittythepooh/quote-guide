@@ -124,9 +124,9 @@
   </div>
 {:else}
   <section class="summary" aria-labelledby="sum-h" bind:this={sumEl}>
-    <h2 id="sum-h">What to focus on</h2>
+    <h2 id="sum-h">What is worth testing</h2>
     <p class="lead">
-      Based on your answers and the data we have. Each item is something to <strong>test</strong> with honest options, not a trick.
+      General information for profiles like yours, from broad answers and limited data. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
       {#if claimPct !== null}Your claim feeling is treated as about {claimPct}% for the excess advice.{/if}
     </p>
 
@@ -163,7 +163,7 @@
             <span class="num">{n + 1}</span>
             <div class="t">
               <strong>{it.title}</strong>
-              <span class="badge {tone(it.likelihood)}" title="How likely this is to help you, from how well it fits you and how strong the evidence is">Chance it helps: {it.likelihood}</span>
+              <span class="badge {tone(it.likelihood)}" title="How well this matches your answers, and how strong the evidence is. A general indicator, not a promise.">Fit for your answers: {it.likelihood}</span>
             </div>
           </div>
           <p>{it.why}</p>
@@ -208,7 +208,7 @@
     {#if msg}<p class="warn" role="alert">{msg}</p>{/if}
     <p class="fine">
       The <a href="/explorer/">test plan</a> lists these changes in this order, tells you exactly what to change on a comparison site, and shows which really moved your price.
-      Information only, not advice. We save your answers in this browser only.
+      Information only, not advice or a recommendation. Quote Guide is not authorised by the FCA and does not sell or arrange insurance. We save your answers in this browser only. See the <a href="/terms/">terms</a>.
     </p>
   </section>
 {/if}

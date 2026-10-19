@@ -83,3 +83,6 @@ body { margin: 0; min-height: 100dvh; line-height: 1.6; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Placeholders that must be filled in before launch (checked by `npm run check:launch`). */
+.todo { background: #fde68a; color: #1f2937; padding: 1px 6px; border-radius: 6px; font-weight: 700; }

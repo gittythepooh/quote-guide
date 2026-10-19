@@ -13,6 +13,14 @@ Reviewed 19 Oct 2026. Items marked DONE are in the code. The rest need your acti
 - DONE Extra security headers (CSP base-uri, form-action, object-src; COOP; nosniff on API responses).
 - DONE `db/purge.sql` for the 24-month deletion; npm audit clean; no XSS sinks (`@html`, `innerHTML`, `eval`); no personal data or secrets in the repo.
 
+## Added 19 Oct (legal hardening)
+- DONE `noindex` meta tag on every page and an `X-Robots-Tag` header while this is a draft. Remove both at launch (`npm run check:launch` lists them). We deliberately did NOT block crawlers in robots.txt: a blocked crawler cannot see noindex.
+- DONE Full draft privacy notice and terms pages, FCA role statement in the footer, softened advice-like wording ("Fit for your answers", "What is worth testing").
+- DONE Second consent tick on sharing (own genuine data) plus links to privacy and terms.
+- DONE `docs/compliance/` pack (records, light DPIA, anonymisation assessment, request and breach procedures, FCA self-assessment, ICO fee, editorial rules).
+- DONE `npm run check:wording` runs before every build; `npm run check:launch` lists remaining blockers.
+- STILL HUMAN: legal review, ICO fee self-assessment, yellow placeholders (name, contact email, governing law), Cloudflare transfer terms, remove noindex, donation link.
+
 ## Added 19 Oct (second pass)
 - DONE Turnstile: widget loads only when the share panel opens; server verifies before storing; fails closed (503 if no secret, 403 if the check fails or times out after 5 s). The visitor IP is not sent when verifying.
 - DONE Circuit breaker: at most 60 accepted reports per hour and 400 per day (D1 counters, no IPs). Invalid reports never spend a bot-check call.

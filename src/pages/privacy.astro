@@ -1,48 +1,114 @@
 ---
 import Base from '../layouts/Base.astro';
+const updated = '19 October 2026';
 ---
 
-<Base title="Privacy | Quote Guide">
-  <article class="wrap" style="padding-block:56px 0; max-width:760px;">
-    <span class="pill">Privacy</span>
+<Base title="Privacy notice | Quote Guide" description="What Quote Guide stores, why, for how long, and your rights.">
+  <article class="wrap" style="padding-block:56px 0; max-width:800px;">
+    <span class="pill">Privacy notice</span>
     <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0;">How your data is handled</h1>
-    <p class="draft"><strong>Draft.</strong> This text must be reviewed by a qualified adviser before launch.</p>
+    <p class="draft"><strong>Draft, not yet reviewed by a legal adviser.</strong> Items shown as square brackets highlighted in yellow must be completed before launch. Last updated {updated}.</p>
 
-    <h2>By default, nothing leaves your browser</h2>
-    <p>The explorer, comparer and checklist run on your device. What you type is saved in your browser's local storage only. Clear your browser data to remove it. You can also export it to a file.</p>
+    <div class="box">
+      <strong>In short</strong>
+      <ul>
+        <li>By default <strong>nothing you type leaves your browser</strong>. Your answers and quotes are saved on your own device only.</li>
+        <li>Sharing a report is <strong>optional</strong>, anonymous and banded. It never includes prices, your name, address, email, or free text.</li>
+        <li>We publish only group figures, and only once at least 20 people have reported the same change.</li>
+        <li>We do not sell data, show adverts or use tracking cookies.</li>
+      </ul>
+    </div>
 
-    <h2>If you choose to share a report</h2>
-    <p>Sharing is optional and starts only when you press "Send report". We receive:</p>
+    <h2>1. Who we are</h2>
+    <p>The controller of any personal data described here is <span class="todo">[YOUR NAME OR TRADING NAME]</span>, operating "Quote Guide". Contact for privacy questions and requests: <span class="todo">[CONTACT EMAIL]</span>. We have not appointed a Data Protection Officer.</p>
+
+    <h2>2. What we handle, why, and for how long</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Data</th><th>Why</th><th>Basis</th><th>Kept</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Your answers and quotes</strong> in the guided check, test plan, comparer and checklist</td>
+            <td>To give you the tools and remember your progress</td>
+            <td>Not received by us. Stored on your device only.</td>
+            <td>Until you clear it (Start over, Start fresh, or clearing browser data)</td>
+          </tr>
+          <tr>
+            <td><strong>An optional shared report</strong>: age band, region, car age band, no-claims band, cover type, comparison site, percentage change for each test you choose, number of runs, baseline spread, and the week it arrived</td>
+            <td>To build community findings that help other people</td>
+            <td>Consent (UK GDPR Article 6(1)(a)), given by ticking the box and pressing Send. You can withdraw by deleting the report.</td>
+            <td>24 months, then deleted. Backups can hold deleted rows for up to 30 days.</td>
+          </tr>
+          <tr>
+            <td><strong>A delete code hash</strong>: a one-way hash of the random code shown to you once</td>
+            <td>So you can delete your own report without an account</td>
+            <td>Same as the report</td>
+            <td>Same as the report</td>
+          </tr>
+          <tr>
+            <td><strong>Report counters</strong>: how many reports were accepted this hour and day</td>
+            <td>To stop floods of fake reports</td>
+            <td>Not personal data (not linked to anyone)</td>
+            <td>3 days</td>
+          </tr>
+          <tr>
+            <td><strong>Bot check</strong> (Cloudflare Turnstile), only when you open the share panel</td>
+            <td>To stop automated abuse</td>
+            <td>Legitimate interests: keeping the service secure and the data honest</td>
+            <td>Handled by Cloudflare under its own terms. We receive only pass or fail.</td>
+          </tr>
+          <tr>
+            <td><strong>Technical request data</strong> (such as IP address) when you visit</td>
+            <td>To deliver and protect the website</td>
+            <td>Legitimate interests</td>
+            <td>Processed by Cloudflare on our behalf. We do not store IP addresses in our database, and we do not record them in reports.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>We do not ask for, and the form cannot accept, names, addresses, postcodes, dates of birth, email addresses, registration numbers, prices or free text in a shared report. Banded data is designed to be anonymous, but because several bands are combined we treat it as personal data to be safe.</p>
+
+    <h2>3. Who receives data</h2>
     <ul>
-      <li>Broad bands: age band, region, car age band, no-claims band, cover type, comparison site.</li>
-      <li>The percentage change for each test you choose to share, how many runs you did, and your baseline spread.</li>
-      <li>The day it was received (no time).</li>
+      <li><strong>Cloudflare, Inc.</strong> hosts the website and the report database and runs the bot check. It acts as our processor.</li>
+      <li><strong>GitHub</strong> hosts the source code only. It receives no visitor or report data.</li>
+      <li>We do not share, sell or rent data to anyone else, and we publish individual reports to no one.</li>
     </ul>
-    <p>We do <strong>not</strong> receive prices, your name, address, postcode, date of birth, email, registration number, free text, or your IP address. The panel shows the exact data before you send it.</p>
 
-    <h2>Deleting a report</h2>
-    <p>After sending, you get a random code once. We store only a one-way hash of it. Enter the code in the explorer's "Delete a report I sent" box to remove your rows. If you lose the code we cannot find your report, because it is not linked to you.</p>
+    <h2>4. Transfers outside the UK</h2>
+    <p>Cloudflare operates a global network, including in the United States. <span class="todo">[Confirm: Cloudflare's data processing terms and the UK Addendum / International Data Transfer Agreement apply to our account.]</span></p>
 
-    <h2>What we publish</h2>
-    <p>Only group figures (median and range) for a type of change, and only once at least 20 people have reported it. Individual reports are never published. Reports older than two years are not used.</p>
+    <h2>5. Your rights</h2>
+    <p>You can ask us to: tell you what we hold; correct it; delete it; restrict or object to our use of it; and, where we rely on consent, withdraw it at any time. You can also ask for a copy of data you provided.</p>
+    <ul>
+      <li><strong>Fastest route:</strong> delete a report yourself with the code shown after sending (the "Delete a report I sent" box in the test plan).</li>
+      <li><strong>Lost your code?</strong> Contact us at <span class="todo">[CONTACT EMAIL]</span>. Because reports are not linked to you, we may not be able to find yours. We will say so and explain what we can do. We reply within one month.</li>
+      <li><strong>Complaints:</strong> you can complain to the Information Commissioner's Office (ico.org.uk, helpline 0303 123 1113). We would like the chance to put things right first.</li>
+    </ul>
 
-    <h2>Bot check</h2>
-    <p>When you open the share panel, a Cloudflare Turnstile bot check loads from Cloudflare. Your browser contacts Cloudflare to run it. We do not send your IP address to Cloudflare when we verify the result. We do not store any IP address.</p>
+    <h2>6. Browser storage (cookies and similar)</h2>
+    <p>We use your browser's local storage to keep your own progress, because you asked us to save what you enter. The keys are <code>qg-advisor-v1</code>, <code>qg-whatif-v2</code>, <code>qg-compare-v1</code> and <code>qg-must-be-true</code>. They never leave your device and are not used for tracking or advertising. We set no cookies ourselves.</p>
+    <p>If you open the share panel, a Cloudflare Turnstile script loads from Cloudflare and may use its own storage to tell people from bots. We load it only at that point. <span class="todo">[Adviser to confirm the PECR position for Turnstile and for local storage.]</span></p>
 
-    <h2>Limits</h2>
-    <p>To stop floods of fake reports we count how many reports are accepted per hour and per day. These counts are not linked to any person.</p>
+    <h2>7. Automated decisions and children</h2>
+    <p>We make no automated decisions about you. The tools show general information from the data we hold. This service is not aimed at under-18s. If you are under 18, ask a parent or guardian before sharing a report.</p>
 
-    <h2>Cookies and tracking</h2>
-    <p>No advertising, no tracking cookies and no accounts.</p>
-
-    <h2>Not advice</h2>
-    <p>Quote Guide gives general information. It does not give personal recommendations or sell insurance. Always answer insurance questions truthfully.</p>
+    <h2>8. Changes</h2>
+    <p>If we change this notice in a way that matters, we will update the date above and say what changed.</p>
   </article>
 </Base>
 
 <style>
-  h2 { font-size: 1.3rem; letter-spacing: -0.02em; margin: 36px 0 8px; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.02em; margin: 34px 0 8px; }
   p, li { margin: 0 0 12px; }
   ul { padding-left: 20px; }
   .draft { background: var(--warn-soft); padding: 12px 16px; border-radius: 12px; }
+  .box { background: var(--accent-soft); border-radius: 14px; padding: 16px 18px; margin: 18px 0; }
+  .box ul { margin: 8px 0 0; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; min-width: 640px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { background: var(--surface-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-size: 0.85em; }
 </style>

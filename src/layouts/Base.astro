@@ -23,6 +23,8 @@ const links = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
+    <!-- PRE-LAUNCH: remove this robots tag AND the X-Robots-Tag line in public/_headers at launch. `npm run check:launch` fails while they exist. -->
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
@@ -54,9 +56,9 @@ const links = [
     <footer style="border-top:1px solid var(--line); margin-top:72px; padding:32px 0 48px; color:var(--muted); font-size:0.88rem;">
       <div class="wrap" style="display:grid; gap:10px;">
         <p style="margin:0; max-width:70ch;">
-          <strong style="color:var(--text);">Information only.</strong> Quote Guide does not give personal advice or sell insurance. Always answer quote questions truthfully. Wrong answers can reduce or void a claim payout.
+          <strong style="color:var(--text);">Information only.</strong> Quote Guide is not authorised or regulated by the Financial Conduct Authority. We do not sell, arrange or advise on insurance, and we do not recommend any insurer or policy. Always answer quote questions truthfully: wrong answers can reduce or void a claim payout.
         </p>
-        <p style="margin:0;">Free and independent. Funded by donations. No affiliate links. Your answers stay in your browser unless you choose to share. <a href="/privacy/" style="color:var(--accent);">Privacy</a></p>
+        <p style="margin:0;">Free and independent. Funded by donations. No affiliate links. Your answers stay in your browser unless you choose to share. <a href="/privacy/" style="color:var(--accent);">Privacy</a> · <a href="/terms/" style="color:var(--accent);">Terms</a></p>
       </div>
     </footer>
   </body>

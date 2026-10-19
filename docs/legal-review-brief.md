@@ -51,6 +51,9 @@ Prepared 19 Oct 2026. This is a briefing, not legal advice. Its purpose is to le
 17. Licence for the code (open source) and for the published data.
 18. Accessibility duties (Equality Act) for a free public site.
 
+## Already drafted for you to review
+`docs/compliance/` holds an FCA self-assessment, record of processing, light DPIA, anonymisation assessment (shows the rows are unique in the table, so treated as personal data), request and breach procedures, and editorial rules. The site has draft `/privacy/` and `/terms/` pages with yellow placeholders. Please mark up those drafts rather than starting from scratch.
+
 ## Documents to give the adviser
 - `src/pages/privacy.astro` (draft privacy notice) and `src/pages/guide.astro`.
 - `src/lib/report-schema.ts` (exactly what can be collected) and `db/schema.sql`.
