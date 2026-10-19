@@ -106,7 +106,7 @@
 
 {#if !done}
   <div class="chat">
-    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax={STEPS.length} aria-valuenow={answered.length}>
+    <div class="prog" role="progressbar" aria-label="Question progress" aria-valuemin="0" aria-valuemax={STEPS.length} aria-valuenow={answered.length}>
       <div style="width:{(answered.length / STEPS.length) * 100}%"></div>
     </div>
     <p class="count">Question {answered.length + 1} of {STEPS.length}</p>
@@ -142,7 +142,7 @@
   <section class="summary" aria-labelledby="sum-h" bind:this={sumEl}>
     <h2 id="sum-h" class="sr">In priority order</h2>
     <div class="topcta">
-      <div><strong>{start.length + also.length} tests, in this order</strong><span>About 20 to 30 minutes. You can stop and come back any time.</span></div>
+      <div><strong>{[...start, ...also].filter((i) => i.testLabel).length} tests to run, in this order</strong><span>Plus a few free tips. About 20 to 30 minutes in all. You can stop and come back any time.</span></div>
       <button class="btn btn-primary" type="button" onclick={openPlan}>Open my test plan →</button>
     </div>
     <p class="lead">
@@ -301,7 +301,7 @@
   .tierhint { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 9px; vertical-align: 2px; margin-left: 6px; }
   .opt { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 2px 9px; vertical-align: 2px; margin-left: 6px; }
   .lowhint { color: var(--muted); font-size: 0.88rem; margin: -4px 0 10px; }
-  .lowtier { opacity: 0.88; }
+  .lowtier { border-style: dashed; } /* a cue that does not lower text contrast (opacity would) */
   .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .item { padding: 18px; }
   .item p { margin: 8px 0 0; }
@@ -320,8 +320,6 @@
   .answers { margin-top: 0; }
   summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; }
   .basis { color: var(--muted); font-size: 0.88rem; }
-  .plain { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-  .plain li { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
   .why { color: var(--muted); font-size: 0.92rem; }
   .check { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 8px; }

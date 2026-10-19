@@ -103,11 +103,25 @@ export async function sha256Hex(s: string) {
 let schemaReady: Promise<unknown> | null = null;
 /** Create the tables if they do not exist yet. Runs once per Worker instance; retries if it failed. */
 export function ensureSchema(db: D1Database): Promise<unknown> {
-  if (!schemaReady) {
-    schemaReady = db.batch(SCHEMA_STATEMENTS.map((q) => db.prepare(q))).catch((e) => {
-      schemaReady = null;
-      throw e;
-    });
-  }
-  return schemaReady;
+  const run: Promise<unknown> = schemaReady ?? db.batch(SCHEMA_STATEMENTS.map((q) => db.prepare(q))).catch((e: unknown) => {
+    schemaReady = null;
+    throw e;
+  });
+  schemaReady = run;
+  return run;
+}
+
+/** Retention: delete raw reports older than 24 months and old limiter counters. Run monthly by the Worker's cron. */
+export async function purgeOld(db: D1Database): Promise<void> {
+  await ensureSchema(db);
+  await db.batch([
+    db.prepare("DELETE FROM results WHERE week < date('now', '-730 days')"),
+    db.prepare("DELETE FROM limits WHERE substr(bucket, 3, 10) < date('now', '-3 days')"),
+  ]);
+}
+
+/** Only honour the test-verifier override when the request is to a local address. */
+export function isLocalRequest(request: Request): boolean {
+  const h = new URL(request.url).hostname;
+  return h === 'localhost' || h === '127.0.0.1' || h === '[::1]';
 }

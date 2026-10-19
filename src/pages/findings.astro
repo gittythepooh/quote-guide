@@ -18,6 +18,7 @@ import ShareStep from '../components/ShareStep.svelte';
   </div>
   <div class="wrap">
     <ShareStep client:only="svelte" />
+    <noscript><p class="card" style="padding:18px;">This tool needs JavaScript to run in your browser. Your answers are never sent anywhere unless you choose to share.</p></noscript>
     <Findings client:load />
   </div>
 </Base>

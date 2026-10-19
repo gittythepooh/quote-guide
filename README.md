@@ -12,6 +12,14 @@ Everything runs in the browser. No server, no accounts, no stored personal data.
 ## Stack
 Astro (static) + Svelte islands + Tailwind v4. Hosted on Cloudflare Pages.
 
+## Checks
+```sh
+npm test              # ~100 checks: scoring, test plan maths, data handling, API handler, schema
+npm run check:types   # TypeScript and Svelte warnings
+npm run check:wording # the information-only guard (also runs before every build)
+npm run check:launch  # lists what still blocks going public
+```
+
 ## Run locally
 ```sh
 npm install

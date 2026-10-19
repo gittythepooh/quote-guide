@@ -16,6 +16,10 @@ run_worker_first = ["/api/*"]
 [vars]
 TURNSTILE_SITEKEY = "0x4AAAAAAFbUzvPAoco8zmdq"   # public site key (safe to commit)
 
+# Monthly clean-up: deletes reports older than 24 months (the privacy notice promises this).
+[triggers]
+crons = ["17 3 1 * *"]
+
 # The database ID is not a secret. The tables create themselves on first use.
 [[d1_databases]]
 binding = "DB"

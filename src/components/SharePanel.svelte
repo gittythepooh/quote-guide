@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { CHANGES, AGE_BANDS, REGIONS, CAR_AGE_BANDS, NCD_BANDS, COVER, SITES, type ChangeKey, type Report } from '../lib/report-schema';
+  import { CHANGES, AGE_BANDS, REGIONS, CAR_AGE_BANDS, NCD_BANDS, COVER, SITES, NOISE_MAX, PCT_MIN, PCT_MAX, inShareRange, type ChangeKey, type Report } from '../lib/report-schema';
 
   type Row = { id: string; label: string; pct: number; change: ChangeKey; repeats: number };
   let { rows, baselineRuns, noisePct, usingSample, answers, open = $bindable(false) }: { rows: Row[]; baselineRuns: number; noisePct: number; usingSample: boolean; answers: any; open?: boolean } = $props();
@@ -49,24 +49,34 @@
 
   // Bands from the guided check are used when they match the allowed bands. The rest is chosen here.
   const pre = (v: unknown, list: readonly string[]) => (typeof v === 'string' && list.includes(v) ? v : '');
-  let ageBand = $state(pre(answers?.age, AGE_BANDS));
-  let ncd = $state(pre(answers?.ncd, NCD_BANDS));
-  let cover = $state(pre(answers?.cover, COVER));
+  let ageBand = $state('');
+  let ncd = $state('');
+  let cover = $state('');
+  // Fill from the guided check once the answers are known, without overwriting a choice the person made.
+  $effect(() => {
+    if (!ageBand) ageBand = pre(answers?.age, AGE_BANDS);
+    if (!ncd) ncd = pre(answers?.ncd, NCD_BANDS);
+    if (!cover) cover = pre(answers?.cover, COVER);
+  });
   let region = $state('');
   let carAge = $state('');
   let site = $state('');
   let excluded = $state<Record<string, boolean>>({});
 
-  const chosen = $derived(rows.filter((r) => !excluded[r.id]));
+  // The server accepts changes from -90% to +300% and a baseline spread up to 50%. Anything outside that is almost
+  // certainly a typo, so say so instead of letting the whole report fail.
+  const outOfRange = $derived(rows.filter((r) => !inShareRange(r.pct)));
+  const noiseTooHigh = $derived(noisePct > NOISE_MAX);
+  const chosen = $derived(rows.filter((r) => inShareRange(r.pct) && !excluded[r.id]));
   const dupes = $derived(new Set(chosen.map((c) => c.change)).size !== chosen.length);
 
   const payload = $derived<Report | null>(
-    ageBand && region && carAge && ncd && cover && site && baselineRuns >= 1 && chosen.length && !dupes
+    ageBand && region && carAge && ncd && cover && site && baselineRuns >= 1 && !noiseTooHigh && chosen.length && !dupes
       ? ({
           v: 1,
           profile: { ageBand, region, carAge, ncd, cover, site } as Report['profile'],
           baselineRuns: Math.min(10, baselineRuns),
-          noisePct: Math.min(50, noisePct),
+          noisePct,
           results: chosen.map((c) => ({ change: c.change, pct: Math.round(c.pct * 10) / 10, repeats: Math.min(10, c.repeats) })),
         } as Report)
       : null,
@@ -164,6 +174,12 @@
       {/each}
     </ul>
     <p class="hint">Baseline runs: {baselineRuns}. Measured noise: {noisePct.toFixed(1)}%.</p>
+    {#if outOfRange.length}
+      <p class="warn">{outOfRange.map((r) => r.label).join(', ')} {outOfRange.length === 1 ? 'is' : 'are'} not included: a change outside {PCT_MIN}% to +{PCT_MAX}% is almost always a typo. Check the price in your test plan.</p>
+    {/if}
+    {#if noiseTooHigh}
+      <p class="warn">Your baseline runs differ by more than {NOISE_MAX}%, so they cannot be shared. Check the baseline prices in your test plan.</p>
+    {/if}
     {#if dupes}<p class="warn">Each standard type can be used once per report.</p>{/if}
 
     <details open={!!payload}>

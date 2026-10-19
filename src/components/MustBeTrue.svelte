@@ -35,7 +35,7 @@
     <strong>{done} of {items.length} checked</strong>
     <span class="saved">Saved on this device only</span>
   </div>
-  <div class="bar" role="progressbar" aria-valuenow={pct} aria-valuemin="0" aria-valuemax="100">
+  <div class="bar" role="progressbar" aria-label="Checklist progress" aria-valuenow={pct} aria-valuemin="0" aria-valuemax="100">
     <div class="fill" style="width:{pct}%"></div>
   </div>
   <ul>

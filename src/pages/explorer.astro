@@ -22,6 +22,7 @@ import HowTo from '../components/HowTo.astro';
   <div class="wrap">
     <HowTo />
     <Explorer client:only="svelte" />
+    <noscript><p class="card" style="padding:18px;">This tool needs JavaScript to run in your browser. Your answers are never sent anywhere unless you choose to share.</p></noscript>
     <p class="nextstep"><a href="/compare/">Next: put your final quotes side by side →</a></p>
   </div>
 </Base>

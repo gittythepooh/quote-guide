@@ -2,7 +2,7 @@
   import { tick } from 'svelte';
   import { TESTS, orderTests, isoDate, addDays, daysUntil, type Ordered } from '../lib/tests';
   import {
-    load, save, emptyStore, sampleStore, baseline, allResults, gbp, signed, pctText, NOISE_FLOOR,
+    load, save, normalize, emptyStore, sampleStore, baseline, allResults, gbp, signed, pctText, NOISE_FLOOR,
     stackCandidates, buildStack, findSuspects, type Store, type Result,
   } from '../lib/explorer-store';
 
@@ -86,7 +86,7 @@
   const setBase = (i: number, v: string) => { store.baselineRuns[i] = numOrNull(v); };
   const addBase = () => { if (store.baselineRuns.length < 3) store.baselineRuns.push(null); };
   const dropBase = (i: number) => { if (store.baselineRuns.length > 1) store.baselineRuns.splice(i, 1); };
-  const setRef = (k: 'vehicleValue' | 'mileage', v: string) => { store.refs[k] = numOrNull(v); };
+  const setRef = (k: 'vehicleValue' | 'mileage' | 'excess', v: string) => { store.refs[k] = numOrNull(v); };
   const skip = (id: string) => { st(id).skipped = true; if (openId === id) openId = null; };
   const unskip = (id: string) => { st(id).skipped = false; openId = id; };
   const clear = (id: string) => { const s = st(id); s.runs = [null]; s.skipped = false; };
@@ -126,7 +126,7 @@
     try {
       const d = JSON.parse(await f.text());
       if (d?.v !== 2 || !Array.isArray(d.baselineRuns)) throw new Error('bad');
-      store = { ...emptyStore(), ...d, usingSample: false };
+      store = { ...normalize(d), usingSample: false };
       msg = 'Imported.';
     } catch { msg = 'That file could not be read.'; }
     (e.target as HTMLInputElement).value = '';

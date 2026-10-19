@@ -86,12 +86,37 @@ function fromV1(d: any): Store {
   return s;
 }
 
+const num1 = (x: unknown): number | null => (typeof x === 'number' && Number.isFinite(x) ? x : null);
+const runsOf = (x: unknown): (number | null)[] => {
+  const a = Array.isArray(x) ? x.slice(0, 3).map(num1) : [];
+  return a.length ? a : [null];
+};
+
+/** Make any saved or imported data safe to use: right shapes, known tests only, numbers or null. */
+export function normalize(input: unknown): Store {
+  const d: any = input && typeof input === 'object' ? input : {};
+  const out = emptyStore();
+  out.baselineRuns = runsOf(d.baselineRuns);
+  out.refs = { vehicleValue: num1(d.refs?.vehicleValue), mileage: num1(d.refs?.mileage), excess: num1(d.refs?.excess) };
+  for (const [id, st] of Object.entries(d.tests && typeof d.tests === 'object' ? (d.tests as Record<string, any>) : {})) {
+    const def = TESTS[id];
+    if (!def || !st || typeof st !== 'object') continue;
+    const params: Params = { ...def.defaults };
+    for (const [k, v] of Object.entries(st.params && typeof st.params === 'object' ? st.params : {})) if (typeof v === 'string' && v.length <= 40) params[k] = v;
+    out.tests[id] = { params, runs: runsOf(st.runs), ...(st.on === true ? { on: true } : {}), ...(st.skipped === true ? { skipped: true } : {}), ...(typeof st.text === 'string' ? { text: st.text.slice(0, 200) } : {}) };
+  }
+  out.custom = (Array.isArray(d.custom) ? d.custom : []).slice(0, 20).filter((c: any) => c && typeof c === 'object').map((c: any) => ({ id: typeof c.id === 'string' ? c.id.slice(0, 60) : crypto.randomUUID(), label: typeof c.label === 'string' ? c.label.slice(0, 120) : '', price: num1(c.price) }));
+  for (const [k, v] of Object.entries(d.stack && typeof d.stack === 'object' ? (d.stack as Record<string, unknown>) : {})) if (TESTS[k]) out.stack[k] = num1(v);
+  out.usingSample = d.usingSample === true;
+  return out;
+}
+
 export function load(): Store {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      if (d?.v === 2) return tidy({ ...emptyStore(), ...d, refs: { ...emptyStore().refs, ...(d.refs ?? {}) }, stack: d.stack ?? {} });
+      if (d?.v === 2) return tidy(normalize(d));
     }
     const old = localStorage.getItem('qg-whatif-v1');
     if (old) return tidy(fromV1(JSON.parse(old)));

@@ -11,7 +11,7 @@
   --accent: #0f766e;
   --accent-soft: #d9f1ed;
   --accent-text: #ffffff;
-  --good: #15803d;
+  --good: #166534; /* 6.9:1 on --good-soft (checked with axe) */
   --good-soft: #dcf5e4;
   --warn: #b45309;
   --warn-soft: #fdecd0;

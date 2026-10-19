@@ -57,6 +57,12 @@ export type Report = {
   results: Result[];
 };
 
+/** Limits the server enforces. The share panel checks the same limits so a typo cannot sink a whole report. */
+export const PCT_MIN = -90;
+export const PCT_MAX = 300;
+export const NOISE_MAX = 50;
+export const inShareRange = (pct: number) => Number.isFinite(pct) && pct >= PCT_MIN && pct <= PCT_MAX;
+
 export const MIN_GROUP = 20; // a public figure needs at least this many reports
 
 const has = <T extends readonly string[]>(list: T, v: unknown): v is T[number] =>
@@ -81,7 +87,7 @@ export function validateReport(input: unknown): { ok: true; report: Report } | {
   const baselineRuns = r.baselineRuns;
   if (!isNum(baselineRuns) || !Number.isInteger(baselineRuns) || baselineRuns < 1 || baselineRuns > 10) return { ok: false, error: 'bad baselineRuns' };
   const noisePct = r.noisePct;
-  if (!isNum(noisePct) || noisePct < 0 || noisePct > 50) return { ok: false, error: 'bad noisePct' };
+  if (!isNum(noisePct) || noisePct < 0 || noisePct > NOISE_MAX) return { ok: false, error: 'bad noisePct' };
   if (!Array.isArray(r.results) || r.results.length < 1 || r.results.length > 20) return { ok: false, error: 'bad results' };
   const seen = new Set<string>();
   const results: Result[] = [];
@@ -89,7 +95,7 @@ export function validateReport(input: unknown): { ok: true; report: Report } | {
     if (!x || typeof x.change !== 'string' || !Object.hasOwn(CHANGES, x.change) || seen.has(x.change)) return { ok: false, error: 'bad change' };
     const pct = x.pct;
     const repeats = x.repeats;
-    if (!isNum(pct) || pct < -90 || pct > 300) return { ok: false, error: 'bad pct' };
+    if (!isNum(pct) || !inShareRange(pct)) return { ok: false, error: 'bad pct' };
     if (!isNum(repeats) || !Number.isInteger(repeats) || repeats < 1 || repeats > 10) return { ok: false, error: 'bad repeats' };
     seen.add(x.change);
     results.push({ change: x.change as ChangeKey, pct: round1(pct), repeats });

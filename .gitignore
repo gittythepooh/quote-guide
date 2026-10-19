@@ -26,3 +26,6 @@ pnpm-debug.log*
 # Cloudflare local state
 .wrangler/
 .dev.vars
+
+# test bundles
+tests/.build/

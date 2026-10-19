@@ -27,7 +27,7 @@ The Worker then serves `/api/config`, `/api/findings` and `/api/report`.
 ## 6. Before real use
 - **Rate limit rule (per IP).** Dashboard, your domain, Security, WAF, Rate limiting rules: URI path equals `/api/report`, method POST or DELETE, suggested 5 requests per 10 minutes (or the longest period your plan allows), action Block for 1 hour. This needs a domain on Cloudflare. The app also has a backstop: at most 60 accepted reports an hour and 400 a day (`underCap` in `functions/api/_util.ts`).
 - Do not enable Logpush or any tool that records client IPs for `/api/*`.
-- Monthly: delete old rows. In the D1 dashboard console run the statements in `db/purge.sql`.
+- Retention: a monthly cron in the Worker deletes reports older than 24 months and old counters (see `scheduled` in `src/worker.ts`). `db/purge.sql` remains for manual use.
 - Legal review and the privacy notice placeholders (see `docs/compliance/README.md`).
 
 ## Local testing

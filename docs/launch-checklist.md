@@ -31,6 +31,11 @@ Reviewed 19 Oct 2026. Items marked DONE are in the code. The rest need your acti
 - DONE The API now runs inside a Worker (`src/worker.ts`) so it works with the Workers deploy. Tables create themselves. `/api/config` gives the public bot-check key. Tested locally: pages, routes, validation, auto-created tables. The real Turnstile check and a real shared report can only be tested live.
 - STILL HUMAN: create the D1 database and Turnstile widget, set the `TURNSTILE_SECRET` secret, edit `wrangler.toml` (see `cloudflare-setup.md`).
 
+## Added 19 Oct (second review)
+- DONE `npm test` (103 checks) and `npm run check:types` (0 errors). Accessibility: axe reports 0 violations on every page in light, dark and phone width.
+- DONE Monthly retention purge now runs automatically (Worker cron). The old "run db/purge.sql monthly" step is no longer needed.
+- STILL YOU: Turnstile secret as a true Secret and rotated; own domain with HSTS and the rate-limit rule. See `review-2.md`.
+
 ## Must do before launch
 1. **Rate limiting rule (HIGH, you).** Create the Cloudflare WAF rule in `docs/cloudflare-setup.md`. The in-app cap is a backstop, not a substitute.
 2. **Turnstile keys (HIGH, you).** Create the widget, set `PUBLIC_TURNSTILE_SITEKEY` and the `TURNSTILE_SECRET` Pages secret. Then send one real test report on the preview URL.
@@ -38,7 +43,7 @@ Reviewed 19 Oct 2026. Items marked DONE are in the code. The rest need your acti
 4. **Privacy contact (MED).** Add a contact address to the privacy page for people who lose their delete code. State that deleted rows can persist in D1 Time Travel backups for up to 30 days.
 5. **Account security (MED).** 2FA on GitHub and Cloudflare. Protect `main`. Never commit tokens. Keep the repo free of real data.
 6. **Do not log IPs (MED).** No analytics or Logpush on `/api/*` that records client IPs.
-7. **Monthly job (MED).** Run `db/purge.sql`. Skim new reports for bursts (same week, same change, odd values).
+7. **Monthly check (MED).** Retention purge is automatic (Worker cron). Skim new reports for bursts (same week, same change, odd values).
 
 ## Known, accepted for now
 - CSP still allows inline scripts (Astro islands need it). Move to hashes later.

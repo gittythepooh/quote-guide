@@ -15,13 +15,13 @@ const terms = [
   <summary><span>New to this? How to run a test</span><em>2 minute read</em></summary>
   <div class="inner">
     <div class="col">
-      <h3>You will need</h3>
+      <h2>You will need</h2>
       <ul>
         <li>About 20 to 30 minutes and one comparison site open in a private window.</li>
         <li>Your real car and driver details to hand.</li>
         <li>A place to note prices (this page saves them for you).</li>
       </ul>
-      <h3>How a test works</h3>
+      <h2>How a test works</h2>
       <ol>
         <li><strong>Baseline:</strong> fill in the site honestly. Note the cheapest comprehensive price.</li>
         <li><strong>Change one thing</strong> exactly as the card says. Keep everything else the same.</li>
@@ -30,7 +30,7 @@ const terms = [
       <p class="tip"><strong>Tips:</strong> use the same site and the same sitting for every test, and do not buy from a test quote. A repeat run on a test shows whether it was a fluke.</p>
     </div>
     <div class="col">
-      <h3>Jargon buster</h3>
+      <h2>Jargon buster</h2>
       <dl>
         {terms.map(([t, d]) => (<><dt>{t}</dt><dd>{d}</dd></>))}
       </dl>
@@ -48,7 +48,7 @@ const terms = [
   summary em { font-style: normal; font-weight: 500; font-size: 0.8rem; color: var(--muted); }
   .inner { display: grid; gap: 22px; grid-template-columns: 1fr; padding: 0 18px 18px; }
   @media (min-width: 820px) { .inner { grid-template-columns: 1fr 1fr; } }
-  h3 { margin: 0 0 6px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  h2 { margin: 0 0 6px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
   ul, ol { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 4px; }
   .tip { background: var(--accent-soft); border-radius: 12px; padding: 10px 14px; font-size: 0.9rem; margin: 0; }
   dl { margin: 0; display: grid; gap: 8px; }

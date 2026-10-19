@@ -1,5 +1,5 @@
 import { validateReport } from '../../src/lib/report-schema';
-import { ensureSchema, json, readJson, sameOrigin, sha256Hex, underCap, verifyTurnstile, weekStart } from './_util';
+import { ensureSchema, isLocalRequest, json, readJson, sameOrigin, sha256Hex, underCap, verifyTurnstile, weekStart } from './_util';
 
 interface Env {
   DB: D1Database;
@@ -23,7 +23,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const { token, report: raw } = (body.body ?? {}) as { token?: unknown; report?: unknown };
   const v = validateReport(raw); // cheap checks first
   if (!v.ok) return json({ error: v.error }, 400);
-  if (!(await verifyTurnstile(token, env.TURNSTILE_SECRET, env.TURNSTILE_VERIFY_URL))) return json({ error: 'bot check failed' }, 403);
+  if (!(await verifyTurnstile(token, env.TURNSTILE_SECRET, isLocalRequest(request) ? env.TURNSTILE_VERIFY_URL : undefined))) return json({ error: 'bot check failed' }, 403);
   if (!(await underCap(env.DB))) return json({ error: 'too many reports right now, try later' }, 429, { 'retry-after': '3600' });
   const { report } = v;
 
