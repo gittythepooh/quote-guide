@@ -9,13 +9,13 @@ export const SEED_SOURCE =
 export type SeedFinding = { change: ChangeKey; pct: number; note: string };
 
 export const seedFindings: SeedFinding[] = [
-  { change: 'add_named_driver', pct: -15, note: 'Parent added who would genuinely drive. Mum -15.3%, dad -14.9%.' },
+  { change: 'add_named_driver', pct: -15, note: 'A parent added who would genuinely drive: about -15% either way.' },
   { change: 'add_two_named_drivers', pct: -22, note: 'Both parents added: -22.1%.' },
   { change: 'vehicle_value_up', pct: 0, note: 'About £0 change. Within noise.' },
   { change: 'vehicle_value_down', pct: 0, note: 'About £0 change. Within noise.' },
   { change: 'tracker', pct: -0.1, note: 'About £2 change. Within noise.' },
-  { change: 'cover_tpft', pct: -6, note: 'About 6% cheaper than comprehensive. Low confidence: labels in the later part of the sheet looked swapped.' },
-  { change: 'cover_tp', pct: 72, note: 'Third party only was dearer than comprehensive (+72%). Low confidence: same label issue. Always get a comprehensive quote too.' },
+  { change: 'cover_tpft', pct: -6, note: 'About 6% cheaper than comprehensive. Low confidence: one small early test.' },
+  { change: 'cover_tp', pct: 72, note: 'Third party only was dearer than comprehensive (+72%). Low confidence: one small early test. Always get a comprehensive quote too.' },
   { change: 'mileage_down', pct: 3, note: 'Lower mileage moved the price by about 3%. Within noise.' },
   { change: 'mileage_up', pct: -1, note: 'Higher mileage moved the price by about 1%. Within noise.' },
   { change: 'black_box', pct: -38, note: 'Black box quote about 38% cheaper than the no-black-box baseline. Check the trade-offs.' },

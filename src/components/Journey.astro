@@ -1,0 +1,44 @@
+---
+// A four-step bar that shows where you are in the journey. Pass the current step (1 to 4).
+interface Props { current: 1 | 2 | 3 | 4 }
+const { current } = Astro.props;
+const steps = [
+  { n: 1, label: 'Check', href: '/start/', hint: 'What to test' },
+  { n: 2, label: 'Test', href: '/explorer/', hint: 'Run your plan' },
+  { n: 3, label: 'Compare', href: '/compare/', hint: 'Final quotes' },
+  { n: 4, label: 'Community', href: '/findings/', hint: 'See what worked' },
+];
+---
+
+<nav class="journey wrap" aria-label="Your journey">
+  <ol>
+    {steps.map((s) => (
+      <li class:list={{ cur: s.n === current, done: s.n < current }}>
+        <a href={s.href} aria-current={s.n === current ? 'step' : undefined}>
+          <span class="dot">{s.n < current ? '✓' : s.n}</span>
+          <span class="txt"><strong>{s.label}</strong><small>{s.hint}</small></span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .journey { padding-top: 22px; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; text-decoration: none; color: var(--muted); border: 1px solid transparent; }
+  a:hover { background: var(--surface-2); }
+  .dot { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); font-weight: 800; font-size: 0.82rem; color: var(--muted); }
+  .txt { display: grid; line-height: 1.2; min-width: 0; }
+  strong { color: var(--text); font-size: 0.9rem; }
+  small { font-size: 0.74rem; }
+  .cur a { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+  .cur .dot { background: var(--accent); color: var(--accent-text); }
+  .done .dot { background: var(--good-soft); color: var(--good); }
+  @media (max-width: 640px) {
+    ol { gap: 4px; }
+    a { flex-direction: column; text-align: center; gap: 4px; padding: 8px 4px; }
+    small { display: none; }
+    strong { font-size: 0.78rem; }
+  }
+</style>

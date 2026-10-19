@@ -25,13 +25,37 @@ export function sampleStore(): Store {
     baselineRuns: [3339],
     usingSample: true,
     tests: Object.fromEntries([
-      t('drivers', { count: 'two' }, 2601),
+      t('drivers', {}, 2827),
+      t('drivers2', {}, 2601),
       t('blackbox', {}, 2052),
       t('cover', { type: 'tpft' }, 3135),
       t('value', { dir: 'down' }, 3339),
       t('tracker', {}, 3337),
     ]),
   };
+}
+
+// Rows the OLD explorer pre-filled as sample data. It switched to "your data" as soon as anything was
+// typed, so these could be migrated as if they were real. Drop any that still match label AND price.
+const OLD_SAMPLE: Record<string, number> = {
+  'add mum as a driver': 2827, 'add dad as a driver': 2843, 'add both parents': 2601,
+  'vehicle value +£200': 3339, 'vehicle value −£200': 3339, 'add a tracker': 3337,
+  'change course type': 3339, 'add a second job': 3339,
+};
+const isOldSample = (label: string, price: number | null) => price !== null && OLD_SAMPLE[label.trim().toLowerCase()] === price;
+
+/** Clean up older saved data: remove leftover sample rows and move the old "two drivers" option. */
+function tidy(s: Store): Store {
+  s.custom = (s.custom ?? []).filter((c) => !isOldSample(c.label ?? '', c.price));
+  const d: any = s.tests.drivers;
+  if (d?.params?.count === 'two') {
+    const { count: _c, ...rest } = d.params;
+    s.tests.drivers2 = { on: true, params: { ...TESTS.drivers2.defaults, ...rest }, runs: d.runs ?? [null] };
+    s.tests.drivers = { params: { ...TESTS.drivers.defaults, ...rest }, runs: [null] };
+  } else if (d?.params && 'count' in d.params) {
+    delete d.params.count;
+  }
+  return s;
 }
 
 const V1_LABELS: Record<string, [string, Params]> = {
@@ -53,6 +77,7 @@ function fromV1(d: any): Store {
     const label = String(row.label ?? '').trim();
     const price = typeof row.price === 'number' ? row.price : null;
     if (!label && price === null) continue;
+    if (isOldSample(label, price)) continue;
     const hit = V1_LABELS[label.toLowerCase()];
     if (hit && !s.tests[hit[0]]) s.tests[hit[0]] = { on: true, params: { ...TESTS[hit[0]].defaults, ...hit[1] }, runs: [price] };
     else s.custom.push({ id: crypto.randomUUID(), label, price });
@@ -65,10 +90,10 @@ export function load(): Store {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw);
-      if (d?.v === 2) return { ...emptyStore(), ...d };
+      if (d?.v === 2) return tidy({ ...emptyStore(), ...d });
     }
     const old = localStorage.getItem('qg-whatif-v1');
-    if (old) return fromV1(JSON.parse(old));
+    if (old) return tidy(fromV1(JSON.parse(old)));
   } catch {}
   return emptyStore();
 }

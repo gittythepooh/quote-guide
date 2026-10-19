@@ -1,92 +1,162 @@
 ---
 import Base from '../layouts/Base.astro';
 
-const tools = [
-  {
-    href: '/start/',
-    title: 'Guided check',
-    text: 'Answer a few quick questions, like a chat. Get a short list of what is worth testing for you and how likely it is to help.',
-    tag: 'Start here',
-  },
-  {
-    href: '/explorer/',
-    title: 'Test plan',
-    text: 'Work through the tests one at a time. Each says what to change, then shows whether it really moved your price or was just noise.',
-    tag: 'Interactive',
-  },
-  {
-    href: '/compare/',
-    title: 'Quote comparer',
-    text: 'Put your final quotes side by side. See the expected yearly cost once the excess and missing cover are counted.',
-    tag: 'Interactive',
-  },
-  {
-    href: '/guide/',
-    title: 'Quote form guide',
-    text: 'Plain-English notes for the questions that change your price. Includes the answers that must be true when you buy.',
-    tag: 'Read first',
-  },
-];
-
 const steps = [
-  { n: '1', t: 'Get a baseline', d: 'Fill in one comparison site with your real details. Note the cheapest price.' },
-  { n: '2', t: 'Test one change at a time', d: 'Change a single thing, such as an extra driver. Note the new price.' },
-  { n: '3', t: 'See what mattered', d: 'The explorer shows real effects and flags small gaps as likely noise.' },
-  { n: '4', t: 'Buy on true answers', d: 'Enter your real details on the quote you buy. Check the list in the guide.' },
+  { n: 1, href: '/start/', title: 'Answer a few questions', text: 'A two-minute chat. You get a short list of what is worth testing, in priority order.', icon: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11' },
+  { n: 2, href: '/explorer/', title: 'Run your test plan', text: 'Each card says exactly what to change on a comparison site. Enter the price and see if it really mattered.', icon: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6' },
+  { n: 3, href: '/compare/', title: 'Compare your final quotes', text: 'Put them side by side with the likely cost of the excess counted, so a low price with a high excess is judged fairly.', icon: 'M12 3v18M3 7l9-4 9 4M5 7l-3 8a4 4 0 0 0 6 0L5 7zM19 7l-3 8a4 4 0 0 0 6 0l-3-8z' },
+  { n: 4, href: '/findings/', title: 'Help the next person', text: 'Optionally share your results, anonymously. Together they become the figures that do not exist anywhere else.', icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75' },
+];
+const bars = [
+  { label: 'Black box quote', pct: -38 },
+  { label: 'Add two other drivers', pct: -22 },
+  { label: 'Add one other driver', pct: -15 },
+  { label: 'Vehicle value −10%', pct: 0 },
 ];
 ---
 
 <Base title="Quote Guide: fair-value car insurance, explained">
-  <section class="wrap" style="padding-block:72px 40px;">
-    <span class="pill">Free · Independent · Your answers stay in your browser</span>
-    <h1 style="font-size:clamp(2.2rem,6vw,3.8rem); line-height:1.05; letter-spacing:-0.03em; margin:20px 0 16px; font-weight:800; max-width:16ch;">
-      Know what really moves your car insurance price.
-    </h1>
-    <p style="font-size:1.15rem; color:var(--muted); max-width:56ch; margin:0 0 28px;">
-      Comparison sites show a price. Quote Guide helps you understand it. Test changes, spot the noise, and fill in every form honestly.
-    </p>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-      <a class="btn btn-primary" href="/start/">Start the guided check →</a>
-      <a class="btn btn-ghost" href="/explorer/">Open the test plan</a>
+  <section class="wrap hero">
+    <div class="copy">
+      <span class="pill">Free · Independent · Nothing leaves your browser</span>
+      <h1>Find out what really moves your car insurance price.</h1>
+      <p class="sub">
+        Comparison sites show you a price, not why. Quote Guide tells you which honest changes are worth testing, shows you which ones actually mattered, and keeps you truthful on every form.
+      </p>
+      <div class="ctas">
+        <a class="btn btn-primary big" href="/start/">Start the 2-minute check →</a>
+        <a class="btn btn-ghost big" href="/guide/">Read the guide</a>
+      </div>
+      <ul class="trust">
+        <li>No sign-up</li><li>No adverts</li><li>Not an insurer or broker</li>
+      </ul>
     </div>
+
+    <figure class="preview" aria-label="Example result">
+      <div class="pcard">
+        <div class="phead"><span class="pdot"></span><strong>Your results</strong><em>example</em></div>
+        <ul>
+          {bars.map((b) => (
+            <li>
+              <div class="pm"><span>{b.label}</span><b class:list={{ good: b.pct < 0, flat: b.pct === 0 }}>{b.pct === 0 ? '≈ 0%' : `${b.pct}%`}</b></div>
+              <div class="trk"><i class="band"></i><i class="mid"></i><i class:list={['bar', { flat: b.pct === 0 }]} style={`width:${Math.abs(b.pct) / 40 * 50}%;`}></i></div>
+            </li>
+          ))}
+        </ul>
+        <p class="pnote">Grey zone = probably noise. Left is cheaper.</p>
+      </div>
+      <figcaption>Example from our 2022 test on one young-driver profile. Your results will differ.</figcaption>
+    </figure>
   </section>
 
-  <section class="wrap" style="display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
-    {tools.map((t) => (
-      <a href={t.href} class="card tool" style="padding:26px; text-decoration:none; color:inherit; display:grid; gap:10px;">
-        <span class="pill" style="justify-self:start;">{t.tag}</span>
-        <h2 style="margin:0; font-size:1.3rem; letter-spacing:-0.01em;">{t.title}</h2>
-        <p style="margin:0; color:var(--muted);">{t.text}</p>
-        <span style="color:var(--accent); font-weight:700;">Open →</span>
-      </a>
-    ))}
-  </section>
-
-  <section class="wrap" style="padding-top:64px;">
-    <h2 style="font-size:1.6rem; letter-spacing:-0.02em; margin:0 0 20px;">How it works</h2>
-    <ol style="list-style:none; padding:0; margin:0; display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+  <section class="wrap block">
+    <h2>Four steps, about 30 minutes</h2>
+    <ol class="steps">
       {steps.map((s) => (
-        <li class="card" style="padding:20px;">
-          <span style="display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-weight:800; margin-bottom:12px;">{s.n}</span>
-          <strong>{s.t}</strong>
-          <p style="margin:6px 0 0; color:var(--muted); font-size:0.95rem;">{s.d}</p>
+        <li>
+          <a href={s.href} class="card step">
+            <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={s.icon} /></svg></span>
+            <span class="sn">Step {s.n}</span>
+            <strong>{s.title}</strong>
+            <span class="st">{s.text}</span>
+          </a>
         </li>
       ))}
     </ol>
   </section>
 
-  <section class="wrap" style="padding-top:64px;">
-    <div class="card" style="padding:28px; display:grid; gap:10px; background:var(--surface-2);">
-      <h2 style="margin:0; font-size:1.3rem;">Free, and kept free by donations</h2>
-      <p style="margin:0; color:var(--muted); max-width:62ch;">
-        No adverts, no affiliate links, no account needed. If this saved you money, a small donation keeps it running.
-      </p>
-      <div><a class="btn btn-ghost" href="#" aria-disabled="true" title="Add your Ko-fi or Stripe link here">Donate (link coming soon)</a></div>
+  <section class="wrap block why">
+    <div>
+      <h3>See what moves <em>your</em> price</h3>
+      <p>Not a list of generic tips. The plan is ordered for your profile, and each test tells you exactly what to change.</p>
+    </div>
+    <div>
+      <h3>Tell real effects from noise</h3>
+      <p>Quotes wobble. We measure your own noise level and only call a change real when it is bigger than that.</p>
+    </div>
+    <div>
+      <h3>Stay honest, stay covered</h3>
+      <p>A wrong answer can void a claim. Every test is an honest option, and the must-be-true list keeps your final answers straight.</p>
+    </div>
+  </section>
+
+  <section class="wrap block">
+    <div class="card community">
+      <div class="ctext">
+        <span class="pill">The second half of the idea</span>
+        <h2>Building the dataset that does not exist yet</h2>
+        <p>
+          Nobody publishes which changes actually moved real quotes. If you choose to share, your percentages join everyone else's and become public group figures, so the next person starts with evidence, not guesses.
+        </p>
+        <ul>
+          <li><strong>Private by design.</strong> Only percentages and broad bands. No prices, name, address or email.</li>
+          <li><strong>Nothing shows until 20 people agree.</strong> No single report is ever published.</li>
+          <li><strong>You stay in control.</strong> Delete your report any time with your code.</li>
+        </ul>
+        <a class="btn btn-primary" href="/findings/">See what we have so far</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap block">
+    <div class="card donate">
+      <div>
+        <h2>Free, and kept free by donations</h2>
+        <p>No adverts, no affiliate links, no account. If this saved you money, a small donation keeps it running.</p>
+      </div>
+      <a class="btn btn-ghost" href="#" aria-disabled="true" title="Add your Ko-fi or Stripe link here">Donate (link coming soon)</a>
     </div>
   </section>
 </Base>
 
 <style>
-  .tool { transition: transform 0.18s ease, box-shadow 0.18s ease; }
-  .tool:hover { transform: translateY(-3px); }
+  .hero { display: grid; gap: 36px; padding-block: 56px 24px; align-items: center; }
+  @media (min-width: 900px) { .hero { grid-template-columns: 1.15fr 0.85fr; padding-block: 80px 32px; } }
+  h1 { font-size: clamp(2.3rem, 6vw, 3.9rem); line-height: 1.04; letter-spacing: -0.035em; margin: 18px 0 16px; font-weight: 800; max-width: 17ch; }
+  .sub { font-size: 1.12rem; color: var(--muted); max-width: 52ch; margin: 0 0 26px; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .big { padding: 14px 24px; font-size: 1rem; }
+  .trust { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 0.88rem; font-weight: 600; }
+  .trust li::before { content: '✓'; color: var(--accent); margin-right: 6px; }
+
+  .preview { margin: 0; display: grid; gap: 10px; }
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow); padding: 20px; transform: rotate(0.6deg); }
+  .phead { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .phead em { margin-left: auto; font-style: normal; font-size: 0.72rem; font-weight: 700; color: var(--muted); background: var(--surface-2); border-radius: 999px; padding: 3px 10px; }
+  .pdot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+  .pcard ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .pm { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; }
+  .pm b { font-variant-numeric: tabular-nums; color: var(--muted); }
+  .pm b.good { color: var(--good); }
+  .trk { position: relative; height: 12px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .trk .band { position: absolute; left: 43.75%; width: 12.5%; top: 0; bottom: 0; background: var(--noise); }
+  .trk .mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--line); transform: translateX(-1px); }
+  .trk .bar { position: absolute; right: 50%; top: 2px; bottom: 2px; background: var(--good); border-radius: 999px; }
+  .trk .bar.flat { background: var(--muted); opacity: 0.6; width: 1.5% !important; }
+  .pnote { margin: 14px 0 0; font-size: 0.78rem; color: var(--muted); }
+  figcaption { font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+  .block { padding-top: 64px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); letter-spacing: -0.025em; margin: 0 0 20px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .step { display: grid; gap: 6px; padding: 22px; text-decoration: none; color: inherit; height: 100%; box-sizing: border-box; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+  .step:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); margin-bottom: 6px; }
+  .sn { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .step strong { font-size: 1.08rem; }
+  .st { color: var(--muted); font-size: 0.93rem; }
+
+  .why { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .why h3 { margin: 0 0 6px; font-size: 1.1rem; letter-spacing: -0.01em; }
+  .why h3 em { font-style: normal; color: var(--accent); }
+  .why p { margin: 0; color: var(--muted); }
+
+  .community { padding: 32px; background: linear-gradient(135deg, var(--accent-soft), var(--surface)); }
+  .ctext { max-width: 62ch; display: grid; gap: 12px; justify-items: start; }
+  .community h2 { margin: 6px 0 0; }
+  .community p { margin: 0; color: var(--muted); }
+  .community ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .donate { padding: 26px 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; background: var(--surface-2); }
+  .donate h2 { font-size: 1.3rem; margin-bottom: 6px; }
+  .donate p { margin: 0; color: var(--muted); max-width: 58ch; }
 </style>

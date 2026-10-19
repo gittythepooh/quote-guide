@@ -45,7 +45,7 @@
 html {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
 }
@@ -86,3 +86,11 @@ body { margin: 0; min-height: 100dvh; line-height: 1.6; }
 
 /* Placeholders that must be filled in before launch (checked by `npm run check:launch`). */
 .todo { background: #fde68a; color: #1f2937; padding: 1px 6px; border-radius: 6px; font-weight: 700; }
+
+/* Print: keep the content, drop the chrome (used by "Print or save as PDF"). */
+@media print {
+  .site-header, .site-foot, .skip-link, .journey, .acts, .chips, .data, .area-share, button { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .card { box-shadow: none !important; border-color: #bbb !important; break-inside: avoid; }
+  .area-res { position: static !important; }
+}

@@ -2,10 +2,9 @@
   import { CHANGES, AGE_BANDS, REGIONS, CAR_AGE_BANDS, NCD_BANDS, COVER, SITES, type ChangeKey, type Report } from '../lib/report-schema';
 
   type Row = { id: string; label: string; pct: number; change: ChangeKey; repeats: number };
-  let { rows, baselineRuns, noisePct, usingSample, answers }: { rows: Row[]; baselineRuns: number; noisePct: number; usingSample: boolean; answers: any } = $props();
+  let { rows, baselineRuns, noisePct, usingSample, answers, open = $bindable(false) }: { rows: Row[]; baselineRuns: number; noisePct: number; usingSample: boolean; answers: any; open?: boolean } = $props();
 
   const SITEKEY = import.meta.env.PUBLIC_TURNSTILE_SITEKEY as string | undefined;
-  let open = $state(false);
   let token = $state('');
   let tsEl = $state<HTMLDivElement>();
   let tsId: string | undefined;

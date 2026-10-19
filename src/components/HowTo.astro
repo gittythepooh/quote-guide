@@ -1,0 +1,57 @@
+---
+// "How to run a test" and a plain-English jargon buster. Shown above the test plan.
+const terms = [
+  ['Baseline', 'Your starting price: the cheapest yearly price for your real details. Every test is compared with it.'],
+  ['Noise', 'Normal wobble in quotes (the cheapest insurer changes, prices drift). Gaps smaller than the noise level are probably not real.'],
+  ['Excess', 'What you pay towards a claim. A voluntary excess is extra you choose to add, which can lower the price.'],
+  ['No-claims years', 'Years without a claim. Insurers usually give a discount for each one.'],
+  ['Black box / telematics', 'A device or app that records how you drive. Good driving can cut the price, poor driving can raise it.'],
+  ['Named driver', 'Someone else listed on your policy who genuinely drives the car.'],
+  ['Fronting', 'Naming an older relative as the main driver when someone else really is. It is a form of misrepresentation and can void a policy.'],
+];
+---
+
+<details class="howto">
+  <summary><span>New to this? How to run a test</span><em>2 minute read</em></summary>
+  <div class="inner">
+    <div class="col">
+      <h3>You will need</h3>
+      <ul>
+        <li>About 20 to 30 minutes and one comparison site open in a private window.</li>
+        <li>Your real car and driver details to hand.</li>
+        <li>A place to note prices (this page saves them for you).</li>
+      </ul>
+      <h3>How a test works</h3>
+      <ol>
+        <li><strong>Baseline:</strong> fill in the site honestly. Note the cheapest comprehensive price.</li>
+        <li><strong>Change one thing</strong> exactly as the card says. Keep everything else the same.</li>
+        <li><strong>Enter the new cheapest price.</strong> You see at once if it was a real change or noise.</li>
+      </ol>
+      <p class="tip"><strong>Tips:</strong> use the same site and the same sitting for every test, and do not buy from a test quote. A repeat run on a test shows whether it was a fluke.</p>
+    </div>
+    <div class="col">
+      <h3>Jargon buster</h3>
+      <dl>
+        {terms.map(([t, d]) => (<><dt>{t}</dt><dd>{d}</dd></>))}
+      </dl>
+    </div>
+  </div>
+</details>
+
+<style>
+  .howto { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; margin-bottom: 18px; }
+  summary { cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; font-weight: 700; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 1.3rem; color: var(--accent); }
+  .howto[open] summary::after { content: '–'; }
+  summary span { flex: 1; }
+  summary em { font-style: normal; font-weight: 500; font-size: 0.8rem; color: var(--muted); }
+  .inner { display: grid; gap: 22px; grid-template-columns: 1fr; padding: 0 18px 18px; }
+  @media (min-width: 820px) { .inner { grid-template-columns: 1fr 1fr; } }
+  h3 { margin: 0 0 6px; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  ul, ol { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 4px; }
+  .tip { background: var(--accent-soft); border-radius: 12px; padding: 10px 14px; font-size: 0.9rem; margin: 0; }
+  dl { margin: 0; display: grid; gap: 8px; }
+  dt { font-weight: 700; font-size: 0.92rem; }
+  dd { margin: 0 0 4px; color: var(--muted); font-size: 0.9rem; }
+</style>

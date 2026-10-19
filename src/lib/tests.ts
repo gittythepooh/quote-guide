@@ -28,25 +28,47 @@ const label = (def: ParamDef | undefined, value: string) => def?.options.find((o
 
 const AGES = ['21-24', '25-29', '30-39', '40-49', '50-59', '60+'].map((v) => ({ value: v, label: v }));
 
+const WHO = [{ value: 'partner', label: 'Partner' }, { value: 'parent', label: 'Parent' }, { value: 'child', label: 'Adult child' }, { value: 'sibling', label: 'Sibling' }, { value: 'friend', label: 'Friend' }];
+const LICENCE = [{ value: 'lt2', label: 'Under 2' }, { value: '2-5', label: '2 to 5' }, { value: '5+', label: '5 or more' }];
+const RECORD = [{ value: 'none', label: 'None' }, { value: 'some', label: 'Some' }];
+const DRIVER_MUST = 'Only add people who genuinely drive the car. If you are the main driver, never name an older relative as the main driver (fronting).';
+const DRIVER_CAUTION = 'We do not ask for gender: insurers have not been allowed to price on it since 2012.';
+const describe = (p: Params) => {
+  const who = WHO.find((o) => o.value === p.who)?.label.toLowerCase() ?? p.who;
+  const lic = LICENCE.find((o) => o.value === p.licence)?.label.toLowerCase() ?? p.licence;
+  return `${who}, aged ${p.age}, licence held ${lic} years, ${p.record === 'none' ? 'no claims or convictions' : 'with claims or convictions'}`;
+};
+
 const drivers: TestDef = {
   id: 'drivers',
-  title: 'Add another driver',
+  title: 'Add one more driver',
   params: [
-    { id: 'count', label: 'How many?', options: [{ value: 'one', label: 'One driver' }, { value: 'two', label: 'Two drivers' }] },
-    { id: 'who', label: 'Who are they?', options: [{ value: 'partner', label: 'Partner' }, { value: 'parent', label: 'Parent' }, { value: 'child', label: 'Adult child' }, { value: 'sibling', label: 'Sibling' }, { value: 'friend', label: 'Friend' }] },
+    { id: 'who', label: 'Who are they?', options: WHO },
     { id: 'age', label: 'Their age', options: AGES },
-    { id: 'licence', label: 'Years with a full licence', options: [{ value: 'lt2', label: 'Under 2' }, { value: '2-5', label: '2 to 5' }, { value: '5+', label: '5 or more' }] },
-    { id: 'record', label: 'Claims or convictions', options: [{ value: 'none', label: 'None' }, { value: 'some', label: 'Some' }] },
+    { id: 'licence', label: 'Years with a full licence', options: LICENCE },
+    { id: 'record', label: 'Claims or convictions', options: RECORD },
   ],
-  defaults: { count: 'one', who: 'partner', age: '40-49', licence: '5+', record: 'none' },
-  instruction: (p) => {
-    const d = drivers.params;
-    const n = p.count === 'two' ? 'two named drivers like this' : 'one named driver';
-    return `Add ${n}: ${label(d[1], p.who).toLowerCase()}, aged ${p.age}, licence held ${label(d[3], p.licence).toLowerCase()} years, ${p.record === 'none' ? 'no claims or convictions' : 'with claims or convictions'}. Keep every other answer the same.`;
-  },
-  change: (p) => (p.count === 'two' ? 'add_two_named_drivers' : 'add_named_driver'),
-  mustBeTrue: 'Only add people who genuinely drive the car. If you are the main driver, never name an older relative as the main driver (fronting).',
-  caution: 'We do not ask for gender: insurers have not been allowed to price on it since 2012.',
+  defaults: { who: 'partner', age: '40-49', licence: '5+', record: 'none' },
+  instruction: (p) => `Add one named driver: ${describe(p)}. Keep every other answer the same.`,
+  change: () => 'add_named_driver',
+  mustBeTrue: DRIVER_MUST,
+  caution: DRIVER_CAUTION,
+};
+
+const drivers2: TestDef = {
+  id: 'drivers2',
+  title: 'Add a second driver as well',
+  params: [
+    { id: 'who', label: 'Who is the second driver?', options: WHO },
+    { id: 'age', label: 'Their age', options: AGES },
+    { id: 'licence', label: 'Years with a full licence', options: LICENCE },
+    { id: 'record', label: 'Claims or convictions', options: RECORD },
+  ],
+  defaults: { who: 'parent', age: '50-59', licence: '5+', record: 'none' },
+  instruction: (p) => `Keep the first extra driver and add a second named driver: ${describe(p)}. Enter the price with BOTH drivers added. We compare it with your baseline and with the one-driver price.`,
+  change: () => 'add_two_named_drivers',
+  mustBeTrue: DRIVER_MUST,
+  caution: DRIVER_CAUTION,
 };
 
 const blackbox: TestDef = {
@@ -156,14 +178,14 @@ const parking: TestDef = {
   mustBeTrue: 'Only if it is true. Use the real place when you buy.',
 };
 
-export const TESTS: Record<string, TestDef> = Object.fromEntries([drivers, blackbox, job, timing, excess, pay, cover, mileage, value, tracker, parking].map((t) => [t.id, t]));
+export const TESTS: Record<string, TestDef> = Object.fromEntries([drivers, drivers2, blackbox, job, timing, excess, pay, cover, mileage, value, tracker, parking].map((t) => [t.id, t]));
 
 // Guided-check item id -> test ids it covers.
 const FROM_ADVISOR: Record<string, string[]> = {
   drivers: ['drivers'], blackbox: ['blackbox'], job: ['job'], timing: ['timing'], pay: ['pay'],
   excess: ['excess'], cover: ['cover'], mileage: ['mileage'], value: ['value', 'tracker'],
 };
-const DEFAULT_ORDER = ['drivers', 'blackbox', 'job', 'timing', 'excess', 'pay', 'cover', 'mileage', 'value', 'tracker', 'parking'];
+const DEFAULT_ORDER = ['drivers', 'drivers2', 'blackbox', 'job', 'timing', 'excess', 'pay', 'cover', 'mileage', 'value', 'tracker', 'parking'];
 
 export type Ordered = { test: TestDef; group: 'start' | 'also' | 'skip' | 'more'; why?: string };
 
@@ -171,7 +193,7 @@ export type Ordered = { test: TestDef; group: 'start' | 'also' | 'skip' | 'more'
 export function orderTests(answers: Answers | null): { items: Ordered[]; personal: boolean } {
   const complete = answers && Object.keys(answers).length >= 11;
   if (!complete) {
-    return { personal: false, items: DEFAULT_ORDER.map((id, i) => ({ test: TESTS[id], group: i < 4 ? 'start' : i < 7 ? 'also' : 'skip' })) };
+    return { personal: false, items: DEFAULT_ORDER.map((id, i) => ({ test: TESTS[id], group: i < 4 ? 'start' : i < 8 ? 'also' : 'skip' })) };
   }
   const items: Ordered[] = [];
   const seen = new Set<string>();
@@ -180,6 +202,11 @@ export function orderTests(answers: Answers | null): { items: Ordered[]; persona
       if (seen.has(id)) continue;
       seen.add(id);
       items.push({ test: TESTS[id], group: it.group, why: it.why });
+      // Two other genuine drivers: also test the second one, right after the first.
+      if (id === 'drivers' && (answers as Answers).household === 'two' && !seen.has('drivers2')) {
+        seen.add('drivers2');
+        items.push({ test: TESTS.drivers2, group: it.group, why: 'Shows what the second driver adds on top of the first.' });
+      }
     }
   }
   for (const id of DEFAULT_ORDER) if (!seen.has(id)) items.push({ test: TESTS[id], group: 'more' });

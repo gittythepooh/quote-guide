@@ -14,6 +14,7 @@
   let initOpen = false;
   let moreOpen = $state(false);
   let msg = $state('');
+  let shareOpen = $state(false);
 
   $effect.pre(() => {
     if (loaded) return;
@@ -41,9 +42,11 @@
   const activeIds = $derived([...startList, ...alsoList, ...addedList].map((i) => i.test.id));
   const doneCount = $derived(activeIds.filter((id) => resMap[id]).length);
   const sorted = $derived([...results].sort((x, y) => x.pct - y.pct));
-  const scale = $derived(Math.max(15, ...results.map((r) => Math.abs(r.pct))));
+  const scale = $derived(Math.min(60, Math.max(15, ...results.map((r) => Math.abs(r.pct)))));
   const best = $derived(sorted.find((r) => r.verdict === 'cheaper'));
-  const realCheaper = $derived(sorted.filter((r) => r.verdict === 'cheaper' && r.change));
+  const realCheaper = $derived(
+    sorted.filter((r) => r.verdict === 'cheaper' && r.change).filter((r, _i, all) => !(r.id === 'drivers2' && all.some((x) => x.id === 'drivers'))),
+  );
   const hasCombo = $derived(store.custom.some((c) => c.id === 'combo'));
   const hasData = $derived(b.avg !== null);
 
@@ -91,6 +94,13 @@
     const el = next ? document.querySelector(`[data-test="${next}"]`) : document.querySelector('[data-results]');
     if (el) window.scrollTo({ top: Math.max(0, window.scrollY + el.getBoundingClientRect().top - 90), behavior: 'smooth' });
   }
+
+  async function openShare() {
+    shareOpen = true;
+    await tick();
+    document.getElementById('share')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+  const printPage = () => window.print();
 
   function addCustom(label = '') { store.custom.push({ id: crypto.randomUUID(), label, price: null }); }
   function addCombo() {
@@ -195,6 +205,12 @@
           <div class="out {r.verdict}" aria-live="polite">
             <strong>{signed(r.diff)} ({pctText(r.pct)})</strong>
             <span>{gbp(r.avg)} against your {gbp(b.avg)} baseline. {verdictText(r)}{r.verdict === 'noise' ? ` (under ${b.noise.toFixed(1)}%).` : '.'}</span>
+            {#if id === 'drivers2' && resMap.drivers}
+              {@const one = resMap.drivers}
+              {@const extra = ((r.avg - one.avg) / one.avg) * 100}
+              <span class="vs">Compared with one extra driver ({gbp(one.avg)}): the second driver changes the price by <strong>{signed(r.avg - one.avg)} ({pctText(extra)})</strong>.</span>
+            {/if}
+            {#if Math.abs(r.pct) > 100}<span class="warnline">That is very far from your baseline. Check you entered the same kind of price: the cheapest yearly price for the same cover.</span>{/if}
             {#if r.repeatsDisagree}<span class="warnline">Your repeat runs differ by {r.disagreePct.toFixed(1)}%. Treat this result with care.</span>{/if}
           </div>
         {:else if !hasData}
@@ -345,11 +361,33 @@
         <button class="btn btn-primary sm" type="button" onclick={addCombo}>Add a combined test</button>
       </div>
     {/if}
+    {#if best}
+      <div class="next">
+        <strong>What to do next</strong>
+        <ol>
+          <li>If it is true for you, include <b>{best.title.toLowerCase()}</b> when you get your final quotes.</li>
+          <li>Check every answer against the <a href="/guide/">must-be-true list</a> before you buy.</li>
+          <li>Put your final quotes side by side in the <a href="/compare/">comparer</a>.</li>
+        </ol>
+        <button class="btn btn-ghost sm" type="button" onclick={printPage}>Print or save as PDF</button>
+      </div>
+    {/if}
     <p class="note">Information only, not advice. Buy only on true answers: see the <a href="/guide/">guide</a>.</p>
   </aside>
 
-  <div class="area-share">
-    <SharePanel rows={shareRows} baselineRuns={b.runs} noisePct={Math.round(b.spreadPct * 10) / 10} usingSample={store.usingSample} {answers} />
+  <div class="area-share" id="share">
+    {#if shareRows.length >= 2 && !shareOpen}
+      <div class="card sharecta">
+        <div>
+          <strong>You have {shareRows.length} results. Help others by sharing them?</strong>
+          <span>Anonymous, takes a minute, and only percentages are sent. Findings unlock once 20 people report the same change.</span>
+        </div>
+        <button class="btn btn-primary" type="button" onclick={openShare}>Share anonymously</button>
+      </div>
+    {/if}
+    {#if shareOpen || shareRows.length < 2}
+    <SharePanel bind:open={shareOpen} rows={shareRows} baselineRuns={b.runs} noisePct={Math.round(b.spreadPct * 10) / 10} usingSample={store.usingSample} {answers} />
+    {/if}
   </div>
 </div>
 
@@ -415,6 +453,7 @@
   .out.cheaper { background: var(--good-soft); } .out.cheaper strong { color: var(--good); }
   .out.dearer { background: var(--warn-soft); } .out.dearer strong { color: var(--bad); }
   .warnline { color: var(--warn); font-weight: 600; }
+  .vs { margin-top: 2px; }
   .hint { color: var(--muted); font-size: 0.85rem; margin: 0; }
   .must { background: var(--accent-soft); border-radius: 12px; padding: 8px 12px; font-size: 0.86rem; margin: 0; }
   .caut { background: var(--warn-soft); border-radius: 12px; padding: 8px 12px; font-size: 0.86rem; margin: 0; }
@@ -445,6 +484,12 @@
   .legend { color: var(--muted); font-size: 0.78rem; margin: 12px 0 0; }
   .sw { display: inline-block; width: 12px; height: 12px; border-radius: 4px; background: var(--noise); border: 1px solid var(--line); vertical-align: -2px; }
   .empty-res { color: var(--muted); padding: 18px 0 6px; }
+  .next { display: grid; gap: 8px; background: var(--surface-2); border-radius: 14px; padding: 14px; margin-top: 16px; font-size: 0.9rem; }
+  .next ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+  .next a { color: var(--accent); font-weight: 600; }
+  .sharecta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px 20px; margin-bottom: 14px; background: var(--accent-soft); border-color: transparent; }
+  .sharecta div { display: grid; gap: 2px; max-width: 60ch; }
+  .sharecta span { color: var(--muted); font-size: 0.88rem; }
   .combo { display: grid; gap: 8px; background: var(--accent-soft); border-radius: 14px; padding: 14px; margin-top: 16px; font-size: 0.9rem; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   li { position: relative; }

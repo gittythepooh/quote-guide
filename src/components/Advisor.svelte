@@ -88,6 +88,18 @@
   const tone = (l: Item['likelihood']) => (l === 'High' ? 'hi' : l === 'Medium' ? 'mid' : 'lo');
 </script>
 
+<header class="intro">
+  {#if !done}
+    <span class="pill">Guided check · about 2 minutes</span>
+    <h1>What is worth testing for you?</h1>
+    <p>Answer a few quick questions. You get a short list of what to try first, how well each fits you, and what must stay true when you buy.</p>
+  {:else}
+    <span class="pill">Your result</span>
+    <h1>Your test priorities</h1>
+    <p>Based on your answers. Change any answer below and the list updates.</p>
+  {/if}
+</header>
+
 {#if !done}
   <div class="chat">
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax={STEPS.length} aria-valuenow={answered.length}>
@@ -124,7 +136,11 @@
   </div>
 {:else}
   <section class="summary" aria-labelledby="sum-h" bind:this={sumEl}>
-    <h2 id="sum-h">What is worth testing</h2>
+    <h2 id="sum-h" class="sr">In priority order</h2>
+    <div class="topcta">
+      <div><strong>{start.length + also.length} tests, in this order</strong><span>About 20 to 30 minutes. You can stop and come back any time.</span></div>
+      <button class="btn btn-primary" type="button" onclick={openPlan}>Open my test plan →</button>
+    </div>
     <p class="lead">
       General information for profiles like yours, from broad answers and limited data. Each item is something to <strong>test</strong> with honest options. It is not a recommendation to you.
       {#if claimPct !== null}Your claim feeling is treated as about {claimPct}% for the excess advice.{/if}
@@ -214,6 +230,13 @@
 {/if}
 
 <style>
+  .intro { margin: 0 0 22px; }
+  .intro h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; margin: 16px 0 10px; }
+  .intro p { color: var(--muted); max-width: 60ch; margin: 0; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .topcta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; background: var(--accent-soft); border-radius: 16px; padding: 16px 18px; margin: 0 0 16px; }
+  .topcta div { display: grid; gap: 2px; }
+  .topcta span { color: var(--muted); font-size: 0.88rem; }
   .chat { max-width: 680px; }
   .prog { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
   .prog > div { height: 100%; background: var(--accent); transition: width 0.35s ease; }

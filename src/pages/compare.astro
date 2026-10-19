@@ -1,9 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Comparer from '../components/Comparer.svelte';
+import Journey from '../components/Journey.astro';
 ---
 
 <Base title="Quote comparer | Quote Guide">
+  <Journey current={3} />
   <div class="wrap" style="padding-block:56px 28px;">
     <span class="pill">Interactive</span>
     <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 12px;">
@@ -18,5 +20,11 @@ import Comparer from '../components/Comparer.svelte';
   </div>
   <div class="wrap">
     <Comparer client:only="svelte" />
+    <p class="nextstep"><a href="/findings/">Next: see what the community has found →</a></p>
   </div>
 </Base>
+
+<style>
+  .nextstep { margin: 28px 0 0; text-align: right; }
+  .nextstep a { color: var(--accent); font-weight: 700; text-decoration: none; }
+</style>
