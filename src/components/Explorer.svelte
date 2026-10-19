@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
+  import { STEPS } from '../lib/advisor';
   import { TESTS, orderTests, isoDate, addDays, daysUntil, type Ordered } from '../lib/tests';
   import {
     load, save, normalize, emptyStore, sampleStore, baseline, allResults, gbp, signed, pctText, NOISE_FLOOR,
@@ -48,6 +49,9 @@
   const suspects = $derived(findSuspects(results, order.items.map((i) => i.test.id)));
   const keptTitles = $derived(stackOut.keptIds.map((id) => TESTS[id].title));
   const hasData = $derived(b.avg !== null);
+  // The test plan is ordered by the guided check, so it comes first. People who already have saved results are let through.
+  const checkDone = $derived(!!answers && STEPS.every((st) => answers[st.id] !== undefined));
+  const gated = $derived(loaded && !checkDone && !hasData && !store.usingSample);
 
   const shareRows = $derived(
     store.usingSample ? [] : results.filter((r) => r.change).map((r) => ({ id: r.id, label: r.title, pct: r.pct, change: r.change!, repeats: r.runs })),
@@ -255,6 +259,13 @@
   </article>
 {/snippet}
 
+{#if gated}
+  <section class="card gate" aria-labelledby="gate-h">
+    <h2 id="gate-h">Take the 2-minute check first</h2>
+    <p>The test plan puts the changes in the order most likely to matter for you. That order comes from your answers, so the check comes first. Nothing leaves your browser.</p>
+    <p class="gate-acts"><a class="btn btn-primary" href="/start/">Start the check →</a></p>
+  </section>
+{:else}
 <div class="layout">
   <section class="area-base card base" aria-labelledby="b-h">
     <div class="bh">
@@ -465,6 +476,7 @@
     {/if}
   </div>
 </div>
+{/if}
 
 <style>
   .layout { display: grid; gap: 18px; grid-template-columns: 1fr; grid-template-areas: 'base' 'res' 'tests' 'share'; align-items: start; }
@@ -597,4 +609,8 @@
   .combo { display: grid; gap: 8px; background: var(--accent-soft); border-radius: 14px; padding: 14px; margin-top: 16px; font-size: 0.9rem; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   li { position: relative; }
+  .gate { padding: 32px 28px; text-align: center; margin: 8px 0 28px; }
+  .gate h2 { margin: 0 0 10px; font-size: 1.5rem; letter-spacing: -0.02em; }
+  .gate p { color: var(--muted); max-width: 56ch; margin: 0 auto 12px; }
+  .gate-acts { margin-top: 18px; }
 </style>

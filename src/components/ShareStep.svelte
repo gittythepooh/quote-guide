@@ -43,7 +43,7 @@
       When you have finished a couple of tests, you can share the percentages anonymously here. Each report brings a community figure closer to being published, so the next person starts with evidence.
     </p>
     <div class="acts">
-      <a class="btn btn-primary" href={b.avg !== null ? '/explorer/' : '/start/'}>{b.avg !== null ? 'Back to my test plan' : 'Start the guided check →'}</a>
+      <a class="btn btn-primary" href={b.avg !== null ? '/explorer/' : '/start/'}>{b.avg !== null ? 'Back to my test plan' : 'Take the 2-minute check first →'}</a>
     </div>
   {/if}
 </section>
