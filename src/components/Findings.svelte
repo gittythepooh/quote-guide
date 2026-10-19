@@ -43,7 +43,7 @@
     </span>
   </div>
 
-  <ul class="rows" role="list">
+  <ul class="rows" class:loading={online === 'loading'} role="list" aria-busy={online === 'loading'}>
     {#each rows as r (r.key)}
       {#if r.seed || r.c}
         <li>
@@ -89,6 +89,9 @@
 <p class="src">Starting point source: {SEED_SOURCE}</p>
 
 <style>
+  .rows.loading { opacity: 0.55; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.85; } }
+  @media (prefers-reduced-motion: reduce) { .rows.loading { animation: none; } }
   .panel { padding: 24px; }
   h2 { margin: 0 0 10px; font-size: 1.2rem; letter-spacing: -0.01em; }
   .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }

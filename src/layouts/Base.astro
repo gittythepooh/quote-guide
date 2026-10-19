@@ -26,7 +26,8 @@ const active = (href: string) => path.startsWith(href);
     <meta name="color-scheme" content="light dark" />
     <!-- PRE-LAUNCH: remove this robots tag AND the X-Robots-Tag line in public/_headers at launch. `npm run check:launch` fails while they exist. -->
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>{title}</title>
   </head>
   <body>
@@ -34,9 +35,8 @@ const active = (href: string) => path.startsWith(href);
     <header class="site-header">
       <div class="wrap site-bar">
         <a href="/" class="site-brand">
-          <span class="site-logo" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
-          </span>
+          <img class="site-logo" src="/art/logo-mark.png" alt="" width="34" height="31" />
+
           <span>Fog Off</span>
         </a>
 
@@ -95,10 +95,13 @@ const active = (href: string) => path.startsWith(href);
 <style is:global>
   .skip-link { position: absolute; left: -999px; top: 8px; background: var(--accent); color: var(--accent-text); padding: 8px 14px; border-radius: 10px; z-index: 50; font-weight: 700; }
   .skip-link:focus { left: 12px; }
+  .site-header { view-transition-name: site-header; }
   .site-header { border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 88%, transparent); position: sticky; top: 0; z-index: 20; backdrop-filter: blur(10px); }
   .site-bar { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 12px; }
   .site-brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: -0.01em; }
-  .site-logo { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: var(--accent-text); }
+  .site-logo { display: block; width: 34px; height: auto; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .site-logo { filter: invert(1); } }
+  :root[data-theme='dark'] .site-logo { filter: invert(1); }
   .site-nav { display: flex; gap: 4px; }
   .site-nl, .site-ml { padding: 8px 14px; white-space: nowrap; border-radius: 999px; font-weight: 600; font-size: 0.92rem; text-decoration: none; color: var(--muted); }
   .site-nl:hover, .site-ml:hover { color: var(--text); background: var(--surface-2); }

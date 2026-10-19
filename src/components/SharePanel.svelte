@@ -241,6 +241,12 @@
       <p class="warn">Sharing is not switched on for this site yet. Your results are saved on this device and you can come back later.</p>
     {/if}
 
+    <ul class="trust" role="list">
+      <li>No account</li>
+      <li>Percentages only, never prices</li>
+      <li>Delete any time with your code</li>
+    </ul>
+
     <button class="btn btn-primary" class:dim={!canSend && status !== 'sending'} type="button" aria-disabled={!canSend} onclick={trySend}>
       {status === 'sending' ? 'Sending…' : 'Send report'}
     </button>
@@ -269,6 +275,9 @@
 </section>
 
 <style>
+  .trust { list-style: none; margin: 14px 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .trust li { font-size: 0.8rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 5px 12px; }
+  .trust li::before { content: '✓ '; }
   .panel { padding: 22px; }
   .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.01em; }

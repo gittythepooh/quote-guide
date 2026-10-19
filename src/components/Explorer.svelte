@@ -226,9 +226,17 @@
         {#if runsOf(id).length < 3}<button class="link" type="button" onclick={() => addRun(id)}>+ Add a repeat run (checks it is not a fluke)</button>{/if}
 
         {#if r && b.avg !== null}
+          {@const gScale = Math.max(20, Math.abs(r.pct) * 1.15, b.noise * 2)}
+          {@const hazy = r.runs < 2 || b.runs < 2}
           <div class="out {r.verdict}" aria-live="polite">
             <strong>{signed(r.diff)} ({pctText(r.pct)})</strong>
             <span>{gbp(r.avg)} against your {gbp(b.avg)} baseline. {verdictText(r)}{r.verdict === 'noise' ? ` (under ${b.noise.toFixed(1)}%).` : '.'}</span>
+            <div class="gauge" class:hazy role="img" aria-label="{pctText(r.pct)} against a noise band of plus or minus {b.noise.toFixed(1)} percent">
+              <div class="g-noise" style="left:{50 - (b.noise / gScale) * 50}%; width:{(b.noise / gScale) * 100}%"></div>
+              <div class="g-mid"></div>
+              <div class="g-dot {r.verdict}" style="left:{50 + Math.max(-48, Math.min(48, (r.pct / gScale) * 50))}%"></div>
+            </div>
+            <span class="g-legend"><span>cheaper</span><span>{hazy ? 'Hazy: add a repeat run and a second baseline run to clear it' : 'Clear: repeats agree'}</span><span>dearer</span></span>
             {#if id === 'drivers2' && resMap.drivers}
               {@const one = resMap.drivers}
               {@const extra = ((r.avg - one.avg) / one.avg) * 100}
@@ -266,6 +274,13 @@
     <p class="gate-acts"><a class="btn btn-primary" href="/start/">Start the check →</a></p>
   </section>
 {:else}
+{#if hasData}
+  <div class="planbar" role="status" aria-label="Your plan so far">
+    <span><small>Baseline</small><b>{gbp(b.avg ?? 0)}</b></span>
+    <span><small>Best so far</small><b class:good={!!best}>{best ? pctText(best.pct) : 'none yet'}</b></span>
+    <span><small>Noise</small><b>{b.runs >= 2 ? `±${b.noise.toFixed(1)}%` : 'add a 2nd run'}</b></span>
+  </div>
+{/if}
 <div class="layout">
   <section class="area-base card base" aria-labelledby="b-h">
     <div class="bh">
@@ -509,6 +524,16 @@
   .head:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: 14px; }
   .num { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 0.85rem; }
   .ttl { font-weight: 700; }
+  .gauge { position: relative; height: 12px; border-radius: 999px; background: var(--surface-2); margin: 10px 0 2px; transition: filter 0.6s, opacity 0.6s; }
+  .gauge.hazy { filter: blur(1.6px); opacity: 0.6; }
+  .g-noise { position: absolute; top: 0; bottom: 0; background: var(--noise); border-radius: 999px; }
+  .g-mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: var(--line); }
+  .g-dot { position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%); background: var(--muted); border: 2px solid var(--surface); transition: left 0.5s cubic-bezier(.2,.8,.2,1); }
+  .g-dot.cheaper { background: var(--good); }
+  .g-dot.dearer { background: var(--bad); }
+  .g-legend { display: flex; justify-content: space-between; gap: 10px; font-size: 0.72rem; color: var(--muted); }
+  .g-legend span:nth-child(2) { text-align: center; flex: 1; }
+  @media (prefers-reduced-motion: reduce) { .gauge, .g-dot { transition: none; } }
   .status { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
   .status.todo { background: var(--surface-2); color: var(--muted); }
   .status.skip { background: var(--surface-2); color: var(--muted); text-decoration: line-through; }
@@ -609,6 +634,11 @@
   .combo { display: grid; gap: 8px; background: var(--accent-soft); border-radius: 14px; padding: 14px; margin-top: 16px; font-size: 0.9rem; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   li { position: relative; }
+  .planbar { position: sticky; top: 64px; z-index: 10; display: flex; gap: 22px; justify-content: center; padding: 8px 14px; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 90%, transparent); backdrop-filter: blur(8px); box-shadow: var(--shadow); }
+  .planbar span { display: grid; text-align: center; line-height: 1.15; }
+  .planbar small { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .planbar b { font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+  .planbar b.good { color: var(--good); }
   .gate { padding: 32px 28px; text-align: center; margin: 8px 0 28px; }
   .gate h2 { margin: 0 0 10px; font-size: 1.5rem; letter-spacing: -0.02em; }
   .gate p { color: var(--muted); max-width: 56ch; margin: 0 auto 12px; }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick } from 'svelte';
+  import { fly } from 'svelte/transition';
   import { STEPS, advise, CLAIM_PCT, MUST_BE_TRUE, BAND_HIGH, BAND_MEDIUM, type Answers, type Community, type Item } from '../lib/advisor';
 
   const KEY = 'qg-advisor-v1';
@@ -85,8 +86,34 @@
     location.href = '/explorer/';
   }
 
+  const calm = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const slide = (y: number, delay = 0) => ({ y: calm ? 0 : y, duration: calm ? 0 : 320, delay: calm ? 0 : delay });
+
+  // Count the score up from 0 when a card appears.
+  function countUp(node: HTMLElement, to: number) {
+    if (calm) return;
+    const t0 = performance.now();
+    let raf = requestAnimationFrame(function step(now) {
+      const k = Math.min(1, (now - t0) / 800);
+      node.textContent = String(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) raf = requestAnimationFrame(step);
+    });
+    return { destroy: () => cancelAnimationFrame(raf) };
+  }
+
+  // Number keys pick an answer.
+  function onKey(e: KeyboardEvent) {
+    if (!current || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target as HTMLElement | null;
+    if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    const i = Number(e.key) - 1;
+    if (Number.isInteger(i) && i >= 0 && i < current.options.length) { e.preventDefault(); pick(current.options[i].value); }
+  }
+
   const tone = (l: Item['band']) => (l === 'High' ? 'hi' : l === 'Medium' ? 'mid' : 'lo');
 </script>
+
+<svelte:window onkeydown={onKey} />
 
 <header class="intro">
   {#if !done}
@@ -114,10 +141,10 @@
     <ol class="thread" aria-live="polite">
       {#each answered as s (s.id)}
         <li class="row ai"><div class="bub ai-b">{s.question}</div></li>
-        <li class="row me"><div class="bub me-b">{labelFor(s.id, answers[s.id] as string)}</div></li>
+        <li class="row me" in:fly={slide(10)}><div class="bub me-b">{labelFor(s.id, answers[s.id] as string)}</div></li>
       {/each}
       {#if current}
-        <li class="row ai">
+        <li class="row ai" in:fly={slide(14, 120)}>
           <div class="bub ai-b">
             {current.question}
             {#if current.hint}<small>{current.hint}</small>{/if}
@@ -132,6 +159,7 @@
           <button type="button" class="chip" onclick={() => pick(o.value)}>{o.label}</button>
         {/each}
       </div>
+      <p class="keyhint">Tip: press 1 to {current.options.length} on your keyboard to answer.</p>
     {/if}
 
     {#if answered.length > 0}
@@ -189,12 +217,12 @@
     </details>
 
     {#snippet itemCard(it: Item, n: number)}
-      <li class="card item" class:lowtier={it.group === 'skip'}>
+      <li class="card item" class:lowtier={it.group === 'skip'} in:fly={slide(18, Math.min(n, 8) * 70)}>
         <div class="top">
           <span class="num">{n}</span>
           <div class="t">
             <strong>{it.title}</strong>
-            <span class="badge {tone(it.band)}" title="The Fog Off score: effect x fit x evidence. A general indicator, not a promise or a recommendation.">Fog Off score {Math.round(it.score)} · {it.band}</span>
+            <span class="badge {tone(it.band)}" title="The Fog Off score: effect x fit x evidence. A general indicator, not a promise or a recommendation.">Fog Off score <span use:countUp={Math.round(it.score)}>{Math.round(it.score)}</span> · {it.band}</span>
           </div>
         </div>
         <p>{it.why}</p>
@@ -290,6 +318,7 @@
   .ra { font-weight: 600; }
   .link { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; }
   .edit { padding: 10px 0 4px; }
+  .keyhint { margin: 10px 2px 0; font-size: 0.8rem; color: var(--muted); }
   .scoreinfo { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: 0 0 12px; }
   .si { font-size: 0.9rem; color: var(--muted); display: grid; gap: 8px; margin-top: 10px; }
   .si p { margin: 0; } .si ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; } .si strong { color: var(--text); }
