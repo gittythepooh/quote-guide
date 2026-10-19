@@ -8,23 +8,15 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
 ---
 
 <section class="scene" data-scene data-phase="hero" aria-labelledby="fs-h1">
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-    <defs>
-      <linearGradient id="fo-cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--c1)" /><stop offset="1" style="stop-color:var(--c2)" /></linearGradient>
-      <linearGradient id="fo-body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f8a86" /><stop offset="1" stop-color="#17565a" /></linearGradient>
-      <linearGradient id="fo-glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6f1f6" /><stop offset="1" stop-color="#a9c6d6" /></linearGradient>
-      <symbol id="fo-cloud" viewBox="0 0 300 120"><path d="M40 112 C14 112 4 94 14 78 C22 64 40 62 52 66 C54 40 78 26 100 32 C112 14 146 8 166 28 C184 14 216 20 224 44 C250 38 276 54 270 80 C292 82 298 112 268 112 Z" fill="url(#fo-cg)" /></symbol>
-    </defs>
-  </svg>
   <div class="stage">
     <div class="fog" aria-hidden="true">
-      <svg class="cl k1"><use href="#fo-cloud" /></svg>
-      <svg class="cl k2"><use href="#fo-cloud" /></svg>
-      <svg class="cl k3"><use href="#fo-cloud" /></svg>
-      <svg class="cl k4"><use href="#fo-cloud" /></svg>
-      <svg class="cl k5"><use href="#fo-cloud" /></svg>
-      <svg class="cl k6"><use href="#fo-cloud" /></svg>
-      <svg class="cl k7"><use href="#fo-cloud" /></svg>
+      <img class="cl k1" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k2 flip" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k3" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k4 flip" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k5" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k6 flip" src="/art/cloud.webp" alt="" width="1400" height="369" />
+      <img class="cl k7" src="/art/cloud.webp" alt="" width="1400" height="369" />
     </div>
 
     <div class="beats">
@@ -56,42 +48,14 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
       <div class="art" aria-hidden="true">
         <div class="road"></div>
         <div class="car-wrap">
-          <svg class="car" viewBox="0 0 400 130" fill="none">
-            <defs><clipPath id="fo-glass-clip"><path d="M80 64 L100 48 C104 45 108 44 114 44 L236 44 C252 44 268 54 284 66 Z" /></clipPath></defs>
-            <ellipse cx="200" cy="125" rx="178" ry="5" fill="#000" opacity="0.12" />
-            <path d="M20 104 L20 90 C20 82 24 76 32 70 L72 50 C84 42 98 40 114 40 L238 40 C262 40 282 52 300 68 L352 76 C372 80 382 88 382 98 L382 104 Z" fill="url(#fo-body)" />
-            <path d="M80 64 L100 48 C104 45 108 44 114 44 L236 44 C252 44 268 54 284 66 Z" fill="url(#fo-glass)" />
-            <g clip-path="url(#fo-glass-clip)" class="seated">
-              <path d="M206 70 C208 62 216 60 224 61 C234 61 240 64 242 70 Z" fill="#0f766e" />
-              <circle cx="224" cy="54" r="8.5" fill="#f1c7a5" />
-              <path d="M215 52 C215 44 224 42 230 46 C225 46 220 49 219 55 C217 55 215 54 215 52 Z" fill="#2b2320" />
-            </g>
-            <path d="M172 44 H180 V66 H172 Z" fill="#1f6b6b" />
-            <path d="M32 70 L72 50 M302 69 L352 76" stroke="#fff" stroke-opacity="0.35" stroke-width="1.5" stroke-linecap="round" />
-            <path d="M176 66 V98 M246 66 V98" stroke="#0c3a3e" stroke-opacity="0.45" stroke-width="1.2" />
-            <path d="M186 76 h14" stroke="#0c3a3e" stroke-opacity="0.6" stroke-width="2.2" stroke-linecap="round" />
-            <path d="M20 98 H382 V104 H20 Z" fill="#0f2e33" />
-            <path d="M370 82 C378 84 383 88 383 94 L372 94 Z" fill="#fff6d6" />
-            <path d="M20 86 C20 83 22 81 25 80 L25 92 L20 92 Z" fill="#e0493e" />
-            <circle cx="94" cy="102" r="25" fill="#0b1a1e" />
-            <circle cx="306" cy="102" r="25" fill="#0b1a1e" />
-            <g transform="translate(94 102)"><g class="wheel"><circle r="20" fill="#1a1f23" /><circle r="13" fill="#dfe5e9" /><path d="M0 -13 V13 M-13 0 H13 M-9 -9 L9 9 M-9 9 L9 -9" stroke="#8b979f" stroke-width="2" /><circle r="3.5" fill="#6f7c84" /></g></g>
-            <g transform="translate(306 102)"><g class="wheel"><circle r="20" fill="#1a1f23" /><circle r="13" fill="#dfe5e9" /><path d="M0 -13 V13 M-13 0 H13 M-9 -9 L9 9 M-9 9 L9 -9" stroke="#8b979f" stroke-width="2" /><circle r="3.5" fill="#6f7c84" /></g></g>
-          </svg>
+          <div class="carbox">
+            <img class="carimg" src="/art/car.webp" alt="" width="1400" height="556" />
+            <img class="rim r1" src="/art/rim.webp" alt="" width="164" height="164" />
+            <img class="rim r2" src="/art/rim.webp" alt="" width="164" height="164" />
+            <div class="win"><img class="drv seated" src="/art/seated.webp" alt="" width="600" height="612" /></div>
+          </div>
         </div>
-        <div class="faller">
-          <svg viewBox="0 0 60 112" fill="none" stroke-linecap="round">
-            <path d="M22 32 L9 13 M38 32 L51 13" stroke="#0f766e" stroke-width="8" />
-            <circle cx="8" cy="11" r="4" fill="#f1c7a5" /><circle cx="52" cy="11" r="4" fill="#f1c7a5" />
-            <path d="M26 64 L18 98 M34 64 L45 92" stroke="#243447" stroke-width="9" />
-            <ellipse cx="16" cy="101" rx="7" ry="3.6" fill="#fff" stroke="#c9d1d6" stroke-width="1" transform="rotate(-12 16 101)" />
-            <ellipse cx="47" cy="95" rx="7" ry="3.6" fill="#fff" stroke="#c9d1d6" stroke-width="1" transform="rotate(20 47 95)" />
-            <path d="M20 30 Q30 25 40 30 L38 66 Q30 70 22 66 Z" fill="#0f766e" />
-            <circle cx="30" cy="16" r="9.5" fill="#f1c7a5" />
-            <path d="M20.5 14 C20 6 30 3 36 7 C40 9 40 13 40 14 C35 11 28 11 24 15 C22 16 21 16 20.5 14 Z" fill="#2b2320" />
-            <circle cx="27" cy="17" r="1" fill="#2b2320" /><circle cx="33" cy="17" r="1" fill="#2b2320" /><ellipse cx="30" cy="21.5" rx="1.8" ry="2.2" fill="#9b4a3c" />
-          </svg>
-        </div>
+        <div class="faller"><img src="/art/fall.webp" alt="" width="600" height="467" /></div>
       </div>
 
       <div class="start" data-start>
@@ -117,10 +81,11 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
     background: var(--sky);
     color: var(--text);
   }
+  /* The art is drawn for a white page, so the intro stays light in dark mode too. */
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme='light']) .scene { --c1: #2c3d46; --c2: #1d2a31; --sky: var(--bg); }
+    :root:not([data-theme='light']) .scene { --bg: #f7f8f6; --surface: #fff; --text: #14201b; --muted: #5b6a63; --line: #e1e6e1; --accent: #0f766e; --accent-text: #fff; }
   }
-  :root[data-theme='dark'] .scene { --c1: #2c3d46; --c2: #1d2a31; --sky: var(--bg); }
+  :root[data-theme='dark'] .scene { --bg: #f7f8f6; --surface: #fff; --text: #14201b; --muted: #5b6a63; --line: #e1e6e1; --accent: #0f766e; --accent-text: #fff; }
 
   .stage { position: relative; overflow: hidden; min-height: calc(100dvh - 64px); display: grid; place-items: center; padding: 56px 24px; }
   .fog { position: absolute; inset: 0; pointer-events: none; }
@@ -132,7 +97,6 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .k5 { width: 64vw; right: -14vw; top: 58%; }
   .k6 { width: 48vw; left: 30vw; top: -6%; }
   .k7 { width: 80vw; left: 6vw; top: 72%; }
-  .cl { height: auto; aspect-ratio: 300 / 120; }
 
   .beats { position: relative; width: min(760px, 100%); }
   .beat { text-align: center; }
@@ -159,8 +123,14 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .art { position: relative; height: 160px; margin: 56px auto 0; width: min(420px, 100%); }
   .road { position: absolute; left: -40vw; right: -40vw; bottom: 6px; height: 1px; background: var(--line); }
   .car-wrap { position: absolute; left: 50%; bottom: 6px; width: var(--car-w); transform: translateX(-50%); }
-  .car { display: block; width: 100%; overflow: visible; }
-  .wheel { transform-box: fill-box; transform-origin: center; }
+  .carbox { position: relative; }
+  .carimg { display: block; width: 100%; height: auto; }
+  .rim { position: absolute; width: 11.5%; top: 78.5%; transform: translate(-50%, -50%); border-radius: 50%; }
+  .r1 { left: 17.7%; } .r2 { left: 81.8%; }
+  .win { position: absolute; inset: 0; clip-path: polygon(44% 31%, 43.3% 6.2%, 56.8% 6.2%, 65.9% 30%); }
+  .drv { position: absolute; width: 24.5%; left: 47.3%; top: 7.6%; clip-path: none; }
+  .cl { height: auto; }
+  .flip { scale: -1 1; }
   .faller { display: none; }
 
   .skipbtn, .rail { display: none; }
@@ -192,16 +162,16 @@ const question = firstQuestion.question.replace('Hi! Let us work out what is wor
   .live .road { bottom: var(--road); opacity: var(--roadv); }
   .live .car-wrap { bottom: var(--road); opacity: var(--roadv);
     transform: translate3d(calc(-50% + var(--drive) * var(--drive) * (62vw + var(--car-w))), calc(var(--land) * 5px), 0); }
-  .live .wheel { transform: rotate(calc(var(--drive) * 1900deg)); }
+  .live .rim { transform: translate(-50%, -50%) rotate(calc(var(--drive) * 1900deg)); }
   .live .seated { opacity: var(--seat); }
-  .live .faller { display: block; position: absolute; left: 50%; width: 60px; bottom: calc(var(--road) + var(--car-w) * 0.3);
+  .live .faller { display: block; position: absolute; left: 50%; width: clamp(120px, 17vw, 190px); bottom: calc(var(--road) + var(--car-w) * 0.3);
     opacity: calc((1 - var(--seat)) * var(--fallv));
     transform: translate3d(-50%, calc((var(--fall) * var(--fall) - 1) * 76dvh), 0) rotate(calc(sin(calc(var(--p) * 60)) * 8deg)); }
-  .faller svg { display: block; width: 100%; }
+  .faller img { display: block; width: 100%; height: auto; }
 
   .live .skipbtn { display: block; position: absolute; top: 16px; right: 20px; font: inherit; font-size: 0.85rem; font-weight: 600; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; transition: color 0.2s, border-color 0.2s, opacity 0.3s; }
   .live .skipbtn:hover { color: var(--accent); border-color: var(--accent); }
-  .live[data-phase='start'] .skipbtn { opacity: 0; pointer-events: none; }
+  .live[data-phase='start'] .skipbtn { opacity: 0; visibility: hidden; pointer-events: none; }
   .live .rail { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--line); }
   .live .rail b { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--p)); }
 
