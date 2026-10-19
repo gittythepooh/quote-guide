@@ -93,10 +93,14 @@
     <span class="pill">Guided check · about 2 minutes</span>
     <h1>What is worth testing for you?</h1>
     <p>Answer a few quick questions. You get a short list of what to try first, how well each fits you, and what must stay true when you buy.</p>
+    {#if answered.length > 0}
+      <p class="saved">Continuing where you left off on this device. <button class="link" type="button" onclick={restart}>Start again</button></p>
+    {/if}
   {:else}
     <span class="pill">Your result</span>
     <h1>Your test priorities</h1>
     <p>Based on your answers. Change any answer below and the list updates.</p>
+    <p class="saved">Saved on this device only. Using a shared computer? <button class="link" type="button" onclick={restart}>Clear my answers</button></p>
   {/if}
 </header>
 
@@ -227,6 +231,8 @@
   .intro { margin: 0 0 22px; }
   .intro h1 { font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; margin: 16px 0 10px; }
   .intro p { color: var(--muted); max-width: 60ch; margin: 0; }
+  .intro .saved { margin-top: 10px; font-size: 0.86rem; }
+  .intro .link { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .topcta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; background: var(--accent-soft); border-radius: 16px; padding: 16px 18px; margin: 0 0 16px; }
   .topcta div { display: grid; gap: 2px; }

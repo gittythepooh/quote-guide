@@ -62,10 +62,16 @@ const LICENCE = [{ value: 'lt2', label: 'Under 2' }, { value: '2-5', label: '2 t
 const RECORD = [{ value: 'none', label: 'None' }, { value: 'some', label: 'Some' }];
 const DRIVER_MUST = 'Only add people who genuinely drive the car. If you are the main driver, never name an older relative as the main driver (fronting).';
 const DRIVER_CAUTION = 'We do not ask for gender: insurers have not been allowed to price on it since 2012.';
-const describe = (p: Params) => {
-  const who = WHO.find((o) => o.value === p.who)?.label.toLowerCase() ?? p.who;
-  const lic = LICENCE.find((o) => o.value === p.licence)?.label.toLowerCase() ?? p.licence;
-  return `${who}, aged ${p.age}, licence held ${lic} years, ${p.record === 'none' ? 'no claims or convictions' : 'with claims or convictions'}`;
+/** Describe a driver from the details actually chosen. Nothing is assumed: returns null until something is picked. */
+const describe = (p: Params): string | null => {
+  const parts: string[] = [];
+  const who = WHO.find((o) => o.value === p.who)?.label.toLowerCase();
+  if (who) parts.push(who);
+  if (p.age) parts.push(`aged ${p.age}`);
+  const lic = LICENCE.find((o) => o.value === p.licence)?.label.toLowerCase();
+  if (lic) parts.push(`licence held ${lic} years`);
+  if (p.record) parts.push(p.record === 'none' ? 'no claims or convictions' : 'with claims or convictions');
+  return parts.length ? parts.join(', ') : null;
 };
 
 const drivers: TestDef = {
@@ -77,8 +83,8 @@ const drivers: TestDef = {
     { id: 'licence', label: 'Years with a full licence', options: LICENCE },
     { id: 'record', label: 'Claims or convictions', options: RECORD },
   ],
-  defaults: { who: 'partner', age: '40-49', licence: '5+', record: 'none' },
-  instruction: (p) => `Add one named driver: ${describe(p)}. Keep every other answer the same.`,
+  defaults: { who: '', age: '', licence: '', record: '' }, // nothing pre-selected: use the real driver's details
+  instruction: (p) => { const d = describe(p); return d ? `Add one named driver: ${d}. Keep every other answer the same.` : 'Add one named driver who genuinely drives your car. Choose their details below, then keep every other answer the same.'; },
   change: () => 'add_named_driver',
   mustBeTrue: DRIVER_MUST,
   caution: DRIVER_CAUTION,
@@ -93,8 +99,8 @@ const drivers2: TestDef = {
     { id: 'licence', label: 'Years with a full licence', options: LICENCE },
     { id: 'record', label: 'Claims or convictions', options: RECORD },
   ],
-  defaults: { who: 'parent', age: '50-59', licence: '5+', record: 'none' },
-  instruction: (p) => `Keep the first extra driver and add a second named driver: ${describe(p)}. Enter the price with BOTH drivers added. We compare it with your baseline and with the one-driver price.`,
+  defaults: { who: '', age: '', licence: '', record: '' },
+  instruction: (p) => { const d = describe(p); return `Keep the first extra driver and add a second named driver${d ? `: ${d}` : ' who genuinely drives (choose their details below)'}. Enter the price with BOTH drivers added. We compare it with your baseline and with the one-driver price.`; },
   change: () => 'add_two_named_drivers',
   mustBeTrue: DRIVER_MUST,
   caution: DRIVER_CAUTION,
