@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Advisor from '../components/Advisor.svelte';
+---
+
+<Base title="Guided check | Quote Guide" description="Answer a few quick questions and see which car insurance changes are worth testing for you. Your answers stay in your browser.">
+  <div class="wrap" style="padding-block:48px 24px;">
+    <span class="pill">Guided check · about 2 minutes</span>
+    <h1 style="font-size:clamp(2rem,5vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin:16px 0 10px;">
+      What is worth testing for you?
+    </h1>
+    <p style="color:var(--muted); max-width:60ch; margin:0 0 4px;">
+      Answer a few quick questions. You get a short list of what to try first, how likely it is to help, and what must stay true when you buy.
+    </p>
+  </div>
+  <div class="wrap">
+    <Advisor client:load />
+  </div>
+</Base>

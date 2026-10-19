@@ -8,6 +8,7 @@ interface Props {
 const { title, description = 'Plain-English help to get fair value on car insurance. Information only. Your answers stay in your browser.' } = Astro.props;
 const path = Astro.url.pathname;
 const links = [
+  { href: '/start/', label: 'Start' },
   { href: '/guide/', label: 'Guide' },
   { href: '/explorer/', label: 'Explorer' },
   { href: '/compare/', label: 'Compare' },
@@ -32,14 +33,14 @@ const links = [
           <span style="display:grid; place-items:center; width:30px; height:30px; border-radius:9px; background:var(--accent); color:var(--accent-text);" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
           </span>
-          Quote Guide
+          <span class="brand-text">Quote Guide</span>
         </a>
-        <nav aria-label="Main" style="display:flex; gap:6px;">
+        <nav aria-label="Main" class="mainnav" style="display:flex; gap:4px; min-width:0; overflow-x:auto;">
           {links.map((l) => (
             <a
               href={l.href}
               aria-current={path.startsWith(l.href) ? 'page' : undefined}
-              style={`padding:8px 14px; border-radius:999px; font-weight:600; font-size:0.92rem; text-decoration:none; color:${path.startsWith(l.href) ? 'var(--accent)' : 'var(--muted)'}; background:${path.startsWith(l.href) ? 'var(--accent-soft)' : 'transparent'};`}
+              style={`padding:8px 12px; white-space:nowrap; border-radius:999px; font-weight:600; font-size:0.92rem; text-decoration:none; color:${path.startsWith(l.href) ? 'var(--accent)' : 'var(--muted)'}; background:${path.startsWith(l.href) ? 'var(--accent-soft)' : 'transparent'};`}
             >{l.label}</a>
           ))}
         </nav>
@@ -60,3 +61,12 @@ const links = [
     </footer>
   </body>
 </html>
+
+<style is:global>
+  .mainnav { scrollbar-width: none; }
+  .mainnav::-webkit-scrollbar { display: none; }
+  @media (max-width: 560px) {
+    .brand-text { display: none; }
+    .mainnav a { padding: 8px 10px !important; font-size: 0.88rem !important; }
+  }
+</style>

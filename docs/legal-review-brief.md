@@ -42,6 +42,10 @@ Prepared 19 Oct 2026. This is a briefing, not legal advice. Its purpose is to le
 14. Disclaimer and limitation of liability for information that may be out of date or wrong. Governing law and a plain-English terms page.
 15. Defamation and competition risk if we later publish per-insurer or per-site results. What rules of thumb should we follow?
 
+### Guided check
+19. The "Guided check" ranks what is worth testing for a person ("Start here", "Chance it helps: High/Medium/Low", approximate sizes from tests). Does that amount to a personal recommendation or advice on a contract of insurance? What changes (wording, removing the likelihood label, extra disclaimers) would keep it information-only?
+20. The tool tells people to test every job title that is genuinely accurate for them. Is that wording safe, given insurers can verify occupation and a wrong title can void a claim?
+
 ### Other
 16. Donations: what structure is needed (sole trader, community interest company, other), and any VAT or tax issues?
 17. Licence for the code (open source) and for the published data.

@@ -20,7 +20,8 @@ npm run build      # outputs ./dist
 ```
 
 ## Structure
-- `src/pages/` home, `guide`, `explorer`
+- `src/pages/` home, `start` (guided check), `guide`, `explorer`, `compare`, `findings`, `privacy`
+- `src/lib/advisor.ts` the guided-check questions and ranking rules; `src/components/Advisor.svelte` the chat-style form and summary
 - `src/components/WhatIf.svelte` the what-if explorer (localStorage, JSON export/import)
 - `src/components/MustBeTrue.svelte` "true at purchase" checklist
 - `src/data/sample.ts` sample data from the 2022 controlled test (dummy profile)
